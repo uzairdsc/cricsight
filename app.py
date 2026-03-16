@@ -1671,6 +1671,7 @@ if df is not None:
                 show_bowl_type_wagon_desc = st.checkbox("Show Bowl Type (Wagon Desc)", value=True, key="wagon_desc_bowl_type")
                 show_bowl_kind_wagon_desc = st.checkbox("Show Bowl Pace (Wagon Desc)", value=True, key="wagon_desc_bowl_kind")
                 show_bowl_arm_wagon_desc = st.checkbox("Show Bowl Arm (Wagon Desc)", value=True, key="wagon_desc_bowl_arm")
+                show_venue_wagon_desc = st.checkbox("Show Venue (Wagon Desc)", value=True, key="wagon_desc_venue")
             
             with col3:
                 st.markdown("## Run Filter (Wagon Zone)")
@@ -1743,7 +1744,8 @@ if df is not None:
                     show_phase=show_phase_wagon_desc,
                     show_bowl_type=show_bowl_type_wagon_desc,
                     show_bowl_kind=show_bowl_kind_wagon_desc,
-                    show_bowl_arm=show_bowl_arm_wagon_desc
+                    show_bowl_arm=show_bowl_arm_wagon_desc,
+                    show_venue=show_venue_wagon_desc
                 )
                 with col2:
                     st.pyplot(fig_wagon_desc)
@@ -1792,6 +1794,7 @@ if df is not None:
                 show_bowl_type_wagon_desc_trans = st.checkbox("Show Bowl Type (Wagon Desc)", value=True, key="wagon_desc_trans_bowl_type")
                 show_bowl_kind_wagon_desc_trans = st.checkbox("Show Bowl Pace (Wagon Desc)", value=True, key="wagon_desc_trans_bowl_kind")
                 show_bowl_arm_wagon_desc_trans = st.checkbox("Show Bowl Arm (Wagon Desc)", value=True, key="wagon_desc_trans_bowl_arm")
+                show_venue_wagon_desc_trans = st.checkbox("Show Venue (Wagon Desc)", value=True, key="wagon_desc_trans_venue")
             
             with col3:
                 st.markdown("## Run Filter (Wagon Zone)")
@@ -1864,7 +1867,8 @@ if df is not None:
                     show_phase=show_phase_wagon_desc_trans,
                     show_bowl_type=show_bowl_type_wagon_desc_trans,
                     show_bowl_kind=show_bowl_kind_wagon_desc_trans,
-                    show_bowl_arm=show_bowl_arm_wagon_desc_trans
+                    show_bowl_arm=show_bowl_arm_wagon_desc_trans,
+                    show_venue=show_venue_wagon_desc_trans
                 )
                 with col2:
                     st.pyplot(fig_wagon_desc_trans)
