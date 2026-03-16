@@ -321,6 +321,7 @@ def dismissal_plot(
 
         #testing lines
         valid_shots = valid_shots.copy()
+
         valid_shots['isFour'] = (valid_shots['outcome'] == 'four').astype(int)
         valid_shots['isSix'] = (valid_shots['outcome'] == 'six').astype(int)
 

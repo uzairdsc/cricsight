@@ -106,6 +106,11 @@ if 'df' not in st.session_state:
 
 df = st.session_state.df
 
+# Initialize title_components early so it's available to batch section
+if 'title_components' not in st.session_state:
+    st.session_state.title_components = ['title', 'filters']
+title_components = st.session_state.title_components
+
 if data_source == "Upload Data File":
     uploaded_file = st.sidebar.file_uploader("Upload CSV File", type=["csv"])
     if uploaded_file:
@@ -393,6 +398,7 @@ if st.session_state.df is not None:
                                             'run_values': None,
                                             'over_values': None,
                                             'phase': None,
+                                            'title_components': title_components,
                                             'transparent': batch_transparent,
                                             'show_title': True,
                                             'show_summary': True,
@@ -423,6 +429,7 @@ if st.session_state.df is not None:
                                             'run_values': None,
                                             'over_values': None,
                                             'phase': None,
+                                            'title_components': title_components,
                                             'transparent': batch_transparent,
                                             'show_title': True,
                                             'show_summary': True,
@@ -437,7 +444,7 @@ if st.session_state.df is not None:
                                             'show_phase': True,
                                             'show_bowl_type': True,
                                             'show_bowl_kind': True,
-                                            'show_bowl_arm': True                                     
+                                            'show_bowl_arm': True,
                                         }
                                     
                                     # Generate selected plots
@@ -610,6 +617,7 @@ if df is not None:
             default=['title', 'filters'],
             help="'title' = Player vs Team | 'filters' = Competition, Match#, Innings | 'show_venue' = Venue info in title. Applies to all plots."
         )
+        st.session_state.title_components = title_components
         
     
     # ===== COLUMN 2: Batting Team, Batter, Player ID =====
