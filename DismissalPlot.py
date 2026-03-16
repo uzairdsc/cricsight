@@ -318,6 +318,9 @@ def dismissal_plot(
         valid_balls = local_df[local_df['wide'] == 0]
         valid_shots = valid_balls[~((valid_balls['wagonX'] == 0) & (valid_balls['wagonY'] == 0))]
         # ADD THESE TWO LINES:
+
+        #testing lines
+        valid_shots = valid_shots.copy()
         valid_shots['isFour'] = (valid_shots['outcome'] == 'four').astype(int)
         valid_shots['isSix'] = (valid_shots['outcome'] == 'six').astype(int)
 
