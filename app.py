@@ -37,6 +37,28 @@ st.set_page_config(page_title="PSL Cricket Wagon Wheel App" ,page_icon="🏏" ,l
 st.title("🏏 PSL - Wagon Wheel Analysis Dashboard")
 
 
+def normalize_data(df):
+    """Convert wagonX and wagonY to numeric to prevent type errors in plotting"""
+    if df is None:
+        return None
+    
+    df = df.copy()
+    
+    # Fill NaN values in wagonX and wagonY with 0.0 (represents dot balls)
+    if 'wagonX' in df.columns:
+        df['wagonX'] = df['wagonX'].fillna(0.0)
+    if 'wagonY' in df.columns:
+        df['wagonY'] = df['wagonY'].fillna(0.0)
+    
+    # Convert wagonX and wagonY to numeric (handles strings, ints, floats)
+    if 'wagonX' in df.columns:
+        df['wagonX'] = pd.to_numeric(df['wagonX'], errors='coerce')
+    if 'wagonY' in df.columns:
+        df['wagonY'] = pd.to_numeric(df['wagonY'], errors='coerce')
+    
+    return df
+
+
 @st.cache_data(ttl=60)  # Cache for 1 min
 def load_from_s3(bucket_name, file_key, aws_access_key, aws_secret_key, region_name='us-east-1'):
     """Load CSV from S3 bucket"""
@@ -51,6 +73,7 @@ def load_from_s3(bucket_name, file_key, aws_access_key, aws_secret_key, region_n
         with st.spinner(f"Loading data from S3: {file_key}..."):
             obj = s3_client.get_object(Bucket=bucket_name, Key=file_key)
             df = pd.read_csv(obj['Body'], low_memory=False, )
+            df = normalize_data(df)  # Ensure wagonX/Y are numeric
             st.success(f"Loaded {len(df)} rows from S3")
             return df
     except NoCredentialsError:
@@ -115,6 +138,7 @@ if data_source == "Upload Data File":
     uploaded_file = st.sidebar.file_uploader("Upload CSV File", type=["csv"])
     if uploaded_file:
         df = pd.read_csv(uploaded_file, low_memory=False)
+        df = normalize_data(df)  # Ensure wagonX/Y are numeric
         st.session_state.df = df
         st.sidebar.success(f"Loaded {len(df):,} rows")
 
@@ -225,6 +249,7 @@ elif data_source == "Cache_all":
         try:
             with st.spinner(f"Loading data from {local_file_path}..."):
                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
+                loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
                 st.session_state.df = loaded_df
                 df = loaded_df
                 st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
@@ -247,6 +272,7 @@ elif data_source == "Cache_since24":
         try:
             with st.spinner(f"Loading data from {local_file_path}..."):
                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
+                loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
                 st.session_state.df = loaded_df
                 df = loaded_df
                 st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
