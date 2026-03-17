@@ -664,7 +664,7 @@ if df is not None:
         title_components = st.multiselect(
             "Title Components",
             options=['title', 'filters', 'show_venue'],
-            default=['title', 'filters'],
+            default=['title'],
             help="'title' = Player vs Team | 'filters' = Competition, Match#, Innings | 'show_venue' = Venue info in title. Applies to all plots."
         )
         st.session_state.title_components = title_components
