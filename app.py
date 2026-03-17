@@ -925,6 +925,7 @@ if df is not None:
             # "Wagon Wheel (Transparent Background)",
             "Wagon Wheel Descriptive",
             "Wagon Wheel Descriptive (Transparent)",
+            "━━ Wagon Wheel Desc - vs All Kind",
             "━━ Wagon Wheel Desc - vs Pace",
             "━━ Wagon Wheel Desc - vs Spin",
             "━━ Wagon Wheel Phase - All",
@@ -940,10 +941,10 @@ if df is not None:
         ]
     )
 
-    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
     # Ensure variables persist in session state
-    for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog']:
+    for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog', 'fig_whl_all_kind']:
         if var_name not in st.session_state:
             st.session_state[var_name] = locals()[var_name]
 
@@ -1319,6 +1320,135 @@ if df is not None:
                         key="spike_desc_download"
                     )
 
+        if "━━ Wagon Wheel Desc - vs All Kind" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - All Bowler Kinds</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_all_kind = st.checkbox("Show Plot Title", value=True, key="whl_all_kind_title")
+                show_legend_all_kind = st.checkbox("Show Legend", value=True, key="whl_all_kind_legend")
+                show_summary_all_kind = st.checkbox("Show Runs Summary", value=True, key="whl_all_kind_summary")
+                
+                show_shots_breakdown_all_kind = st.checkbox("Show Shots Breakdown", value=True, key="whl_all_kind_shots_breakdown")
+                if show_shots_breakdown_all_kind:
+                    shots_breakdown_options_all_kind = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_all_kind_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_all_kind = []
+                
+                runs_count_all_kind = st.checkbox("Show Runs Count", value=True, key="whl_all_kind_runs")
+                show_fours_sixes_all_kind = st.checkbox("Show 4s and 6s", value=True, key="whl_all_kind_fs")
+                show_bowler_all_kind = st.checkbox("Show Bowler", value=True, key="whl_all_kind_bowler")
+                show_control_all_kind = st.checkbox("Show Control %", value=True, key="whl_all_kind_control")
+                show_prod_shot_all_kind = st.checkbox("Show Productive Shot", value=True, key="whl_all_kind_prod")
+                show_overs_all_kind = st.checkbox("Show Overs", value=True, key="whl_all_kind_overs")
+                show_phase_all_kind = st.checkbox("Show Phase", value=True, key="whl_all_kind_phase")
+                show_ground_all_kind = st.checkbox("Show Ground Image", value=True, key="whl_all_kind_ground")
+                show_bowl_type_all_kind = st.checkbox("Show Bowl Type", value=True, key="whl_all_kind_bowl_type")
+                show_bowl_kind_all_kind = st.checkbox("Show Bowl Pace", value=True, key="whl_all_kind_bowl_kind")
+                show_bowl_arm_all_kind = st.checkbox("Show Bowl Arm", value=True, key="whl_all_kind_bowl_arm")
+                show_venue_all_kind = st.checkbox("Show Venue", value=True, key="whl_all_kind_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_all_kind" not in st.session_state:
+                    st.session_state["run_all_whl_all_kind"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_all_kind'] = True
+                    st.session_state["run_init_whl_all_kind"] = True
+
+                def sync_all_to_individual_whl_all_kind():
+                    all_selected = st.session_state["run_all_whl_all_kind"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_all_kind'] = all_selected
+
+                def sync_individual_to_all_whl_all_kind():
+                    all_selected = all(st.session_state[f'run_{i}_whl_all_kind'] for i in range(7))
+                    st.session_state["run_all_whl_all_kind"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_all_kind", on_change=sync_all_to_individual_whl_all_kind)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_all_kind', on_change=sync_individual_to_all_whl_all_kind)
+
+                individual_selected_whl_all_kind = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_all_kind', False)]
+
+                if st.session_state["run_all_whl_all_kind"]:
+                    filtered_runs_whl_all_kind = None
+                elif individual_selected_whl_all_kind:
+                    filtered_runs_whl_all_kind = individual_selected_whl_all_kind
+                else:
+                    filtered_runs_whl_all_kind = []
+                    
+            if filtered_runs_whl_all_kind == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_all_kind = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_all_kind,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_all_kind else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=None,  # HARDCODED: All kinds (no filter)
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_all_kind,
+                    show_summary=show_summary_all_kind,
+                    show_shots_breakdown=show_shots_breakdown_all_kind,
+                    shots_breakdown_options=shots_breakdown_options_all_kind,
+                    show_legend=show_legend_all_kind,
+                    runs_count=runs_count_all_kind,
+                    show_fours_sixes=show_fours_sixes_all_kind,
+                    show_control=show_control_all_kind,
+                    show_prod_shot=show_prod_shot_all_kind,
+                    show_bowler=show_bowler_all_kind,
+                    show_ground=show_ground_all_kind,
+                    show_venue=show_venue_all_kind,
+                    show_overs=show_overs_all_kind,
+                    show_phase=show_phase_all_kind,
+                    show_bowl_type=show_bowl_type_all_kind,
+                    show_bowl_kind=show_bowl_kind_all_kind,
+                    show_bowl_arm=show_bowl_arm_all_kind
+                )
+                with col2:
+                    st.pyplot(fig_whl_all_kind)
+            
+            with col3:
+                if fig_whl_all_kind:
+                    buf = BytesIO()
+                    fig_whl_all_kind.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_all_kind.png",
+                        mime="image/png",
+                        key="whl_all_kind_download"
+                    )
+
+                    
         if "━━ Wagon Wheel Desc - vs Pace" in plot_types:
             st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive vs Pace Bowlers</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
@@ -2931,6 +3061,21 @@ if df is not None:
             
         if fig_dismissal_trans is not None:
             all_figures[f"{selected_player}_dismissal_plot_transparent.png"] = fig_dismissal_trans
+        
+        if fig_whl_phs_all is not None:
+            all_figures[f"{selected_player}_whl_phase_all.png"] = fig_whl_phs_all
+        
+        if fig_whl_phs_pp is not None:
+            all_figures[f"{selected_player}_whl_phase_powerplay.png"] = fig_whl_phs_pp
+        
+        if fig_whl_phs_mid is not None:
+            all_figures[f"{selected_player}_whl_phase_middle.png"] = fig_whl_phs_mid
+        
+        if fig_whl_phs_slog is not None:
+            all_figures[f"{selected_player}_whl_phase_slog.png"] = fig_whl_phs_slog
+        
+        if fig_whl_all_kind is not None:
+            all_figures[f"{selected_player}_whl_all_kind.png"] = fig_whl_all_kind
         
         if all_figures:
             player_text = selected_player if selected_player != "All" else "AllPlayers"
