@@ -939,6 +939,9 @@ if df is not None:
             "━━ Wagon Wheel - LAP",
             "━━ Wagon Wheel - LAFP",
             "━━ Wagon Wheel - LAWP",
+            "━━ Wagon Wheel - All Arm",
+            "━━ Wagon Wheel - Right Arm",
+            "━━ Wagon Wheel - Left Arm",
             # "Wagon Zone Plot (White Background)",
             # "Wagon Zone Plot (Transparent Background)",
             "Wagon Zone",
@@ -948,10 +951,10 @@ if df is not None:
         ]
     )
 
-    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws, fig_whl_all_arm, fig_whl_right_arm, fig_whl_left_arm = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
     # Ensure variables persist in session state
-    for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog', 'fig_whl_all_kind', 'fig_whl_all_type', 'fig_whl_rap', 'fig_whl_rafs', 'fig_whl_raws', 'fig_whl_lap', 'fig_whl_lafs', 'fig_whl_laws']:
+    for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog', 'fig_whl_all_kind', 'fig_whl_all_type', 'fig_whl_rap', 'fig_whl_rafs', 'fig_whl_raws', 'fig_whl_lap', 'fig_whl_lafs', 'fig_whl_laws', 'fig_whl_all_arm', 'fig_whl_right_arm', 'fig_whl_left_arm']:
         if var_name not in st.session_state:
             st.session_state[var_name] = locals()[var_name]
 
@@ -3247,6 +3250,390 @@ if df is not None:
                         key="whl_laws_download"
                     )
 
+        if "━━ Wagon Wheel - All Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - All Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_whl_all_arm = st.checkbox("Show Plot Title", value=True, key="whl_all_arm_title")
+                show_legend_whl_all_arm = st.checkbox("Show Legend", value=True, key="whl_all_arm_legend")
+                show_summary_whl_all_arm = st.checkbox("Show Runs Summary", value=True, key="whl_all_arm_summary")
+                
+                show_shots_breakdown_whl_all_arm = st.checkbox("Show Shots Breakdown", value=True, key="whl_all_arm_shots_breakdown")
+                if show_shots_breakdown_whl_all_arm:
+                    shots_breakdown_options_whl_all_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_all_arm_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_whl_all_arm = []
+                
+                runs_count_whl_all_arm = st.checkbox("Show Runs Count", value=True, key="whl_all_arm_runs")
+                show_fours_sixes_whl_all_arm = st.checkbox("Show 4s and 6s", value=True, key="whl_all_arm_fs")
+                show_bowler_whl_all_arm = st.checkbox("Show Bowler", value=True, key="whl_all_arm_bowler")
+                show_control_whl_all_arm = st.checkbox("Show Control %", value=True, key="whl_all_arm_control")
+                show_prod_shot_whl_all_arm = st.checkbox("Show Productive Shot", value=True, key="whl_all_arm_prod")
+                show_overs_whl_all_arm = st.checkbox("Show Overs", value=True, key="whl_all_arm_overs")
+                show_phase_whl_all_arm = st.checkbox("Show Phase", value=True, key="whl_all_arm_phase")
+                show_ground_whl_all_arm = st.checkbox("Show Ground Image", value=True, key="whl_all_arm_ground")
+                show_bowl_type_whl_all_arm = st.checkbox("Show Bowl Type", value=True, key="whl_all_arm_bowl_type")
+                show_bowl_kind_whl_all_arm = st.checkbox("Show Bowl Pace", value=True, key="whl_all_arm_bowl_kind")
+                show_bowl_arm_whl_all_arm = st.checkbox("Show Bowl Arm", value=True, key="whl_all_arm_bowl_arm")
+                show_venue_whl_all_arm = st.checkbox("Show Venue", value=True, key="whl_all_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_all_arm" not in st.session_state:
+                    st.session_state["run_all_whl_all_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_all_arm'] = True
+                    st.session_state["run_init_whl_all_arm"] = True
+
+                def sync_all_to_individual_whl_all_arm():
+                    all_selected = st.session_state["run_all_whl_all_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_all_arm'] = all_selected
+
+                def sync_individual_to_all_whl_all_arm():
+                    all_selected = all(st.session_state[f'run_{i}_whl_all_arm'] for i in range(7))
+                    st.session_state["run_all_whl_all_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_all_arm", on_change=sync_all_to_individual_whl_all_arm)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_all_arm', on_change=sync_individual_to_all_whl_all_arm)
+
+                individual_selected_whl_all_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_all_arm', False)]
+
+                if st.session_state["run_all_whl_all_arm"]:
+                    filtered_runs_whl_all_arm = None
+                elif individual_selected_whl_all_arm:
+                    filtered_runs_whl_all_arm = individual_selected_whl_all_arm
+                else:
+                    filtered_runs_whl_all_arm = []
+                    
+            if filtered_runs_whl_all_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_all_arm = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_all_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_whl_all_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=None,
+                    show_title=show_title_whl_all_arm,
+                    show_summary=show_summary_whl_all_arm,
+                    show_shots_breakdown=show_shots_breakdown_whl_all_arm,
+                    shots_breakdown_options=shots_breakdown_options_whl_all_arm,
+                    show_legend=show_legend_whl_all_arm,
+                    runs_count=runs_count_whl_all_arm,
+                    show_fours_sixes=show_fours_sixes_whl_all_arm,
+                    show_control=show_control_whl_all_arm,
+                    show_prod_shot=show_prod_shot_whl_all_arm,
+                    show_bowler=show_bowler_whl_all_arm,
+                    show_ground=show_ground_whl_all_arm,
+                    show_venue=show_venue_whl_all_arm,
+                    show_overs=show_overs_whl_all_arm,
+                    show_phase=show_phase_whl_all_arm,
+                    show_bowl_type=show_bowl_type_whl_all_arm,
+                    show_bowl_kind=show_bowl_kind_whl_all_arm,
+                    show_bowl_arm=show_bowl_arm_whl_all_arm
+                )
+                with col2:
+                    st.pyplot(fig_whl_all_arm)
+            
+            with col3:
+                if fig_whl_all_arm:
+                    buf = BytesIO()
+                    fig_whl_all_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_all_arm.png",
+                        mime="image/png",
+                        key="whl_all_arm_download"
+                    )
+
+        if "━━ Wagon Wheel - Right Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - Right Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_whl_right_arm = st.checkbox("Show Plot Title", value=True, key="whl_right_arm_title")
+                show_legend_whl_right_arm = st.checkbox("Show Legend", value=True, key="whl_right_arm_legend")
+                show_summary_whl_right_arm = st.checkbox("Show Runs Summary", value=True, key="whl_right_arm_summary")
+                
+                show_shots_breakdown_whl_right_arm = st.checkbox("Show Shots Breakdown", value=True, key="whl_right_arm_shots_breakdown")
+                if show_shots_breakdown_whl_right_arm:
+                    shots_breakdown_options_whl_right_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_right_arm_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_whl_right_arm = []
+                
+                runs_count_whl_right_arm = st.checkbox("Show Runs Count", value=True, key="whl_right_arm_runs")
+                show_fours_sixes_whl_right_arm = st.checkbox("Show 4s and 6s", value=True, key="whl_right_arm_fs")
+                show_bowler_whl_right_arm = st.checkbox("Show Bowler", value=True, key="whl_right_arm_bowler")
+                show_control_whl_right_arm = st.checkbox("Show Control %", value=True, key="whl_right_arm_control")
+                show_prod_shot_whl_right_arm = st.checkbox("Show Productive Shot", value=True, key="whl_right_arm_prod")
+                show_overs_whl_right_arm = st.checkbox("Show Overs", value=True, key="whl_right_arm_overs")
+                show_phase_whl_right_arm = st.checkbox("Show Phase", value=True, key="whl_right_arm_phase")
+                show_ground_whl_right_arm = st.checkbox("Show Ground Image", value=True, key="whl_right_arm_ground")
+                show_bowl_type_whl_right_arm = st.checkbox("Show Bowl Type", value=True, key="whl_right_arm_bowl_type")
+                show_bowl_kind_whl_right_arm = st.checkbox("Show Bowl Pace", value=True, key="whl_right_arm_bowl_kind")
+                show_bowl_arm_whl_right_arm = st.checkbox("Show Bowl Arm", value=True, key="whl_right_arm_bowl_arm")
+                show_venue_whl_right_arm = st.checkbox("Show Venue", value=True, key="whl_right_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_right_arm" not in st.session_state:
+                    st.session_state["run_all_whl_right_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_right_arm'] = True
+                    st.session_state["run_init_whl_right_arm"] = True
+
+                def sync_all_to_individual_whl_right_arm():
+                    all_selected = st.session_state["run_all_whl_right_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_right_arm'] = all_selected
+
+                def sync_individual_to_all_whl_right_arm():
+                    all_selected = all(st.session_state[f'run_{i}_whl_right_arm'] for i in range(7))
+                    st.session_state["run_all_whl_right_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_right_arm", on_change=sync_all_to_individual_whl_right_arm)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_right_arm', on_change=sync_individual_to_all_whl_right_arm)
+
+                individual_selected_whl_right_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_right_arm', False)]
+
+                if st.session_state["run_all_whl_right_arm"]:
+                    filtered_runs_whl_right_arm = None
+                elif individual_selected_whl_right_arm:
+                    filtered_runs_whl_right_arm = individual_selected_whl_right_arm
+                else:
+                    filtered_runs_whl_right_arm = []
+                    
+            if filtered_runs_whl_right_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_right_arm = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_right_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_whl_right_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Right Arm"],
+                    show_title=show_title_whl_right_arm,
+                    show_summary=show_summary_whl_right_arm,
+                    show_shots_breakdown=show_shots_breakdown_whl_right_arm,
+                    shots_breakdown_options=shots_breakdown_options_whl_right_arm,
+                    show_legend=show_legend_whl_right_arm,
+                    runs_count=runs_count_whl_right_arm,
+                    show_fours_sixes=show_fours_sixes_whl_right_arm,
+                    show_control=show_control_whl_right_arm,
+                    show_prod_shot=show_prod_shot_whl_right_arm,
+                    show_bowler=show_bowler_whl_right_arm,
+                    show_ground=show_ground_whl_right_arm,
+                    show_venue=show_venue_whl_right_arm,
+                    show_overs=show_overs_whl_right_arm,
+                    show_phase=show_phase_whl_right_arm,
+                    show_bowl_type=show_bowl_type_whl_right_arm,
+                    show_bowl_kind=show_bowl_kind_whl_right_arm,
+                    show_bowl_arm=show_bowl_arm_whl_right_arm
+                )
+                with col2:
+                    st.pyplot(fig_whl_right_arm)
+            
+            with col3:
+                if fig_whl_right_arm:
+                    buf = BytesIO()
+                    fig_whl_right_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_right_arm.png",
+                        mime="image/png",
+                        key="whl_right_arm_download"
+                    )
+
+        if "━━ Wagon Wheel - Left Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - Left Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_whl_left_arm = st.checkbox("Show Plot Title", value=True, key="whl_left_arm_title")
+                show_legend_whl_left_arm = st.checkbox("Show Legend", value=True, key="whl_left_arm_legend")
+                show_summary_whl_left_arm = st.checkbox("Show Runs Summary", value=True, key="whl_left_arm_summary")
+                
+                show_shots_breakdown_whl_left_arm = st.checkbox("Show Shots Breakdown", value=True, key="whl_left_arm_shots_breakdown")
+                if show_shots_breakdown_whl_left_arm:
+                    shots_breakdown_options_whl_left_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_left_arm_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_whl_left_arm = []
+                
+                runs_count_whl_left_arm = st.checkbox("Show Runs Count", value=True, key="whl_left_arm_runs")
+                show_fours_sixes_whl_left_arm = st.checkbox("Show 4s and 6s", value=True, key="whl_left_arm_fs")
+                show_bowler_whl_left_arm = st.checkbox("Show Bowler", value=True, key="whl_left_arm_bowler")
+                show_control_whl_left_arm = st.checkbox("Show Control %", value=True, key="whl_left_arm_control")
+                show_prod_shot_whl_left_arm = st.checkbox("Show Productive Shot", value=True, key="whl_left_arm_prod")
+                show_overs_whl_left_arm = st.checkbox("Show Overs", value=True, key="whl_left_arm_overs")
+                show_phase_whl_left_arm = st.checkbox("Show Phase", value=True, key="whl_left_arm_phase")
+                show_ground_whl_left_arm = st.checkbox("Show Ground Image", value=True, key="whl_left_arm_ground")
+                show_bowl_type_whl_left_arm = st.checkbox("Show Bowl Type", value=True, key="whl_left_arm_bowl_type")
+                show_bowl_kind_whl_left_arm = st.checkbox("Show Bowl Pace", value=True, key="whl_left_arm_bowl_kind")
+                show_bowl_arm_whl_left_arm = st.checkbox("Show Bowl Arm", value=True, key="whl_left_arm_bowl_arm")
+                show_venue_whl_left_arm = st.checkbox("Show Venue", value=True, key="whl_left_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_left_arm" not in st.session_state:
+                    st.session_state["run_all_whl_left_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_left_arm'] = True
+                    st.session_state["run_init_whl_left_arm"] = True
+
+                def sync_all_to_individual_whl_left_arm():
+                    all_selected = st.session_state["run_all_whl_left_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_left_arm'] = all_selected
+
+                def sync_individual_to_all_whl_left_arm():
+                    all_selected = all(st.session_state[f'run_{i}_whl_left_arm'] for i in range(7))
+                    st.session_state["run_all_whl_left_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_left_arm", on_change=sync_all_to_individual_whl_left_arm)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_left_arm', on_change=sync_individual_to_all_whl_left_arm)
+
+                individual_selected_whl_left_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_left_arm', False)]
+
+                if st.session_state["run_all_whl_left_arm"]:
+                    filtered_runs_whl_left_arm = None
+                elif individual_selected_whl_left_arm:
+                    filtered_runs_whl_left_arm = individual_selected_whl_left_arm
+                else:
+                    filtered_runs_whl_left_arm = []
+                    
+            if filtered_runs_whl_left_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_left_arm = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_left_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_whl_left_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Left Arm"],
+                    show_title=show_title_whl_left_arm,
+                    show_summary=show_summary_whl_left_arm,
+                    show_shots_breakdown=show_shots_breakdown_whl_left_arm,
+                    shots_breakdown_options=shots_breakdown_options_whl_left_arm,
+                    show_legend=show_legend_whl_left_arm,
+                    runs_count=runs_count_whl_left_arm,
+                    show_fours_sixes=show_fours_sixes_whl_left_arm,
+                    show_control=show_control_whl_left_arm,
+                    show_prod_shot=show_prod_shot_whl_left_arm,
+                    show_bowler=show_bowler_whl_left_arm,
+                    show_ground=show_ground_whl_left_arm,
+                    show_venue=show_venue_whl_left_arm,
+                    show_overs=show_overs_whl_left_arm,
+                    show_phase=show_phase_whl_left_arm,
+                    show_bowl_type=show_bowl_type_whl_left_arm,
+                    show_bowl_kind=show_bowl_kind_whl_left_arm,
+                    show_bowl_arm=show_bowl_arm_whl_left_arm
+                )
+                with col2:
+                    st.pyplot(fig_whl_left_arm)
+            
+            with col3:
+                if fig_whl_left_arm:
+                    buf = BytesIO()
+                    fig_whl_left_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_left_arm.png",
+                        mime="image/png",
+                        key="whl_left_arm_download"
+                    )
+
         if "Wagon Zone Plot (White Background)" in plot_types:
             st.markdown("<h2 style='text-align: center;'>Wagon Zone Plot (White Background)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
@@ -4000,6 +4387,15 @@ if df is not None:
         
         if fig_whl_laws is not None:
             all_figures[f"{selected_player}_whl_laws.png"] = fig_whl_laws
+        
+        if fig_whl_all_arm is not None:
+            all_figures[f"{selected_player}_whl_all_arm.png"] = fig_whl_all_arm
+        
+        if fig_whl_right_arm is not None:
+            all_figures[f"{selected_player}_whl_right_arm.png"] = fig_whl_right_arm
+        
+        if fig_whl_left_arm is not None:
+            all_figures[f"{selected_player}_whl_left_arm.png"] = fig_whl_left_arm
         
         if all_figures:
             player_text = selected_player if selected_player != "All" else "AllPlayers"

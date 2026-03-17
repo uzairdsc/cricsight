@@ -1141,7 +1141,7 @@ def spike_graph_plot_descriptive(
     #     controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
     #     control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
 
-    controlled_balls = valid_balls[valid_balls['control'] ==1]
+    controlled_balls = valid_balls[valid_balls['control'] == 1]
     control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
     # valid_balls = df[
     #     (df['batsmanName'] == player_name) &
