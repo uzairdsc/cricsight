@@ -286,14 +286,14 @@ def spike_graph_plot(
     # else:
     #     player_data_sorted = player_data.sort_values(by='batsmanRuns')
     #     player_data['color'] = player_data['batsmanRuns'].map(score_colors).fillna('black')
-    if player_name is None:
-        innings_valid_balls = local_df.copy()  # include all for team
-        innings_runs = innings_valid_balls['score'].sum()
-    else:
-        innings_valid_balls = local_df[local_df['wide'] == 0]
-        innings_runs = innings_valid_balls['batruns'].sum()
+    # if player_name is None:
+    #     innings_valid_balls = local_df.copy()  # include all for team
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_valid_balls = local_df[local_df['wide'] == 0]
+    #     innings_runs = innings_valid_balls['batruns'].sum()
 
-    innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
+    # innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
 
 
     # === Additional Stats ===
@@ -762,7 +762,7 @@ def spike_graph_plot(
         phase_names = {
             1: "Powerplay (1-6)",
             2: "Middle (7-15)", 
-            3: "Death (16-20)"
+            3: "Slog (16-20)"
         }
         # phase_text = phase_names.get(phase, "All")
 
@@ -977,8 +977,8 @@ def spike_graph_plot_descriptive(
     # elif team_bats == 'ENG':
     #     team_bowl = 'IND'
     # Get unique batting teams
-    batting_teams = local_df['team_bat'].dropna().unique()
-    all_teams = pd.concat([local_df['team_bat'], local_df['team_bowl']]).dropna().unique()
+    # batting_teams = local_df['team_bat'].dropna().unique()
+    # all_teams = pd.concat([local_df['team_bat'], local_df['team_bowl']]).dropna().unique()
 
     # # Calculate bowling team based on filtered team_bat
     # if len(batting_teams) == 0:
@@ -1069,14 +1069,14 @@ def spike_graph_plot_descriptive(
     # else:
     #     player_data_sorted = player_data.sort_values(by='batsmanRuns')
     #     player_data['color'] = player_data['batsmanRuns'].map(score_colors).fillna('black')
-    if player_name is None:
-        innings_valid_balls = local_df.copy()  # include all for team
-        innings_runs = innings_valid_balls['score'].sum()
-    else:
-        innings_valid_balls = local_df[local_df['wide'] == 0]
-        innings_runs = innings_valid_balls['batruns'].sum()
+    # if player_name is None:
+    #     innings_valid_balls = local_df.copy()  # include all for team
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_valid_balls = local_df[local_df['wide'] == 0]
+    #     innings_runs = innings_valid_balls['batruns'].sum()
 
-    innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
+    # innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
 
 
     # === Additional Stats ===
@@ -1108,8 +1108,9 @@ def spike_graph_plot_descriptive(
     #     balls_faced = balls_faced_df.shape[0]
 
     # Final unified stats calculation
+    # === FILTERED STATS (specific bowler, if selected) ===
     if player_name is None:
-        # Team-level stats (exclude wides only)
+        # Team-level stats (exclude wides only) - from filtered local_df
         valid_balls = local_df[local_df['wide'] == 0]
         valid_shots = valid_balls[~((valid_balls['wagonX'] == 0) & (valid_balls['wagonY'] == 0))]
         # ADD THESE TWO LINES:
@@ -1119,9 +1120,10 @@ def spike_graph_plot_descriptive(
         total_score = valid_shots['score'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
-        balls_faced = valid_balls.shape[0]
+        balls_faced = valid_shots[~((valid_shots['wagonX'] == 0) & (valid_shots['wagonY'] == 0))].shape[0]
+
     else:
-        # Player-level stats (exclude wides + keep only player's shots)
+        # Player-level stats (exclude wides + keep only player's shots) - from filtered local_df
         valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
         valid_shots = player_data  # already filtered with shot data
         # ADD THESE TWO LINES:
@@ -1131,7 +1133,7 @@ def spike_graph_plot_descriptive(
         total_score = valid_shots['batruns'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
-        balls_faced = balls_faced_df.shape[0]
+        balls_faced = player_data.shape[0]
 
     # if len(valid_balls) == 0:
     #     control_pct = 0.0
@@ -1416,15 +1418,13 @@ def spike_graph_plot_descriptive(
     #     ax.text(180, -5, f"Total 4s: {innings_4s} | 6s: {innings_6s}",
     #             fontsize=11, ha='center', color='darkgreen')
 
+    # === SUMMARY SECTION: Shows OVERALL stats (all bowlers combined) ===
     if show_summary:
         ax.text(180, 440, f"Total Runs: {innings_runs} ({innings_balls} balls) | Strike Rate: {round(innings_runs/innings_balls*100, 2) if innings_balls > 0 else 0}",
                 fontsize=11, ha='center', fontweight='bold', color='darkgreen')
-        # ax.text(180, 458, f"4s x {innings_4s} | 6s x {innings_6s}",
-        # ax.text(180, 458, f"0s x {innings_0s} | 1s x {innings_1s} | 4s x {innings_4s} | 6s x {innings_6s}",
-        #         fontsize=11, ha='center', color='darkgreen')
 
     if show_shots_breakdown:
-    # Build breakdown text dynamically
+    # Build breakdown text dynamically - shows OVERALL breakdown
         breakdown_parts = []
         if '0s' in shots_breakdown_options:
             breakdown_parts.append(f"0s x {innings_0s}")
@@ -1475,7 +1475,7 @@ def spike_graph_plot_descriptive(
     #     ax.text(430, 250, f"Productive Shot:\n{most_prod_shot_text}",
     #             fontsize=11, ha='center', color='navy',fontweight='bold')
 
-    # update position for the plot
+    # === RUNS COUNT SECTION: Shows FILTERED stats (specific bowler, if selected) ===
     if runs_count:
         if not show_fours_sixes and not show_bowler:
              ax.text(180, 499, f"{total_score} ({balls_faced} balls)",
@@ -1483,9 +1483,6 @@ def spike_graph_plot_descriptive(
         else:
             ax.text(40, 499, f"{total_score} ({balls_faced} balls)",
                     fontsize=11, ha='center', fontweight='bold')
-
-        # ax.text(40, 499, f"{total_score} ({balls_faced} balls)",
-        #         fontsize=11, ha='center', fontweight='bold')
         
     if show_fours_sixes:
         if not runs_count and not show_bowler:
@@ -1494,9 +1491,6 @@ def spike_graph_plot_descriptive(
         else:
             ax.text(180, 499, f" | 4s: {total_4s} | 6s: {total_6s}",
                 fontsize=11, ha='center', color='darkgreen')
-
-        # ax.text(180, 499, f" | 4s: {total_4s} | 6s: {total_6s}",
-        #         fontsize=11, ha='center', color='darkgreen')
         
     if show_bowler:
         if bowler_name is None:
@@ -1506,10 +1500,8 @@ def spike_graph_plot_descriptive(
                 ax.text(180, 499, f"vs {bowler_name}",
                         fontsize=11, ha='center', color='blue', fontweight='bold')
             else:
-                ax.text(320, 499, f" | vs {bowler_name}",
+                ax.text(360, 499, f" | vs {bowler_name}",
                         fontsize=11, ha='center', color='blue', fontweight='bold')
-            # ax.text(310, 499, f" | vs {bowler_name}",
-            #         fontsize=11, ha='center', color='blue', fontweight='bold')
 
     if show_title:
         # ax.text(180,420,title_text, fontsize=12, fontweight='bold',  ha='center',
@@ -1586,7 +1578,7 @@ def spike_graph_plot_descriptive(
         phase_names = {
             1: "Powerplay (1-6)",
             2: "Middle (7-15)", 
-            3: "Death (16-20)"
+            3: "Slog (16-20)"
         }
         # phase_text = phase_names.get(phase, "All")
 
@@ -1648,10 +1640,10 @@ def spike_graph_plot_descriptive(
         
         # Responsive positioning
         if not show_bowl_arm:
-            ax.text(180, 610, f"Bowl Pace: {bowl_kind_text}", 
+            ax.text(180, 610, f"Bowl Pace: {bowl_kind_text.capitalize()}", 
                     fontsize=10, ha='center', color='teal', fontweight='bold')
         else:
-            ax.text(70, 610, f"Bowl Pace: {bowl_kind_text}", 
+            ax.text(70, 610, f"Bowl Pace: {bowl_kind_text.capitalize()}", 
                     fontsize=10, ha='center', color='teal', fontweight='bold')
 
     if show_bowl_arm:

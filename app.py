@@ -350,7 +350,7 @@ if st.session_state.df is not None:
                     # Plot type selection
                     batch_plot_types = st.sidebar.multiselect(
                         "Select plots to generate:",
-                    ["Wagon Wheel Plot", "Wagon Wheel Descriptive", "Wagon Zone Plot", "Wagon Zone Descriptive", "Dismissal Plot"],
+                    ["Wagon Wheel Plot", "Wagon Wheel", "Wagon Zone Plot", "Wagon Zone", "Dismissal Plot"],
                     )
                     
                     # Transparent option
@@ -506,7 +506,7 @@ if st.session_state.df is not None:
                                                 all_batch_figures[f"{player_name}_spike_graph_plot.png"] = fig
                                                 success_count += 1
                                         
-                                        if "Wagon Wheel Descriptive" in batch_plot_types:
+                                        if "Wagon Wheel" in batch_plot_types:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_graph_plot_descriptive(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
@@ -521,7 +521,7 @@ if st.session_state.df is not None:
                                                 all_batch_figures[f"{player_name}_wagon_zone_plot.png"] = fig
                                                 success_count += 1
                                         
-                                        if "Wagon Zone Descriptive" in batch_plot_types:
+                                        if "Wagon Zone" in batch_plot_types:
                                             # Wagon plots don't have show_legend or show_ground parameters
                                             wagon_filters = {k: v for k, v in batch_filters.items() if k not in ['show_legend', 'show_ground']}
                                             fig = wagon_zone_plot_descriptive(df=df, pid=pid, player_name=None, **wagon_filters)
@@ -921,21 +921,21 @@ if df is not None:
     plot_types = st.multiselect(
         "Choose plot(s):",
         [
-            # "Wagon Wheel (White Background)",
+            "Wagon Wheel (White Background)",
             # "Wagon Wheel (Transparent Background)",
-            "Wagon Wheel Descriptive",
-            "Wagon Wheel Descriptive (Transparent)",
-            "━━ Wagon Wheel Desc - vs All Kind",
-            "━━ Wagon Wheel Desc - vs Pace",
-            "━━ Wagon Wheel Desc - vs Spin",
+            "Wagon Wheel",
+            "Wagon Wheel (Trans)",
+            "━━ Wagon Wheel - vs All Kind",
+            "━━ Wagon Wheel - vs Pace",
+            "━━ Wagon Wheel - vs Spin",
             "━━ Wagon Wheel Phase - All",
             "━━ Wagon Wheel Phase - Powerplay",
             "━━ Wagon Wheel Phase - Middle",
             "━━ Wagon Wheel Phase - Slog",
-            # "Wagon Zone Plot (White Background)",
+            "Wagon Zone Plot (White Background)",
             # "Wagon Zone Plot (Transparent Background)",
-            "Wagon Zone Descriptive",
-            "Wagon Zone Descriptive (Transparent)",
+            "Wagon Zone",
+            "Wagon Zone (Trans)",
             "Dismissal Plot",
             "Dismissal Plot (Trans)"
         ]
@@ -1193,8 +1193,8 @@ if df is not None:
                         key="spike_trans_download"
                     )
 
-        if "Wagon Wheel Descriptive" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive</h2>", unsafe_allow_html=True)
+        if "Wagon Wheel" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1320,8 +1320,8 @@ if df is not None:
                         key="spike_desc_download"
                     )
 
-        if "━━ Wagon Wheel Desc - vs All Kind" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - All Bowler Kinds</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - vs All Kind" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - All Bowler Kinds</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1448,9 +1448,9 @@ if df is not None:
                         key="whl_all_kind_download"
                     )
 
-                    
-        if "━━ Wagon Wheel Desc - vs Pace" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive vs Pace Bowlers</h2>", unsafe_allow_html=True)
+
+        if "━━ Wagon Wheel - vs Pace" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel vs Pace Bowlers</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1577,8 +1577,8 @@ if df is not None:
                         key="spike_desc_pace_download"
                     )
 
-        if "━━ Wagon Wheel Desc - vs Spin" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive vs Spin Bowlers</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - vs Spin" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel vs Spin Bowlers</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1705,8 +1705,8 @@ if df is not None:
                         key="spike_desc_spin_download"
                     )
 
-        if "Wagon Wheel Descriptive (Transparent)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive (Transparent)</h2>", unsafe_allow_html=True)
+        if "Wagon Wheel (Trans)" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel (Trans)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1833,7 +1833,7 @@ if df is not None:
                     )
 
         if "━━ Wagon Wheel Phase - All" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - All Phases</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - All Phases</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1961,7 +1961,7 @@ if df is not None:
                     )
 
         if "━━ Wagon Wheel Phase - Powerplay" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Powerplay (1-6)</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - Powerplay (1-6)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2089,7 +2089,7 @@ if df is not None:
                     )
 
         if "━━ Wagon Wheel Phase - Middle" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Middle (7-15)</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - Middle (7-15)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2217,7 +2217,7 @@ if df is not None:
                     )
 
         if "━━ Wagon Wheel Phase - Slog" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Slog (16-20)</h2>", unsafe_allow_html=True)
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - Slog (16-20)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2575,8 +2575,8 @@ if df is not None:
                         key="wagon_trans_download"
                     )
 
-        if "Wagon Zone Descriptive" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Zone Descriptive</h2>", unsafe_allow_html=True)
+        if "Wagon Zone" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2698,8 +2698,8 @@ if df is not None:
                         key="wagon_desc_download"
                     )
 
-        if "Wagon Zone Descriptive (Transparent)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Zone Descriptive (Transparent)</h2>", unsafe_allow_html=True)
+        if "Wagon Zone (Trans)" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone (Trans)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
