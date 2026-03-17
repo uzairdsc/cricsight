@@ -350,7 +350,7 @@ if st.session_state.df is not None:
                     # Plot type selection
                     batch_plot_types = st.sidebar.multiselect(
                         "Select plots to generate:",
-                    ["Spike Plot Plot", "Spike Plot Descriptive", "Wagon Zone Plot", "Wagon Zone Descriptive", "Dismissal Plot"],
+                    ["Wagon Wheel Plot", "Wagon Wheel Descriptive", "Wagon Zone Plot", "Wagon Zone Descriptive", "Dismissal Plot"],
                     )
                     
                     # Transparent option
@@ -499,14 +499,14 @@ if st.session_state.df is not None:
                                     
                                     # Generate selected plots
                                     try:
-                                        if "Spike Plot Plot" in batch_plot_types:
+                                        if "Wagon Wheel Plot" in batch_plot_types:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_plot_custom(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
                                                 all_batch_figures[f"{player_name}_spike_graph_plot.png"] = fig
                                                 success_count += 1
                                         
-                                        if "Spike Plot Descriptive" in batch_plot_types:
+                                        if "Wagon Wheel Descriptive" in batch_plot_types:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_graph_plot_descriptive(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
@@ -530,7 +530,7 @@ if st.session_state.df is not None:
                                                 success_count += 1
                                         
                                         if "Dismissal Plot" in batch_plot_types:
-                                            # Dismissal plots have all parameters like spike plots
+                                            # Dismissal plots have all parameters like Wagon Wheels
                                             dismissal_filters = {k: v for k, v in batch_filters.items()}
                                             fig = dismissal_plot(df=df, pid=pid, player_name=None, **dismissal_filters)
                                             if fig is not None:
@@ -868,12 +868,12 @@ if df is not None:
         # }
         # phase = phase_map.get(selected_phase_str, None)
 
-        phase_options = ["Powerplay (1-6)", "Middle (7-15)", "Death (16-20)"]
+        phase_options = ["Powerplay (1-6)", "Middle (7-15)", "Slog (16-20)"]
         selected_phase_str = st.multiselect("Phase", phase_options, default=[])
         phase_map = {
             "Powerplay (1-6)": 1,
             "Middle (7-15)": 2,
-            "Death (16-20)": 3
+            "Slog (16-20)": 3
         }
         phase = [phase_map[p] for p in selected_phase_str] if selected_phase_str else None
 
@@ -921,24 +921,35 @@ if df is not None:
     plot_types = st.multiselect(
         "Choose plot(s):",
         [
-            "Spike Plot (White Background)",
-            "Spike Plot (Transparent Background)",
-            "Spike Plot Descriptive",
-            "Spike Plot Descriptive (Transparent)",
-            "Wagon Zone Plot (White Background)",
-            "Wagon Zone Plot (Transparent Background)",
+            # "Wagon Wheel (White Background)",
+            # "Wagon Wheel (Transparent Background)",
+            "Wagon Wheel Descriptive",
+            "Wagon Wheel Descriptive (Transparent)",
+            "━━ Wagon Wheel Desc - vs Pace",
+            "━━ Wagon Wheel Desc - vs Spin",
+            "━━ Wagon Wheel Phase - All",
+            "━━ Wagon Wheel Phase - Powerplay",
+            "━━ Wagon Wheel Phase - Middle",
+            "━━ Wagon Wheel Phase - Slog",
+            # "Wagon Zone Plot (White Background)",
+            # "Wagon Zone Plot (Transparent Background)",
             "Wagon Zone Descriptive",
             "Wagon Zone Descriptive (Transparent)",
-            "Dismissal Plot (White Background)",
-            "Dismissal Plot (Transparent Background)"
+            "Dismissal Plot",
+            "Dismissal Plot (Trans)"
         ]
     )
 
-    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans = None, None, None, None, None, None, None, None, None, None
+    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+
+    # Ensure variables persist in session state
+    for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog']:
+        if var_name not in st.session_state:
+            st.session_state[var_name] = locals()[var_name]
 
     if plot_types:
-        if "Spike Plot (White Background)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Spike Plot (White Background)</h2>", unsafe_allow_html=True)
+        if "Wagon Wheel (White Background)" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel (White Background)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -965,12 +976,12 @@ if df is not None:
                 show_control = st.checkbox("Show Control %", value=True)
                 show_prod_shot = st.checkbox("Show Productive Shot", value=True)
                 show_overs = st.checkbox("Show Overs", value=True)
-                show_phase = st.checkbox("Show Phase", value=False)
+                show_phase = st.checkbox("Show Phase", value=True)
                 show_venue = st.checkbox("Show Venue", value=True)
                 show_ground = st.checkbox("Show Ground Image", value=True)
 
             with col3:
-                st.markdown("## Run Filter (Spike Plot)")
+                st.markdown("## Run Filter (Wagon Wheel)")
 
                 if "run_init_spike" not in st.session_state:
                     st.session_state["run_all_spike"] = True
@@ -1059,8 +1070,8 @@ if df is not None:
                         key="spike_download"
                     )
 
-        if "Spike Plot (Transparent Background)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Spike Plot (Transparent Background)</h2>", unsafe_allow_html=True)
+        if "Wagon Wheel (Transparent Background)" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel (Transparent Background)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1092,7 +1103,7 @@ if df is not None:
                 show_ground_trans = st.checkbox("Show Ground Image", value=True, key="spike_trans_ground")
 
             with col3:
-                st.markdown("## Run Filter (Spike Plot)")
+                st.markdown("## Run Filter (Wagon Wheel)")
 
                 if "run_init_spike_trans" not in st.session_state:
                     st.session_state["run_all_spike_trans"] = True
@@ -1181,8 +1192,8 @@ if df is not None:
                         key="spike_trans_download"
                     )
 
-        if "Spike Plot Descriptive" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Spike Plot Descriptive</h2>", unsafe_allow_html=True)
+        if "Wagon Wheel Descriptive" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1217,7 +1228,7 @@ if df is not None:
                 show_venue_desc = st.checkbox("Show Venue", value=True, key="spike_desc_venue")
 
             with col3:
-                st.markdown("## Run Filter (Spike Plot)")
+                st.markdown("## Run Filter (Wagon Wheel)")
 
                 if "run_init_spike_desc" not in st.session_state:
                     st.session_state.run_init_spike_desc = True
@@ -1308,8 +1319,264 @@ if df is not None:
                         key="spike_desc_download"
                     )
 
-        if "Spike Plot Descriptive (Transparent)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Spike Plot Descriptive (Transparent)</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel Desc - vs Pace" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive vs Pace Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_pace = st.checkbox("Show Plot Title", value=True, key="spike_desc_pace_title")
+                show_legend_pace = st.checkbox("Show Legend", value=True, key="spike_desc_pace_legend")
+                show_summary_pace = st.checkbox("Show Runs Summary", value=True, key="spike_desc_pace_summary")
+                
+                show_shots_breakdown_pace = st.checkbox("Show Shots Breakdown", value=True, key="spike_desc_pace_shots_breakdown")
+                if show_shots_breakdown_pace:
+                    shots_breakdown_options_pace = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="spike_desc_pace_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_pace = []
+                
+                runs_count_pace = st.checkbox("Show Runs Count", value=True, key="spike_desc_pace_runs")
+                show_fours_sixes_pace = st.checkbox("Show 4s and 6s", value=True, key="spike_desc_pace_fs")
+                show_bowler_pace = st.checkbox("Show Bowler", value=True, key="spike_desc_pace_bowler")
+                show_control_pace = st.checkbox("Show Control %", value=True, key="spike_desc_pace_control")
+                show_prod_shot_pace = st.checkbox("Show Productive Shot", value=True, key="spike_desc_pace_prod")
+                show_overs_pace = st.checkbox("Show Overs", value=True, key="spike_desc_pace_overs")
+                show_phase_pace = st.checkbox("Show Phase", value=True, key="spike_desc_pace_phase")
+                show_ground_pace = st.checkbox("Show Ground Image", value=True, key="spike_desc_pace_ground")
+                show_bowl_type_pace = st.checkbox("Show Bowl Type", value=True, key="spike_desc_pace_bowl_type")
+                show_bowl_kind_pace = st.checkbox("Show Bowl Pace", value=True, key="spike_desc_pace_bowl_kind")
+                show_bowl_arm_pace = st.checkbox("Show Bowl Arm", value=True, key="spike_desc_pace_bowl_arm")
+                show_venue_pace = st.checkbox("Show Venue", value=True, key="spike_desc_pace_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_spike_desc_pace" not in st.session_state:
+                    st.session_state["run_all_spike_desc_pace"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_spike_desc_pace'] = True
+                    st.session_state["run_init_spike_desc_pace"] = True
+
+                def sync_all_to_individual_spike_desc_pace():
+                    all_selected = st.session_state["run_all_spike_desc_pace"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_spike_desc_pace'] = all_selected
+
+                def sync_individual_to_all_spike_desc_pace():
+                    all_selected = all(st.session_state[f'run_{i}_spike_desc_pace'] for i in range(7))
+                    st.session_state["run_all_spike_desc_pace"] = all_selected
+
+                st.checkbox("All", key="run_all_spike_desc_pace", on_change=sync_all_to_individual_spike_desc_pace)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_spike_desc_pace', on_change=sync_individual_to_all_spike_desc_pace)
+
+                individual_selected_spike_desc_pace = [i for i in range(7) if st.session_state.get(f'run_{i}_spike_desc_pace', False)]
+
+                if st.session_state["run_all_spike_desc_pace"]:
+                    filtered_runs_spike_desc_pace = None
+                elif individual_selected_spike_desc_pace:
+                    filtered_runs_spike_desc_pace = individual_selected_spike_desc_pace
+                else:
+                    filtered_runs_spike_desc_pace = []
+                    
+            if filtered_runs_spike_desc_pace == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_spike_desc_pace = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_spike_desc_pace,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_pace else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["pace bowler"],  # HARDCODED: vs Pace
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_pace,
+                    show_summary=show_summary_pace,
+                    show_shots_breakdown=show_shots_breakdown_pace,
+                    shots_breakdown_options=shots_breakdown_options_pace,
+                    show_legend=show_legend_pace,
+                    runs_count=runs_count_pace,
+                    show_fours_sixes=show_fours_sixes_pace,
+                    show_control=show_control_pace,
+                    show_prod_shot=show_prod_shot_pace,
+                    show_bowler=show_bowler_pace,
+                    show_ground=show_ground_pace,
+                    show_venue=show_venue_pace,
+                    show_overs=show_overs_pace,
+                    show_phase=show_phase_pace,
+                    show_bowl_type=show_bowl_type_pace,
+                    show_bowl_kind=show_bowl_kind_pace,
+                    show_bowl_arm=show_bowl_arm_pace
+                )
+                with col2:
+                    st.pyplot(fig_spike_desc_pace)
+            
+            with col3:
+                if fig_spike_desc_pace:
+                    buf = BytesIO()
+                    fig_spike_desc_pace.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_spike_graph_descriptive_vs_pace.png",
+                        mime="image/png",
+                        key="spike_desc_pace_download"
+                    )
+
+        if "━━ Wagon Wheel Desc - vs Spin" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive vs Spin Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_spin = st.checkbox("Show Plot Title", value=True, key="spike_desc_spin_title")
+                show_legend_spin = st.checkbox("Show Legend", value=True, key="spike_desc_spin_legend")
+                show_summary_spin = st.checkbox("Show Runs Summary", value=True, key="spike_desc_spin_summary")
+                
+                show_shots_breakdown_spin = st.checkbox("Show Shots Breakdown", value=True, key="spike_desc_spin_shots_breakdown")
+                if show_shots_breakdown_spin:
+                    shots_breakdown_options_spin = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="spike_desc_spin_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_spin = []
+                
+                runs_count_spin = st.checkbox("Show Runs Count", value=True, key="spike_desc_spin_runs")
+                show_fours_sixes_spin = st.checkbox("Show 4s and 6s", value=True, key="spike_desc_spin_fs")
+                show_bowler_spin = st.checkbox("Show Bowler", value=True, key="spike_desc_spin_bowler")
+                show_control_spin = st.checkbox("Show Control %", value=True, key="spike_desc_spin_control")
+                show_prod_shot_spin = st.checkbox("Show Productive Shot", value=True, key="spike_desc_spin_prod")
+                show_overs_spin = st.checkbox("Show Overs", value=True, key="spike_desc_spin_overs")
+                show_phase_spin = st.checkbox("Show Phase", value=True, key="spike_desc_spin_phase")
+                show_ground_spin = st.checkbox("Show Ground Image", value=True, key="spike_desc_spin_ground")
+                show_bowl_type_spin = st.checkbox("Show Bowl Type", value=True, key="spike_desc_spin_bowl_type")
+                show_bowl_kind_spin = st.checkbox("Show Bowl Pace", value=True, key="spike_desc_spin_bowl_kind")
+                show_bowl_arm_spin = st.checkbox("Show Bowl Arm", value=True, key="spike_desc_spin_bowl_arm")
+                show_venue_spin = st.checkbox("Show Venue", value=True, key="spike_desc_spin_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_spike_desc_spin" not in st.session_state:
+                    st.session_state["run_all_spike_desc_spin"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_spike_desc_spin'] = True
+                    st.session_state["run_init_spike_desc_spin"] = True
+
+                def sync_all_to_individual_spike_desc_spin():
+                    all_selected = st.session_state["run_all_spike_desc_spin"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_spike_desc_spin'] = all_selected
+
+                def sync_individual_to_all_spike_desc_spin():
+                    all_selected = all(st.session_state[f'run_{i}_spike_desc_spin'] for i in range(7))
+                    st.session_state["run_all_spike_desc_spin"] = all_selected
+
+                st.checkbox("All", key="run_all_spike_desc_spin", on_change=sync_all_to_individual_spike_desc_spin)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_spike_desc_spin', on_change=sync_individual_to_all_spike_desc_spin)
+
+                individual_selected_spike_desc_spin = [i for i in range(7) if st.session_state.get(f'run_{i}_spike_desc_spin', False)]
+
+                if st.session_state["run_all_spike_desc_spin"]:
+                    filtered_runs_spike_desc_spin = None
+                elif individual_selected_spike_desc_spin:
+                    filtered_runs_spike_desc_spin = individual_selected_spike_desc_spin
+                else:
+                    filtered_runs_spike_desc_spin = []
+                    
+            if filtered_runs_spike_desc_spin == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_spike_desc_spin = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_spike_desc_spin,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_spin else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["spin bowler"],  # HARDCODED: vs Spin
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_spin,
+                    show_summary=show_summary_spin,
+                    show_shots_breakdown=show_shots_breakdown_spin,
+                    shots_breakdown_options=shots_breakdown_options_spin,
+                    show_legend=show_legend_spin,
+                    runs_count=runs_count_spin,
+                    show_fours_sixes=show_fours_sixes_spin,
+                    show_control=show_control_spin,
+                    show_prod_shot=show_prod_shot_spin,
+                    show_bowler=show_bowler_spin,
+                    show_ground=show_ground_spin,
+                    show_venue=show_venue_spin,
+                    show_overs=show_overs_spin,
+                    show_phase=show_phase_spin,
+                    show_bowl_type=show_bowl_type_spin,
+                    show_bowl_kind=show_bowl_kind_spin,
+                    show_bowl_arm=show_bowl_arm_spin
+                )
+                with col2:
+                    st.pyplot(fig_spike_desc_spin)
+            
+            with col3:
+                if fig_spike_desc_spin:
+                    buf = BytesIO()
+                    fig_spike_desc_spin.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_spike_graph_descriptive_vs_spin.png",
+                        mime="image/png",
+                        key="spike_desc_spin_download"
+                    )
+
+        if "Wagon Wheel Descriptive (Transparent)" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive (Transparent)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -1344,7 +1611,7 @@ if df is not None:
                 show_venue_desc_trans = st.checkbox("Show Venue", value=True, key="spike_desc_trans_venue")
 
             with col3:
-                st.markdown("## Run Filter (Spike Plot)")
+                st.markdown("## Run Filter (Wagon Wheel)")
 
                 if "run_init_spike_desc_trans" not in st.session_state:
                     st.session_state.run_init_spike_desc_trans = True
@@ -1433,6 +1700,518 @@ if df is not None:
                         file_name=f"{selected_player}_spike_graph_descriptive_transparent.png",
                         mime="image/png",
                         key="spike_desc_trans_download"
+                    )
+
+        if "━━ Wagon Wheel Phase - All" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - All Phases</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_phs_all = st.checkbox("Show Plot Title", value=True, key="whl_phs_all_title")
+                show_legend_phs_all = st.checkbox("Show Legend", value=True, key="whl_phs_all_legend")
+                show_summary_phs_all = st.checkbox("Show Runs Summary", value=True, key="whl_phs_all_summary")
+                
+                show_shots_breakdown_phs_all = st.checkbox("Show Shots Breakdown", value=True, key="whl_phs_all_shots_breakdown")
+                if show_shots_breakdown_phs_all:
+                    shots_breakdown_options_phs_all = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_phs_all_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_phs_all = []
+                
+                runs_count_phs_all = st.checkbox("Show Runs Count", value=True, key="whl_phs_all_runs")
+                show_fours_sixes_phs_all = st.checkbox("Show 4s and 6s", value=True, key="whl_phs_all_fs")
+                show_bowler_phs_all = st.checkbox("Show Bowler", value=True, key="whl_phs_all_bowler")
+                show_control_phs_all = st.checkbox("Show Control %", value=True, key="whl_phs_all_control")
+                show_prod_shot_phs_all = st.checkbox("Show Productive Shot", value=True, key="whl_phs_all_prod")
+                show_overs_phs_all = st.checkbox("Show Overs", value=True, key="whl_phs_all_overs")
+                show_phase_phs_all = st.checkbox("Show Phase", value=True, key="whl_phs_all_phase")
+                show_ground_phs_all = st.checkbox("Show Ground Image", value=True, key="whl_phs_all_ground")
+                show_bowl_type_phs_all = st.checkbox("Show Bowl Type", value=True, key="whl_phs_all_bowl_type")
+                show_bowl_kind_phs_all = st.checkbox("Show Bowl Pace", value=True, key="whl_phs_all_bowl_kind")
+                show_bowl_arm_phs_all = st.checkbox("Show Bowl Arm", value=True, key="whl_phs_all_bowl_arm")
+                show_venue_phs_all = st.checkbox("Show Venue", value=True, key="whl_phs_all_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_phs_all" not in st.session_state:
+                    st.session_state["run_all_whl_phs_all"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_all'] = True
+                    st.session_state["run_init_whl_phs_all"] = True
+
+                def sync_all_to_individual_whl_phs_all():
+                    all_selected = st.session_state["run_all_whl_phs_all"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_all'] = all_selected
+
+                def sync_individual_to_all_whl_phs_all():
+                    all_selected = all(st.session_state[f'run_{i}_whl_phs_all'] for i in range(7))
+                    st.session_state["run_all_whl_phs_all"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_phs_all", on_change=sync_all_to_individual_whl_phs_all)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_phs_all', on_change=sync_individual_to_all_whl_phs_all)
+
+                individual_selected_whl_phs_all = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_phs_all', False)]
+
+                if st.session_state["run_all_whl_phs_all"]:
+                    filtered_runs_whl_phs_all = None
+                elif individual_selected_whl_phs_all:
+                    filtered_runs_whl_phs_all = individual_selected_whl_phs_all
+                else:
+                    filtered_runs_whl_phs_all = []
+                    
+            if filtered_runs_whl_phs_all == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_phs_all = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_phs_all,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=None,  # HARDCODED: All phases
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_phs_all else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_phs_all,
+                    show_summary=show_summary_phs_all,
+                    show_shots_breakdown=show_shots_breakdown_phs_all,
+                    shots_breakdown_options=shots_breakdown_options_phs_all,
+                    show_legend=show_legend_phs_all,
+                    runs_count=runs_count_phs_all,
+                    show_fours_sixes=show_fours_sixes_phs_all,
+                    show_control=show_control_phs_all,
+                    show_prod_shot=show_prod_shot_phs_all,
+                    show_bowler=show_bowler_phs_all,
+                    show_ground=show_ground_phs_all,
+                    show_venue=show_venue_phs_all,
+                    show_overs=show_overs_phs_all,
+                    show_phase=show_phase_phs_all,
+                    show_bowl_type=show_bowl_type_phs_all,
+                    show_bowl_kind=show_bowl_kind_phs_all,
+                    show_bowl_arm=show_bowl_arm_phs_all
+                )
+                with col2:
+                    st.pyplot(fig_whl_phs_all)
+            
+            with col3:
+                if fig_whl_phs_all:
+                    buf = BytesIO()
+                    fig_whl_phs_all.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_phase_all.png",
+                        mime="image/png",
+                        key="whl_phs_all_download"
+                    )
+
+        if "━━ Wagon Wheel Phase - Powerplay" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Powerplay (1-6)</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_phs_pp = st.checkbox("Show Plot Title", value=True, key="whl_phs_pp_title")
+                show_legend_phs_pp = st.checkbox("Show Legend", value=True, key="whl_phs_pp_legend")
+                show_summary_phs_pp = st.checkbox("Show Runs Summary", value=True, key="whl_phs_pp_summary")
+                
+                show_shots_breakdown_phs_pp = st.checkbox("Show Shots Breakdown", value=True, key="whl_phs_pp_shots_breakdown")
+                if show_shots_breakdown_phs_pp:
+                    shots_breakdown_options_phs_pp = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_phs_pp_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_phs_pp = []
+                
+                runs_count_phs_pp = st.checkbox("Show Runs Count", value=True, key="whl_phs_pp_runs")
+                show_fours_sixes_phs_pp = st.checkbox("Show 4s and 6s", value=True, key="whl_phs_pp_fs")
+                show_bowler_phs_pp = st.checkbox("Show Bowler", value=True, key="whl_phs_pp_bowler")
+                show_control_phs_pp = st.checkbox("Show Control %", value=True, key="whl_phs_pp_control")
+                show_prod_shot_phs_pp = st.checkbox("Show Productive Shot", value=True, key="whl_phs_pp_prod")
+                show_overs_phs_pp = st.checkbox("Show Overs", value=True, key="whl_phs_pp_overs")
+                show_phase_phs_pp = st.checkbox("Show Phase", value=True, key="whl_phs_pp_phase")
+                show_ground_phs_pp = st.checkbox("Show Ground Image", value=True, key="whl_phs_pp_ground")
+                show_bowl_type_phs_pp = st.checkbox("Show Bowl Type", value=True, key="whl_phs_pp_bowl_type")
+                show_bowl_kind_phs_pp = st.checkbox("Show Bowl Pace", value=True, key="whl_phs_pp_bowl_kind")
+                show_bowl_arm_phs_pp = st.checkbox("Show Bowl Arm", value=True, key="whl_phs_pp_bowl_arm")
+                show_venue_phs_pp = st.checkbox("Show Venue", value=True, key="whl_phs_pp_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_phs_pp" not in st.session_state:
+                    st.session_state["run_all_whl_phs_pp"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_pp'] = True
+                    st.session_state["run_init_whl_phs_pp"] = True
+
+                def sync_all_to_individual_whl_phs_pp():
+                    all_selected = st.session_state["run_all_whl_phs_pp"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_pp'] = all_selected
+
+                def sync_individual_to_all_whl_phs_pp():
+                    all_selected = all(st.session_state[f'run_{i}_whl_phs_pp'] for i in range(7))
+                    st.session_state["run_all_whl_phs_pp"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_phs_pp", on_change=sync_all_to_individual_whl_phs_pp)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_phs_pp', on_change=sync_individual_to_all_whl_phs_pp)
+
+                individual_selected_whl_phs_pp = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_phs_pp', False)]
+
+                if st.session_state["run_all_whl_phs_pp"]:
+                    filtered_runs_whl_phs_pp = None
+                elif individual_selected_whl_phs_pp:
+                    filtered_runs_whl_phs_pp = individual_selected_whl_phs_pp
+                else:
+                    filtered_runs_whl_phs_pp = []
+                    
+            if filtered_runs_whl_phs_pp == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_phs_pp = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_phs_pp,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[1],  # HARDCODED: Powerplay (1-6)
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_phs_pp else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_phs_pp,
+                    show_summary=show_summary_phs_pp,
+                    show_shots_breakdown=show_shots_breakdown_phs_pp,
+                    shots_breakdown_options=shots_breakdown_options_phs_pp,
+                    show_legend=show_legend_phs_pp,
+                    runs_count=runs_count_phs_pp,
+                    show_fours_sixes=show_fours_sixes_phs_pp,
+                    show_control=show_control_phs_pp,
+                    show_prod_shot=show_prod_shot_phs_pp,
+                    show_bowler=show_bowler_phs_pp,
+                    show_ground=show_ground_phs_pp,
+                    show_venue=show_venue_phs_pp,
+                    show_overs=show_overs_phs_pp,
+                    show_phase=show_phase_phs_pp,
+                    show_bowl_type=show_bowl_type_phs_pp,
+                    show_bowl_kind=show_bowl_kind_phs_pp,
+                    show_bowl_arm=show_bowl_arm_phs_pp
+                )
+                with col2:
+                    st.pyplot(fig_whl_phs_pp)
+            
+            with col3:
+                if fig_whl_phs_pp:
+                    buf = BytesIO()
+                    fig_whl_phs_pp.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_phase_pp.png",
+                        mime="image/png",
+                        key="whl_phs_pp_download"
+                    )
+
+        if "━━ Wagon Wheel Phase - Middle" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Middle (7-15)</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_phs_mid = st.checkbox("Show Plot Title", value=True, key="whl_phs_mid_title")
+                show_legend_phs_mid = st.checkbox("Show Legend", value=True, key="whl_phs_mid_legend")
+                show_summary_phs_mid = st.checkbox("Show Runs Summary", value=True, key="whl_phs_mid_summary")
+                
+                show_shots_breakdown_phs_mid = st.checkbox("Show Shots Breakdown", value=True, key="whl_phs_mid_shots_breakdown")
+                if show_shots_breakdown_phs_mid:
+                    shots_breakdown_options_phs_mid = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_phs_mid_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_phs_mid = []
+                
+                runs_count_phs_mid = st.checkbox("Show Runs Count", value=True, key="whl_phs_mid_runs")
+                show_fours_sixes_phs_mid = st.checkbox("Show 4s and 6s", value=True, key="whl_phs_mid_fs")
+                show_bowler_phs_mid = st.checkbox("Show Bowler", value=True, key="whl_phs_mid_bowler")
+                show_control_phs_mid = st.checkbox("Show Control %", value=True, key="whl_phs_mid_control")
+                show_prod_shot_phs_mid = st.checkbox("Show Productive Shot", value=True, key="whl_phs_mid_prod")
+                show_overs_phs_mid = st.checkbox("Show Overs", value=True, key="whl_phs_mid_overs")
+                show_phase_phs_mid = st.checkbox("Show Phase", value=True, key="whl_phs_mid_phase")
+                show_ground_phs_mid = st.checkbox("Show Ground Image", value=True, key="whl_phs_mid_ground")
+                show_bowl_type_phs_mid = st.checkbox("Show Bowl Type", value=True, key="whl_phs_mid_bowl_type")
+                show_bowl_kind_phs_mid = st.checkbox("Show Bowl Pace", value=True, key="whl_phs_mid_bowl_kind")
+                show_bowl_arm_phs_mid = st.checkbox("Show Bowl Arm", value=True, key="whl_phs_mid_bowl_arm")
+                show_venue_phs_mid = st.checkbox("Show Venue", value=True, key="whl_phs_mid_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_phs_mid" not in st.session_state:
+                    st.session_state["run_all_whl_phs_mid"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_mid'] = True
+                    st.session_state["run_init_whl_phs_mid"] = True
+
+                def sync_all_to_individual_whl_phs_mid():
+                    all_selected = st.session_state["run_all_whl_phs_mid"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_mid'] = all_selected
+
+                def sync_individual_to_all_whl_phs_mid():
+                    all_selected = all(st.session_state[f'run_{i}_whl_phs_mid'] for i in range(7))
+                    st.session_state["run_all_whl_phs_mid"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_phs_mid", on_change=sync_all_to_individual_whl_phs_mid)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_phs_mid', on_change=sync_individual_to_all_whl_phs_mid)
+
+                individual_selected_whl_phs_mid = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_phs_mid', False)]
+
+                if st.session_state["run_all_whl_phs_mid"]:
+                    filtered_runs_whl_phs_mid = None
+                elif individual_selected_whl_phs_mid:
+                    filtered_runs_whl_phs_mid = individual_selected_whl_phs_mid
+                else:
+                    filtered_runs_whl_phs_mid = []
+                    
+            if filtered_runs_whl_phs_mid == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_phs_mid = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_phs_mid,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[2],  # HARDCODED: Middle (7-15)
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_phs_mid else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_phs_mid,
+                    show_summary=show_summary_phs_mid,
+                    show_shots_breakdown=show_shots_breakdown_phs_mid,
+                    shots_breakdown_options=shots_breakdown_options_phs_mid,
+                    show_legend=show_legend_phs_mid,
+                    runs_count=runs_count_phs_mid,
+                    show_fours_sixes=show_fours_sixes_phs_mid,
+                    show_control=show_control_phs_mid,
+                    show_prod_shot=show_prod_shot_phs_mid,
+                    show_bowler=show_bowler_phs_mid,
+                    show_ground=show_ground_phs_mid,
+                    show_venue=show_venue_phs_mid,
+                    show_overs=show_overs_phs_mid,
+                    show_phase=show_phase_phs_mid,
+                    show_bowl_type=show_bowl_type_phs_mid,
+                    show_bowl_kind=show_bowl_kind_phs_mid,
+                    show_bowl_arm=show_bowl_arm_phs_mid
+                )
+                with col2:
+                    st.pyplot(fig_whl_phs_mid)
+            
+            with col3:
+                if fig_whl_phs_mid:
+                    buf = BytesIO()
+                    fig_whl_phs_mid.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_phase_mid.png",
+                        mime="image/png",
+                        key="whl_phs_mid_download"
+                    )
+
+        if "━━ Wagon Wheel Phase - Slog" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel Descriptive - Slog (16-20)</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_phs_slog = st.checkbox("Show Plot Title", value=True, key="whl_phs_slog_title")
+                show_legend_phs_slog = st.checkbox("Show Legend", value=True, key="whl_phs_slog_legend")
+                show_summary_phs_slog = st.checkbox("Show Runs Summary", value=True, key="whl_phs_slog_summary")
+                
+                show_shots_breakdown_phs_slog = st.checkbox("Show Shots Breakdown", value=True, key="whl_phs_slog_shots_breakdown")
+                if show_shots_breakdown_phs_slog:
+                    shots_breakdown_options_phs_slog = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="whl_phs_slog_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_phs_slog = []
+                
+                runs_count_phs_slog = st.checkbox("Show Runs Count", value=True, key="whl_phs_slog_runs")
+                show_fours_sixes_phs_slog = st.checkbox("Show 4s and 6s", value=True, key="whl_phs_slog_fs")
+                show_bowler_phs_slog = st.checkbox("Show Bowler", value=True, key="whl_phs_slog_bowler")
+                show_control_phs_slog = st.checkbox("Show Control %", value=True, key="whl_phs_slog_control")
+                show_prod_shot_phs_slog = st.checkbox("Show Productive Shot", value=True, key="whl_phs_slog_prod")
+                show_overs_phs_slog = st.checkbox("Show Overs", value=True, key="whl_phs_slog_overs")
+                show_phase_phs_slog = st.checkbox("Show Phase", value=True, key="whl_phs_slog_phase")
+                show_ground_phs_slog = st.checkbox("Show Ground Image", value=True, key="whl_phs_slog_ground")
+                show_bowl_type_phs_slog = st.checkbox("Show Bowl Type", value=True, key="whl_phs_slog_bowl_type")
+                show_bowl_kind_phs_slog = st.checkbox("Show Bowl Pace", value=True, key="whl_phs_slog_bowl_kind")
+                show_bowl_arm_phs_slog = st.checkbox("Show Bowl Arm", value=True, key="whl_phs_slog_bowl_arm")
+                show_venue_phs_slog = st.checkbox("Show Venue", value=True, key="whl_phs_slog_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Wheel)")
+
+                if "run_init_whl_phs_slog" not in st.session_state:
+                    st.session_state["run_all_whl_phs_slog"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_slog'] = True
+                    st.session_state["run_init_whl_phs_slog"] = True
+
+                def sync_all_to_individual_whl_phs_slog():
+                    all_selected = st.session_state["run_all_whl_phs_slog"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_whl_phs_slog'] = all_selected
+
+                def sync_individual_to_all_whl_phs_slog():
+                    all_selected = all(st.session_state[f'run_{i}_whl_phs_slog'] for i in range(7))
+                    st.session_state["run_all_whl_phs_slog"] = all_selected
+
+                st.checkbox("All", key="run_all_whl_phs_slog", on_change=sync_all_to_individual_whl_phs_slog)
+
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_whl_phs_slog', on_change=sync_individual_to_all_whl_phs_slog)
+
+                individual_selected_whl_phs_slog = [i for i in range(7) if st.session_state.get(f'run_{i}_whl_phs_slog', False)]
+
+                if st.session_state["run_all_whl_phs_slog"]:
+                    filtered_runs_whl_phs_slog = None
+                elif individual_selected_whl_phs_slog:
+                    filtered_runs_whl_phs_slog = individual_selected_whl_phs_slog
+                else:
+                    filtered_runs_whl_phs_slog = []
+                    
+            if filtered_runs_whl_phs_slog == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_whl_phs_slog = spike_graph_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_whl_phs_slog,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[3],  # HARDCODED: Slog (16-20)
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_phs_slog else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_phs_slog,
+                    show_summary=show_summary_phs_slog,
+                    show_shots_breakdown=show_shots_breakdown_phs_slog,
+                    shots_breakdown_options=shots_breakdown_options_phs_slog,
+                    show_legend=show_legend_phs_slog,
+                    runs_count=runs_count_phs_slog,
+                    show_fours_sixes=show_fours_sixes_phs_slog,
+                    show_control=show_control_phs_slog,
+                    show_prod_shot=show_prod_shot_phs_slog,
+                    show_bowler=show_bowler_phs_slog,
+                    show_ground=show_ground_phs_slog,
+                    show_venue=show_venue_phs_slog,
+                    show_overs=show_overs_phs_slog,
+                    show_phase=show_phase_phs_slog,
+                    show_bowl_type=show_bowl_type_phs_slog,
+                    show_bowl_kind=show_bowl_kind_phs_slog,
+                    show_bowl_arm=show_bowl_arm_phs_slog
+                )
+                with col2:
+                    st.pyplot(fig_whl_phs_slog)
+            
+            with col3:
+                if fig_whl_phs_slog:
+                    buf = BytesIO()
+                    fig_whl_phs_slog.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_whl_phase_slog.png",
+                        mime="image/png",
+                        key="whl_phs_slog_download"
                     )
 
         if "Wagon Zone Plot (White Background)" in plot_types:
@@ -1912,8 +2691,8 @@ if df is not None:
                         key="wagon_desc_trans_download"
                     )
 
-        if "Dismissal Plot (White Background)" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Dismissal Plot (White Background)</h2>", unsafe_allow_html=True)
+        if "Dismissal Plot" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2011,7 +2790,7 @@ if df is not None:
                         key="dismissal_download"
                     )
 
-        if "Dismissal Plot (Transparent Background)" in plot_types:
+        if "Dismissal Plot (Trans)" in plot_types:
             st.markdown("<h2 style='text-align: center;'>Dismissal Plot (Transparent Background)</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
@@ -2125,6 +2904,12 @@ if df is not None:
             
         if fig_spike_desc is not None:
             all_figures[f"{selected_player}_spike_graph_descriptive.png"] = fig_spike_desc
+        
+        if fig_spike_desc_pace is not None:
+            all_figures[f"{selected_player}_spike_graph_descriptive_vs_pace.png"] = fig_spike_desc_pace
+        
+        if fig_spike_desc_spin is not None:
+            all_figures[f"{selected_player}_spike_graph_descriptive_vs_spin.png"] = fig_spike_desc_spin
             
         if fig_wagon is not None:
             all_figures[f"{selected_player}_wagon_plot.png"] = fig_wagon
