@@ -505,7 +505,7 @@ def dismissal_plot(
         )
     else:
         # print("DEBUG: player_data_sorted is EMPTY - showing error message")
-        ax.text(180, 200, "No dismissals for selected filters", ha='center', fontsize=12, color='red', fontweight='bold')
+        ax.text(180, 390, "No dismissals for selected filters", ha='center', fontsize=12, color='red', fontweight='bold')
 
     # plot the point (dot) at batter position which is at 180, 164, not rectangle only dot
     #batter position dot

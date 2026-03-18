@@ -1331,8 +1331,12 @@ if df is not None:
                     show_bowl_kind=show_bowl_kind_desc,
                     show_bowl_arm=show_bowl_arm_desc
                 )
-                with col2:
-                    st.pyplot(fig_spike_desc)
+                
+                if fig_spike_desc is None:
+                    st.warning("⚠️ No data available for selected filters. Please adjust your filter selections.")
+                else:
+                    with col2:
+                        st.pyplot(fig_spike_desc)
             
             with col3:
                 if fig_spike_desc:
@@ -5920,7 +5924,6 @@ if df is not None:
                     bowl_kind=bowl_kind,
                     bowl_arm=bowl_arm,
                     show_title=show_title_dismissal,
-                    show_legend=False,
                     show_summary=show_summary_dismissal,
                     show_shots_breakdown=show_shots_breakdown_dismissal,
                     show_fours_sixes=False,
@@ -6016,7 +6019,6 @@ if df is not None:
                     bowl_kind=bowl_kind,
                     bowl_arm=bowl_arm,
                     show_title=show_title_dismissal_trans,
-                    show_legend=False,
                     show_summary=show_summary_dismissal_trans,
                     show_shots_breakdown=show_shots_breakdown_dismissal_trans,
                     show_fours_sixes=False,

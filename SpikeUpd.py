@@ -350,14 +350,15 @@ def spike_graph_plot(
         total_6s = valid_shots['isSix'].sum()
         balls_faced = balls_faced_df.shape[0]
 
-    # if len(valid_balls) == 0:
-    #     control_pct = 0.0
-    # else:
-    #     controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
-    #     control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
 
-    controlled_balls = valid_balls[valid_balls['control'] ==1]
-    control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+    if len(valid_balls) == 0:
+        control_pct = 0.0
+    else:
+        controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
+        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+
+    # controlled_balls = valid_balls[valid_balls['control'] ==1]
+    # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
     # valid_balls = df[
     #     (df['batsmanName'] == player_name) &
     #     (df['inningNumber'] == inns) &
@@ -946,6 +947,10 @@ def spike_graph_plot_descriptive(
 
     innings_balls = innings_valid_balls.shape[0]
     
+    # Early return if local_df is empty after filtering
+    # if local_df.empty:
+    #     return None
+    
     # innings_4s = innings_valid_balls['isFour'].sum()
     # innings_6s = innings_valid_balls['isSix'].sum()
     
@@ -1135,14 +1140,16 @@ def spike_graph_plot_descriptive(
         total_6s = valid_shots['isSix'].sum()
         balls_faced = player_data.shape[0]
 
-    # if len(valid_balls) == 0:
-    #     control_pct = 0.0
-    # else:
-    #     controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
-    #     control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+    # Guard clause: check if valid_balls has data before calculating control_pct
+    if len(valid_balls) == 0:
+        control_pct = 0.0
+    else:
+        controlled_balls = valid_balls[valid_balls['control'] == 1]
+        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
 
-    controlled_balls = valid_balls[valid_balls['control'] == 1]
-    control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+    # controlled_balls = valid_balls[valid_balls['control'] == 1]
+    # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+
     # valid_balls = df[
     #     (df['batsmanName'] == player_name) &
     #     (df['inningNumber'] == inns) &
@@ -1246,7 +1253,7 @@ def spike_graph_plot_descriptive(
                 color=row['color'], linewidth=lw, alpha=0.8, zorder=1
             )
     else:
-        ax.text(180, 515, "No shots for selected run(s)", ha='center', fontsize=12, color='red', fontweight='bold')
+        ax.text(180, 390, "No shots for selected run(s)", ha='center', fontsize=12, color='red', fontweight='bold')
     # Draw lines
     # for _, row in player_data.iterrows():
     #     ax.plot([center_x, row['wagonX']], [center_y, row['wagonY']],
