@@ -503,14 +503,14 @@ if st.session_state.df is not None:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_plot_custom(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
-                                                all_batch_figures[f"{player_name}_spike_graph_plot.png"] = fig
+                                                all_batch_figures[f"{player_name}_wagon_wheel.png"] = fig
                                                 success_count += 1
                                         
                                         if "Wagon Wheel" in batch_plot_types:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_graph_plot_descriptive(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
-                                                all_batch_figures[f"{player_name}_spike_graph_desc.png"] = fig
+                                                all_batch_figures[f"{player_name}_wagon_wheel_desc.png"] = fig
                                                 success_count += 1
                                         
                                         if "Wagon Zone Plot" in batch_plot_types:
@@ -928,17 +928,17 @@ if df is not None:
             "━━ Wagon Wheel - vs All Types",
             "━━ Wagon Wheel - vs Pace",
             "━━ Wagon Wheel - vs Spin",
-            "━━ Wagon Wheel - All",
+            "━━ Wagon Wheel - All Phases",
             "━━ Wagon Wheel - Powerplay",
             "━━ Wagon Wheel - Middle",
             "━━ Wagon Wheel - Slog",
             "━━ Wagon Wheel - All Kinds",
             "━━ Wagon Wheel - RAP",
-            "━━ Wagon Wheel - RAFP",
-            "━━ Wagon Wheel - RAWP",
+            "━━ Wagon Wheel - RAFS",
+            "━━ Wagon Wheel - RAWS",
             "━━ Wagon Wheel - LAP",
-            "━━ Wagon Wheel - LAFP",
-            "━━ Wagon Wheel - LAWP",
+            "━━ Wagon Wheel - LAFS",
+            "━━ Wagon Wheel - LAWS",
             "━━ Wagon Wheel - All Arm",
             "━━ Wagon Wheel - Right Arm",
             "━━ Wagon Wheel - Left Arm",
@@ -946,12 +946,29 @@ if df is not None:
             # "Wagon Zone Plot (Transparent Background)",
             "Wagon Zone",
             "Wagon Zone (Trans)",
+            "━━ Wagon Zone - vs All Types",
+            "━━ Wagon Zone - vs Pace",
+            "━━ Wagon Zone - vs Spin",
+            "━━ Wagon Zone - All Phases",
+            "━━ Wagon Zone - Powerplay",
+            "━━ Wagon Zone - Middle",
+            "━━ Wagon Zone - Slog",
+            "━━ Wagon Zone - All Kinds",
+            "━━ Wagon Zone - RAP",
+            "━━ Wagon Zone - RAFS",
+            "━━ Wagon Zone - RAWS",
+            "━━ Wagon Zone - LAP",
+            "━━ Wagon Zone - LAFS",
+            "━━ Wagon Zone - LAWS",
+            "━━ Wagon Zone - All Arm",
+            "━━ Wagon Zone - Right Arm",
+            "━━ Wagon Zone - Left Arm",
             "Dismissal Plot",
             "Dismissal Plot (Trans)"
         ]
     )
 
-    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws, fig_whl_all_arm, fig_whl_right_arm, fig_whl_left_arm = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws, fig_whl_all_arm, fig_whl_right_arm, fig_whl_left_arm, fig_wzn_all_type, fig_wzn_pace, fig_wzn_spin, fig_wzn_all_phase, fig_wzn_pp, fig_wzn_mid, fig_wzn_slog, fig_wzn_all_kind, fig_wzn_rap, fig_wzn_rafs, fig_wzn_raws, fig_wzn_lap, fig_wzn_lafs, fig_wzn_laws, fig_wzn_all_arm, fig_wzn_right_arm, fig_wzn_left_arm = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
     # Ensure variables persist in session state
     for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog', 'fig_whl_all_kind', 'fig_whl_all_type', 'fig_whl_rap', 'fig_whl_rafs', 'fig_whl_raws', 'fig_whl_lap', 'fig_whl_lafs', 'fig_whl_laws', 'fig_whl_all_arm', 'fig_whl_right_arm', 'fig_whl_left_arm']:
@@ -1842,7 +1859,7 @@ if df is not None:
                         key="spike_desc_trans_download"
                     )
 
-        if "━━ Wagon Wheel - All" in plot_types:
+        if "━━ Wagon Wheel - All Phases" in plot_types:
             st.markdown("<h2 style='text-align: center;'>Wagon Wheel - All Phases</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
@@ -2610,8 +2627,8 @@ if df is not None:
                         key="whl_rap_download"
                     )
 
-        if "━━ Wagon Wheel - RAFP" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - RAFP</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - RAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - RAFS</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2738,8 +2755,8 @@ if df is not None:
                         key="whl_rafs_download"
                     )
 
-        if "━━ Wagon Wheel - RAWP" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - RAWP</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - RAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - RAWS</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -2994,8 +3011,8 @@ if df is not None:
                         key="whl_lap_download"
                     )
 
-        if "━━ Wagon Wheel - LAFP" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - LAFP</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - LAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - LAFS</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -3122,8 +3139,8 @@ if df is not None:
                         key="whl_lafs_download"
                     )
 
-        if "━━ Wagon Wheel - LAWP" in plot_types:
-            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - LAWP</h2>", unsafe_allow_html=True)
+        if "━━ Wagon Wheel - LAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Wheel - LAWS</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
             
             with col1:
@@ -4111,6 +4128,1736 @@ if df is not None:
                         key="wagon_desc_trans_download"
                     )
 
+        if "━━ Wagon Zone - vs All Types" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - All Bowler Types</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_all_type = st.checkbox("Show Plot Title", value=True, key="wzn_all_type_title")
+                show_summary_wzn_all_type = st.checkbox("Show Runs Summary", value=True, key="wzn_all_type_summary")
+                runs_count_wzn_all_type = st.checkbox("Show Runs Count", value=True, key="wzn_all_type_runs")
+                show_fours_sixes_wzn_all_type = st.checkbox("Show 4s and 6s", value=True, key="wzn_all_type_fs")
+                show_bowler_wzn_all_type = st.checkbox("Show Bowler", value=True, key="wzn_all_type_bowler")
+                show_control_wzn_all_type = st.checkbox("Show Control %", value=True, key="wzn_all_type_control")
+                show_prod_shot_wzn_all_type = st.checkbox("Show Productive Shot", value=True, key="wzn_all_type_prod")
+                show_overs_wzn_all_type = st.checkbox("Show Overs", value=True, key="wzn_all_type_overs")
+                show_phase_wzn_all_type = st.checkbox("Show Phase", value=True, key="wzn_all_type_phase")
+                show_bowl_type_wzn_all_type = st.checkbox("Show Bowl Type", value=True, key="wzn_all_type_bowl_type")
+                show_venue_wzn_all_type = st.checkbox("Show Venue", value=True, key="wzn_all_type_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_all_type" not in st.session_state:
+                    st.session_state["run_all_wzn_all_type"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_type'] = True
+                    st.session_state["run_init_wzn_all_type"] = True
+
+                def sync_all_to_individual_wzn_all_type():
+                    all_selected = st.session_state["run_all_wzn_all_type"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_type'] = all_selected
+
+                def sync_individual_to_all_wzn_all_type():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_all_type'] for i in range(7))
+                    st.session_state["run_all_wzn_all_type"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_all_type", on_change=sync_all_to_individual_wzn_all_type)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_all_type', on_change=sync_individual_to_all_wzn_all_type)
+
+                individual_selected_wzn_all_type = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_all_type', False)]
+                if st.session_state["run_all_wzn_all_type"]:
+                    filtered_runs_wzn_all_type = None
+                elif individual_selected_wzn_all_type:
+                    filtered_runs_wzn_all_type = individual_selected_wzn_all_type
+                else:
+                    filtered_runs_wzn_all_type = []
+                    
+            if filtered_runs_wzn_all_type == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_all_type = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_all_type,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_all_type else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=None,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_all_type,
+                    show_summary=show_summary_wzn_all_type,
+                    runs_count=runs_count_wzn_all_type,
+                    show_fours_sixes=show_fours_sixes_wzn_all_type,
+                    show_control=show_control_wzn_all_type,
+                    show_prod_shot=show_prod_shot_wzn_all_type,
+                    show_bowler=show_bowler_wzn_all_type,
+                    show_venue=show_venue_wzn_all_type,
+                    show_overs=show_overs_wzn_all_type,
+                    show_phase=show_phase_wzn_all_type,
+                    show_bowl_type=show_bowl_type_wzn_all_type
+                )
+                with col2:
+                    st.pyplot(fig_wzn_all_type)
+            
+            with col3:
+                if fig_wzn_all_type:
+                    buf = BytesIO()
+                    fig_wzn_all_type.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_all_type.png",
+                        mime="image/png",
+                        key="wzn_all_type_download"
+                    )
+
+        if "━━ Wagon Zone - vs Pace" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone vs Pace Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_pace = st.checkbox("Show Plot Title", value=True, key="wzn_pace_title")
+                show_summary_wzn_pace = st.checkbox("Show Runs Summary", value=True, key="wzn_pace_summary")
+                runs_count_wzn_pace = st.checkbox("Show Runs Count", value=True, key="wzn_pace_runs")
+                show_fours_sixes_wzn_pace = st.checkbox("Show 4s and 6s", value=True, key="wzn_pace_fs")
+                show_bowler_wzn_pace = st.checkbox("Show Bowler", value=True, key="wzn_pace_bowler")
+                show_control_wzn_pace = st.checkbox("Show Control %", value=True, key="wzn_pace_control")
+                show_prod_shot_wzn_pace = st.checkbox("Show Productive Shot", value=True, key="wzn_pace_prod")
+                show_overs_wzn_pace = st.checkbox("Show Overs", value=True, key="wzn_pace_overs")
+                show_phase_wzn_pace = st.checkbox("Show Phase", value=True, key="wzn_pace_phase")
+                show_bowl_type_wzn_pace = st.checkbox("Show Bowl Type", value=True, key="wzn_pace_bowl_type")
+                show_venue_wzn_pace = st.checkbox("Show Venue", value=True, key="wzn_pace_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_pace" not in st.session_state:
+                    st.session_state["run_all_wzn_pace"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_pace'] = True
+                    st.session_state["run_init_wzn_pace"] = True
+
+                def sync_all_to_individual_wzn_pace():
+                    all_selected = st.session_state["run_all_wzn_pace"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_pace'] = all_selected
+
+                def sync_individual_to_all_wzn_pace():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_pace'] for i in range(7))
+                    st.session_state["run_all_wzn_pace"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_pace", on_change=sync_all_to_individual_wzn_pace)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_pace', on_change=sync_individual_to_all_wzn_pace)
+
+                individual_selected_wzn_pace = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_pace', False)]
+                if st.session_state["run_all_wzn_pace"]:
+                    filtered_runs_wzn_pace = None
+                elif individual_selected_wzn_pace:
+                    filtered_runs_wzn_pace = individual_selected_wzn_pace
+                else:
+                    filtered_runs_wzn_pace = []
+                    
+            if filtered_runs_wzn_pace == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_pace = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_pace,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_pace else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["pace bowler"],
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_pace,
+                    show_summary=show_summary_wzn_pace,
+                    runs_count=runs_count_wzn_pace,
+                    show_fours_sixes=show_fours_sixes_wzn_pace,
+                    show_control=show_control_wzn_pace,
+                    show_prod_shot=show_prod_shot_wzn_pace,
+                    show_bowler=show_bowler_wzn_pace,
+                    show_venue=show_venue_wzn_pace,
+                    show_overs=show_overs_wzn_pace,
+                    show_phase=show_phase_wzn_pace,
+                    show_bowl_type=show_bowl_type_wzn_pace
+                )
+                with col2:
+                    st.pyplot(fig_wzn_pace)
+            
+            with col3:
+                if fig_wzn_pace:
+                    buf = BytesIO()
+                    fig_wzn_pace.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_pace.png",
+                        mime="image/png",
+                        key="wzn_pace_download"
+                    )
+
+        if "━━ Wagon Zone - vs Spin" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone vs Spin Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_spin = st.checkbox("Show Plot Title", value=True, key="wzn_spin_title")
+                show_summary_wzn_spin = st.checkbox("Show Runs Summary", value=True, key="wzn_spin_summary")
+                runs_count_wzn_spin = st.checkbox("Show Runs Count", value=True, key="wzn_spin_runs")
+                show_fours_sixes_wzn_spin = st.checkbox("Show 4s and 6s", value=True, key="wzn_spin_fs")
+                show_bowler_wzn_spin = st.checkbox("Show Bowler", value=True, key="wzn_spin_bowler")
+                show_control_wzn_spin = st.checkbox("Show Control %", value=True, key="wzn_spin_control")
+                show_prod_shot_wzn_spin = st.checkbox("Show Productive Shot", value=True, key="wzn_spin_prod")
+                show_overs_wzn_spin = st.checkbox("Show Overs", value=True, key="wzn_spin_overs")
+                show_phase_wzn_spin = st.checkbox("Show Phase", value=True, key="wzn_spin_phase")
+                show_bowl_type_wzn_spin = st.checkbox("Show Bowl Type", value=True, key="wzn_spin_bowl_type")
+                show_venue_wzn_spin = st.checkbox("Show Venue", value=True, key="wzn_spin_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_spin" not in st.session_state:
+                    st.session_state["run_all_wzn_spin"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_spin'] = True
+                    st.session_state["run_init_wzn_spin"] = True
+
+                def sync_all_to_individual_wzn_spin():
+                    all_selected = st.session_state["run_all_wzn_spin"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_spin'] = all_selected
+
+                def sync_individual_to_all_wzn_spin():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_spin'] for i in range(7))
+                    st.session_state["run_all_wzn_spin"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_spin", on_change=sync_all_to_individual_wzn_spin)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_spin', on_change=sync_individual_to_all_wzn_spin)
+
+                individual_selected_wzn_spin = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_spin', False)]
+                if st.session_state["run_all_wzn_spin"]:
+                    filtered_runs_wzn_spin = None
+                elif individual_selected_wzn_spin:
+                    filtered_runs_wzn_spin = individual_selected_wzn_spin
+                else:
+                    filtered_runs_wzn_spin = []
+                    
+            if filtered_runs_wzn_spin == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_spin = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_spin,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_spin else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["spin bowler"],
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_spin,
+                    show_summary=show_summary_wzn_spin,
+                    runs_count=runs_count_wzn_spin,
+                    show_fours_sixes=show_fours_sixes_wzn_spin,
+                    show_control=show_control_wzn_spin,
+                    show_prod_shot=show_prod_shot_wzn_spin,
+                    show_bowler=show_bowler_wzn_spin,
+                    show_venue=show_venue_wzn_spin,
+                    show_overs=show_overs_wzn_spin,
+                    show_phase=show_phase_wzn_spin,
+                    show_bowl_type=show_bowl_type_wzn_spin
+                )
+                with col2:
+                    st.pyplot(fig_wzn_spin)
+            
+            with col3:
+                if fig_wzn_spin:
+                    buf = BytesIO()
+                    fig_wzn_spin.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_spin.png",
+                        mime="image/png",
+                        key="wzn_spin_download"
+                    )
+
+        if "━━ Wagon Zone - All Phases" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - All Phases</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_phs_all = st.checkbox("Show Plot Title", value=True, key="wzn_phs_all_title")
+                show_summary_wzn_phs_all = st.checkbox("Show Runs Summary", value=True, key="wzn_phs_all_summary")
+                runs_count_wzn_phs_all = st.checkbox("Show Runs Count", value=True, key="wzn_phs_all_runs")
+                show_fours_sixes_wzn_phs_all = st.checkbox("Show 4s and 6s", value=True, key="wzn_phs_all_fs")
+                show_bowler_wzn_phs_all = st.checkbox("Show Bowler", value=True, key="wzn_phs_all_bowler")
+                show_control_wzn_phs_all = st.checkbox("Show Control %", value=True, key="wzn_phs_all_control")
+                show_prod_shot_wzn_phs_all = st.checkbox("Show Productive Shot", value=True, key="wzn_phs_all_prod")
+                show_overs_wzn_phs_all = st.checkbox("Show Overs", value=True, key="wzn_phs_all_overs")
+                show_phase_wzn_phs_all = st.checkbox("Show Phase", value=True, key="wzn_phs_all_phase")
+                show_venue_wzn_phs_all = st.checkbox("Show Venue", value=True, key="wzn_phs_all_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_phs_all" not in st.session_state:
+                    st.session_state["run_all_wzn_phs_all"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_phs_all'] = True
+                    st.session_state["run_init_wzn_phs_all"] = True
+
+                def sync_all_to_individual_wzn_phs_all():
+                    all_selected = st.session_state["run_all_wzn_phs_all"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_phs_all'] = all_selected
+
+                def sync_individual_to_all_wzn_phs_all():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_phs_all'] for i in range(7))
+                    st.session_state["run_all_wzn_phs_all"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_phs_all", on_change=sync_all_to_individual_wzn_phs_all)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_phs_all', on_change=sync_individual_to_all_wzn_phs_all)
+
+                individual_selected_wzn_phs_all = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_phs_all', False)]
+                if st.session_state["run_all_wzn_phs_all"]:
+                    filtered_runs_wzn_phs_all = None
+                elif individual_selected_wzn_phs_all:
+                    filtered_runs_wzn_phs_all = individual_selected_wzn_phs_all
+                else:
+                    filtered_runs_wzn_phs_all = []
+                    
+            if filtered_runs_wzn_phs_all == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_all_phase = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_phs_all,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=None,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_phs_all else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_phs_all,
+                    show_summary=show_summary_wzn_phs_all,
+                    runs_count=runs_count_wzn_phs_all,
+                    show_fours_sixes=show_fours_sixes_wzn_phs_all,
+                    show_control=show_control_wzn_phs_all,
+                    show_prod_shot=show_prod_shot_wzn_phs_all,
+                    show_bowler=show_bowler_wzn_phs_all,
+                    show_venue=show_venue_wzn_phs_all,
+                    show_overs=show_overs_wzn_phs_all,
+                    show_phase=show_phase_wzn_phs_all
+                )
+                with col2:
+                    st.pyplot(fig_wzn_all_phase)
+            
+            with col3:
+                if fig_wzn_all_phase:
+                    buf = BytesIO()
+                    fig_wzn_all_phase.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_all_phase.png",
+                        mime="image/png",
+                        key="wzn_all_phase_download"
+                    )
+
+        if "━━ Wagon Zone - Powerplay" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Powerplay</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_pp = st.checkbox("Show Plot Title", value=True, key="wzn_pp_title")
+                show_summary_wzn_pp = st.checkbox("Show Runs Summary", value=True, key="wzn_pp_summary")
+                runs_count_wzn_pp = st.checkbox("Show Runs Count", value=True, key="wzn_pp_runs")
+                show_fours_sixes_wzn_pp = st.checkbox("Show 4s and 6s", value=True, key="wzn_pp_fs")
+                show_bowler_wzn_pp = st.checkbox("Show Bowler", value=True, key="wzn_pp_bowler")
+                show_control_wzn_pp = st.checkbox("Show Control %", value=True, key="wzn_pp_control")
+                show_prod_shot_wzn_pp = st.checkbox("Show Productive Shot", value=True, key="wzn_pp_prod")
+                show_overs_wzn_pp = st.checkbox("Show Overs", value=True, key="wzn_pp_overs")
+                show_phase_wzn_pp = st.checkbox("Show Phase", value=True, key="wzn_pp_phase")
+                show_venue_wzn_pp = st.checkbox("Show Venue", value=True, key="wzn_pp_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_pp" not in st.session_state:
+                    st.session_state["run_all_wzn_pp"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_pp'] = True
+                    st.session_state["run_init_wzn_pp"] = True
+
+                def sync_all_to_individual_wzn_pp():
+                    all_selected = st.session_state["run_all_wzn_pp"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_pp'] = all_selected
+
+                def sync_individual_to_all_wzn_pp():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_pp'] for i in range(7))
+                    st.session_state["run_all_wzn_pp"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_pp", on_change=sync_all_to_individual_wzn_pp)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_pp', on_change=sync_individual_to_all_wzn_pp)
+
+                individual_selected_wzn_pp = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_pp', False)]
+                if st.session_state["run_all_wzn_pp"]:
+                    filtered_runs_wzn_pp = None
+                elif individual_selected_wzn_pp:
+                    filtered_runs_wzn_pp = individual_selected_wzn_pp
+                else:
+                    filtered_runs_wzn_pp = []
+                    
+            if filtered_runs_wzn_pp == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_pp = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_pp,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[1],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_pp else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_pp,
+                    show_summary=show_summary_wzn_pp,
+                    runs_count=runs_count_wzn_pp,
+                    show_fours_sixes=show_fours_sixes_wzn_pp,
+                    show_control=show_control_wzn_pp,
+                    show_prod_shot=show_prod_shot_wzn_pp,
+                    show_bowler=show_bowler_wzn_pp,
+                    show_venue=show_venue_wzn_pp,
+                    show_overs=show_overs_wzn_pp,
+                    show_phase=show_phase_wzn_pp
+                )
+                with col2:
+                    st.pyplot(fig_wzn_pp)
+            
+            with col3:
+                if fig_wzn_pp:
+                    buf = BytesIO()
+                    fig_wzn_pp.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_pp.png",
+                        mime="image/png",
+                        key="wzn_pp_download"
+                    )
+
+        if "━━ Wagon Zone - Middle" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Middle</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_mid = st.checkbox("Show Plot Title", value=True, key="wzn_mid_title")
+                show_summary_wzn_mid = st.checkbox("Show Runs Summary", value=True, key="wzn_mid_summary")
+                runs_count_wzn_mid = st.checkbox("Show Runs Count", value=True, key="wzn_mid_runs")
+                show_fours_sixes_wzn_mid = st.checkbox("Show 4s and 6s", value=True, key="wzn_mid_fs")
+                show_bowler_wzn_mid = st.checkbox("Show Bowler", value=True, key="wzn_mid_bowler")
+                show_control_wzn_mid = st.checkbox("Show Control %", value=True, key="wzn_mid_control")
+                show_prod_shot_wzn_mid = st.checkbox("Show Productive Shot", value=True, key="wzn_mid_prod")
+                show_overs_wzn_mid = st.checkbox("Show Overs", value=True, key="wzn_mid_overs")
+                show_phase_wzn_mid = st.checkbox("Show Phase", value=True, key="wzn_mid_phase")
+                show_venue_wzn_mid = st.checkbox("Show Venue", value=True, key="wzn_mid_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_mid" not in st.session_state:
+                    st.session_state["run_all_wzn_mid"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_mid'] = True
+                    st.session_state["run_init_wzn_mid"] = True
+
+                def sync_all_to_individual_wzn_mid():
+                    all_selected = st.session_state["run_all_wzn_mid"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_mid'] = all_selected
+
+                def sync_individual_to_all_wzn_mid():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_mid'] for i in range(7))
+                    st.session_state["run_all_wzn_mid"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_mid", on_change=sync_all_to_individual_wzn_mid)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_mid', on_change=sync_individual_to_all_wzn_mid)
+
+                individual_selected_wzn_mid = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_mid', False)]
+                if st.session_state["run_all_wzn_mid"]:
+                    filtered_runs_wzn_mid = None
+                elif individual_selected_wzn_mid:
+                    filtered_runs_wzn_mid = individual_selected_wzn_mid
+                else:
+                    filtered_runs_wzn_mid = []
+                    
+            if filtered_runs_wzn_mid == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_mid = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_mid,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[2],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_mid else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_mid,
+                    show_summary=show_summary_wzn_mid,
+                    runs_count=runs_count_wzn_mid,
+                    show_fours_sixes=show_fours_sixes_wzn_mid,
+                    show_control=show_control_wzn_mid,
+                    show_prod_shot=show_prod_shot_wzn_mid,
+                    show_bowler=show_bowler_wzn_mid,
+                    show_venue=show_venue_wzn_mid,
+                    show_overs=show_overs_wzn_mid,
+                    show_phase=show_phase_wzn_mid
+                )
+                with col2:
+                    st.pyplot(fig_wzn_mid)
+            
+            with col3:
+                if fig_wzn_mid:
+                    buf = BytesIO()
+                    fig_wzn_mid.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_mid.png",
+                        mime="image/png",
+                        key="wzn_mid_download"
+                    )
+
+        if "━━ Wagon Zone - Slog" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Slog</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_slog = st.checkbox("Show Plot Title", value=True, key="wzn_slog_title")
+                show_summary_wzn_slog = st.checkbox("Show Runs Summary", value=True, key="wzn_slog_summary")
+                runs_count_wzn_slog = st.checkbox("Show Runs Count", value=True, key="wzn_slog_runs")
+                show_fours_sixes_wzn_slog = st.checkbox("Show 4s and 6s", value=True, key="wzn_slog_fs")
+                show_bowler_wzn_slog = st.checkbox("Show Bowler", value=True, key="wzn_slog_bowler")
+                show_control_wzn_slog = st.checkbox("Show Control %", value=True, key="wzn_slog_control")
+                show_prod_shot_wzn_slog = st.checkbox("Show Productive Shot", value=True, key="wzn_slog_prod")
+                show_overs_wzn_slog = st.checkbox("Show Overs", value=True, key="wzn_slog_overs")
+                show_phase_wzn_slog = st.checkbox("Show Phase", value=True, key="wzn_slog_phase")
+                show_venue_wzn_slog = st.checkbox("Show Venue", value=True, key="wzn_slog_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_slog" not in st.session_state:
+                    st.session_state["run_all_wzn_slog"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_slog'] = True
+                    st.session_state["run_init_wzn_slog"] = True
+
+                def sync_all_to_individual_wzn_slog():
+                    all_selected = st.session_state["run_all_wzn_slog"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_slog'] = all_selected
+
+                def sync_individual_to_all_wzn_slog():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_slog'] for i in range(7))
+                    st.session_state["run_all_wzn_slog"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_slog", on_change=sync_all_to_individual_wzn_slog)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_slog', on_change=sync_individual_to_all_wzn_slog)
+
+                individual_selected_wzn_slog = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_slog', False)]
+                if st.session_state["run_all_wzn_slog"]:
+                    filtered_runs_wzn_slog = None
+                elif individual_selected_wzn_slog:
+                    filtered_runs_wzn_slog = individual_selected_wzn_slog
+                else:
+                    filtered_runs_wzn_slog = []
+                    
+            if filtered_runs_wzn_slog == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_slog = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_slog,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[3],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_slog else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_slog,
+                    show_summary=show_summary_wzn_slog,
+                    runs_count=runs_count_wzn_slog,
+                    show_fours_sixes=show_fours_sixes_wzn_slog,
+                    show_control=show_control_wzn_slog,
+                    show_prod_shot=show_prod_shot_wzn_slog,
+                    show_bowler=show_bowler_wzn_slog,
+                    show_venue=show_venue_wzn_slog,
+                    show_overs=show_overs_wzn_slog,
+                    show_phase=show_phase_wzn_slog
+                )
+                with col2:
+                    st.pyplot(fig_wzn_slog)
+            
+            with col3:
+                if fig_wzn_slog:
+                    buf = BytesIO()
+                    fig_wzn_slog.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_slog.png",
+                        mime="image/png",
+                        key="wzn_slog_download"
+                    )
+
+        if "━━ Wagon Zone - All Kinds" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - All Bowler Kinds</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_all_kind = st.checkbox("Show Plot Title", value=True, key="wzn_all_kind_title")
+                show_legend_wzn_all_kind = st.checkbox("Show Legend", value=True, key="wzn_all_kind_legend")
+                show_summary_wzn_all_kind = st.checkbox("Show Runs Summary", value=True, key="wzn_all_kind_summary")
+                runs_count_wzn_all_kind = st.checkbox("Show Runs Count", value=True, key="wzn_all_kind_runs")
+                show_fours_sixes_wzn_all_kind = st.checkbox("Show 4s and 6s", value=True, key="wzn_all_kind_fs")
+                show_bowler_wzn_all_kind = st.checkbox("Show Bowler", value=True, key="wzn_all_kind_bowler")
+                show_control_wzn_all_kind = st.checkbox("Show Control %", value=True, key="wzn_all_kind_control")
+                show_prod_shot_wzn_all_kind = st.checkbox("Show Productive Shot", value=True, key="wzn_all_kind_prod")
+                show_overs_wzn_all_kind = st.checkbox("Show Overs", value=True, key="wzn_all_kind_overs")
+                show_phase_wzn_all_kind = st.checkbox("Show Phase", value=True, key="wzn_all_kind_phase")
+                show_bowl_kind_wzn_all_kind = st.checkbox("Show Bowl Pace", value=True, key="wzn_all_kind_bowl_kind")
+                show_venue_wzn_all_kind = st.checkbox("Show Venue", value=True, key="wzn_all_kind_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_all_kind" not in st.session_state:
+                    st.session_state["run_all_wzn_all_kind"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_kind'] = True
+                    st.session_state["run_init_wzn_all_kind"] = True
+
+                def sync_all_to_individual_wzn_all_kind():
+                    all_selected = st.session_state["run_all_wzn_all_kind"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_kind'] = all_selected
+
+                def sync_individual_to_all_wzn_all_kind():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_all_kind'] for i in range(7))
+                    st.session_state["run_all_wzn_all_kind"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_all_kind", on_change=sync_all_to_individual_wzn_all_kind)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_all_kind', on_change=sync_individual_to_all_wzn_all_kind)
+
+                individual_selected_wzn_all_kind = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_all_kind', False)]
+                if st.session_state["run_all_wzn_all_kind"]:
+                    filtered_runs_wzn_all_kind = None
+                elif individual_selected_wzn_all_kind:
+                    filtered_runs_wzn_all_kind = individual_selected_wzn_all_kind
+                else:
+                    filtered_runs_wzn_all_kind = []
+                    
+            if filtered_runs_wzn_all_kind == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_all_kind = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_all_kind,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_all_kind else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=None,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_all_kind,
+                    show_summary=show_summary_wzn_all_kind,
+                    runs_count=runs_count_wzn_all_kind,
+                    show_fours_sixes=show_fours_sixes_wzn_all_kind,
+                    show_control=show_control_wzn_all_kind,
+                    show_prod_shot=show_prod_shot_wzn_all_kind,
+                    show_bowler=show_bowler_wzn_all_kind,
+                    show_venue=show_venue_wzn_all_kind,
+                    show_overs=show_overs_wzn_all_kind,
+                    show_phase=show_phase_wzn_all_kind,
+                    show_bowl_kind=show_bowl_kind_wzn_all_kind
+                )
+                with col2:
+                    st.pyplot(fig_wzn_all_kind)
+            
+            with col3:
+                if fig_wzn_all_kind:
+                    buf = BytesIO()
+                    fig_wzn_all_kind.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_all_kind.png",
+                        mime="image/png",
+                        key="wzn_all_kind_download"
+                    )
+
+        if "━━ Wagon Zone - RAP" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Right Arm Pace</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_rap = st.checkbox("Show Plot Title", value=True, key="wzn_rap_title")
+                show_legend_wzn_rap = st.checkbox("Show Legend", value=True, key="wzn_rap_legend")
+                show_summary_wzn_rap = st.checkbox("Show Runs Summary", value=True, key="wzn_rap_summary")
+                runs_count_wzn_rap = st.checkbox("Show Runs Count", value=True, key="wzn_rap_runs")
+                show_fours_sixes_wzn_rap = st.checkbox("Show 4s and 6s", value=True, key="wzn_rap_fs")
+                show_bowler_wzn_rap = st.checkbox("Show Bowler", value=True, key="wzn_rap_bowler")
+                show_control_wzn_rap = st.checkbox("Show Control %", value=True, key="wzn_rap_control")
+                show_prod_shot_wzn_rap = st.checkbox("Show Productive Shot", value=True, key="wzn_rap_prod")
+                show_overs_wzn_rap = st.checkbox("Show Overs", value=True, key="wzn_rap_overs")
+                show_phase_wzn_rap = st.checkbox("Show Phase", value=True, key="wzn_rap_phase")
+                show_bowl_type_wzn_rap = st.checkbox("Show Bowl Type", value=True, key="wzn_rap_bowl_type")
+                show_venue_wzn_rap = st.checkbox("Show Venue", value=True, key="wzn_rap_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_rap" not in st.session_state:
+                    st.session_state["run_all_wzn_rap"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_rap'] = True
+                    st.session_state["run_init_wzn_rap"] = True
+
+                def sync_all_to_individual_wzn_rap():
+                    all_selected = st.session_state["run_all_wzn_rap"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_rap'] = all_selected
+
+                def sync_individual_to_all_wzn_rap():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_rap'] for i in range(7))
+                    st.session_state["run_all_wzn_rap"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_rap", on_change=sync_all_to_individual_wzn_rap)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_rap', on_change=sync_individual_to_all_wzn_rap)
+
+                individual_selected_wzn_rap = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_rap', False)]
+                if st.session_state["run_all_wzn_rap"]:
+                    filtered_runs_wzn_rap = None
+                elif individual_selected_wzn_rap:
+                    filtered_runs_wzn_rap = individual_selected_wzn_rap
+                else:
+                    filtered_runs_wzn_rap = []
+                    
+            if filtered_runs_wzn_rap == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_rap = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_rap,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_rap else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Pace"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_rap,
+                    show_summary=show_summary_wzn_rap,
+                    runs_count=runs_count_wzn_rap,
+                    show_fours_sixes=show_fours_sixes_wzn_rap,
+                    show_control=show_control_wzn_rap,
+                    show_prod_shot=show_prod_shot_wzn_rap,
+                    show_bowler=show_bowler_wzn_rap,
+                    show_venue=show_venue_wzn_rap,
+                    show_overs=show_overs_wzn_rap,
+                    show_phase=show_phase_wzn_rap,
+                    show_bowl_type=show_bowl_type_wzn_rap
+                )
+                with col2:
+                    st.pyplot(fig_wzn_rap)
+            
+            with col3:
+                if fig_wzn_rap:
+                    buf = BytesIO()
+                    fig_wzn_rap.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_rap.png",
+                        mime="image/png",
+                        key="wzn_rap_download"
+                    )
+
+        if "━━ Wagon Zone - RAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Right Arm Finger Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_rafs = st.checkbox("Show Plot Title", value=True, key="wzn_rafs_title")
+                show_legend_wzn_rafs = st.checkbox("Show Legend", value=True, key="wzn_rafs_legend")
+                show_summary_wzn_rafs = st.checkbox("Show Runs Summary", value=True, key="wzn_rafs_summary")
+                runs_count_wzn_rafs = st.checkbox("Show Runs Count", value=True, key="wzn_rafs_runs")
+                show_fours_sixes_wzn_rafs = st.checkbox("Show 4s and 6s", value=True, key="wzn_rafs_fs")
+                show_bowler_wzn_rafs = st.checkbox("Show Bowler", value=True, key="wzn_rafs_bowler")
+                show_control_wzn_rafs = st.checkbox("Show Control %", value=True, key="wzn_rafs_control")
+                show_prod_shot_wzn_rafs = st.checkbox("Show Productive Shot", value=True, key="wzn_rafs_prod")
+                show_overs_wzn_rafs = st.checkbox("Show Overs", value=True, key="wzn_rafs_overs")
+                show_phase_wzn_rafs = st.checkbox("Show Phase", value=True, key="wzn_rafs_phase")
+                show_bowl_type_wzn_rafs = st.checkbox("Show Bowl Type", value=True, key="wzn_rafs_bowl_type")
+                show_venue_wzn_rafs = st.checkbox("Show Venue", value=True, key="wzn_rafs_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_rafs" not in st.session_state:
+                    st.session_state["run_all_wzn_rafs"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_rafs'] = True
+                    st.session_state["run_init_wzn_rafs"] = True
+
+                def sync_all_to_individual_wzn_rafs():
+                    all_selected = st.session_state["run_all_wzn_rafs"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_rafs'] = all_selected
+
+                def sync_individual_to_all_wzn_rafs():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_rafs'] for i in range(7))
+                    st.session_state["run_all_wzn_rafs"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_rafs", on_change=sync_all_to_individual_wzn_rafs)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_rafs', on_change=sync_individual_to_all_wzn_rafs)
+
+                individual_selected_wzn_rafs = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_rafs', False)]
+                if st.session_state["run_all_wzn_rafs"]:
+                    filtered_runs_wzn_rafs = None
+                elif individual_selected_wzn_rafs:
+                    filtered_runs_wzn_rafs = individual_selected_wzn_rafs
+                else:
+                    filtered_runs_wzn_rafs = []
+                    
+            if filtered_runs_wzn_rafs == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_rafs = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_rafs,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_rafs else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Finger Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_rafs,
+                    show_summary=show_summary_wzn_rafs,
+                    runs_count=runs_count_wzn_rafs,
+                    show_fours_sixes=show_fours_sixes_wzn_rafs,
+                    show_control=show_control_wzn_rafs,
+                    show_prod_shot=show_prod_shot_wzn_rafs,
+                    show_bowler=show_bowler_wzn_rafs,
+                    show_venue=show_venue_wzn_rafs,
+                    show_overs=show_overs_wzn_rafs,
+                    show_phase=show_phase_wzn_rafs,
+                    show_bowl_type=show_bowl_type_wzn_rafs
+                )
+                with col2:
+                    st.pyplot(fig_wzn_rafs)
+            
+            with col3:
+                if fig_wzn_rafs:
+                    buf = BytesIO()
+                    fig_wzn_rafs.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_rafs.png",
+                        mime="image/png",
+                        key="wzn_rafs_download"
+                    )
+
+        if "━━ Wagon Zone - RAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Right Arm Wrist Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_raws = st.checkbox("Show Plot Title", value=True, key="wzn_raws_title")
+                show_legend_wzn_raws = st.checkbox("Show Legend", value=True, key="wzn_raws_legend")
+                show_summary_wzn_raws = st.checkbox("Show Runs Summary", value=True, key="wzn_raws_summary")
+                runs_count_wzn_raws = st.checkbox("Show Runs Count", value=True, key="wzn_raws_runs")
+                show_fours_sixes_wzn_raws = st.checkbox("Show 4s and 6s", value=True, key="wzn_raws_fs")
+                show_bowler_wzn_raws = st.checkbox("Show Bowler", value=True, key="wzn_raws_bowler")
+                show_control_wzn_raws = st.checkbox("Show Control %", value=True, key="wzn_raws_control")
+                show_prod_shot_wzn_raws = st.checkbox("Show Productive Shot", value=True, key="wzn_raws_prod")
+                show_overs_wzn_raws = st.checkbox("Show Overs", value=True, key="wzn_raws_overs")
+                show_phase_wzn_raws = st.checkbox("Show Phase", value=True, key="wzn_raws_phase")
+                show_bowl_type_wzn_raws = st.checkbox("Show Bowl Type", value=True, key="wzn_raws_bowl_type")
+                show_venue_wzn_raws = st.checkbox("Show Venue", value=True, key="wzn_raws_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_raws" not in st.session_state:
+                    st.session_state["run_all_wzn_raws"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_raws'] = True
+                    st.session_state["run_init_wzn_raws"] = True
+
+                def sync_all_to_individual_wzn_raws():
+                    all_selected = st.session_state["run_all_wzn_raws"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_raws'] = all_selected
+
+                def sync_individual_to_all_wzn_raws():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_raws'] for i in range(7))
+                    st.session_state["run_all_wzn_raws"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_raws", on_change=sync_all_to_individual_wzn_raws)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_raws', on_change=sync_individual_to_all_wzn_raws)
+
+                individual_selected_wzn_raws = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_raws', False)]
+                if st.session_state["run_all_wzn_raws"]:
+                    filtered_runs_wzn_raws = None
+                elif individual_selected_wzn_raws:
+                    filtered_runs_wzn_raws = individual_selected_wzn_raws
+                else:
+                    filtered_runs_wzn_raws = []
+                    
+            if filtered_runs_wzn_raws == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_raws = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_raws,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_raws else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Wrist Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_raws,
+                    show_summary=show_summary_wzn_raws,
+                    runs_count=runs_count_wzn_raws,
+                    show_fours_sixes=show_fours_sixes_wzn_raws,
+                    show_control=show_control_wzn_raws,
+                    show_prod_shot=show_prod_shot_wzn_raws,
+                    show_bowler=show_bowler_wzn_raws,
+                    show_venue=show_venue_wzn_raws,
+                    show_overs=show_overs_wzn_raws,
+                    show_phase=show_phase_wzn_raws,
+                    show_bowl_type=show_bowl_type_wzn_raws
+                )
+                with col2:
+                    st.pyplot(fig_wzn_raws)
+            
+            with col3:
+                if fig_wzn_raws:
+                    buf = BytesIO()
+                    fig_wzn_raws.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_raws.png",
+                        mime="image/png",
+                        key="wzn_raws_download"
+                    )
+
+        if "━━ Wagon Zone - LAP" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Left Arm Pace</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_lap = st.checkbox("Show Plot Title", value=True, key="wzn_lap_title")
+                show_legend_wzn_lap = st.checkbox("Show Legend", value=True, key="wzn_lap_legend")
+                show_summary_wzn_lap = st.checkbox("Show Runs Summary", value=True, key="wzn_lap_summary")
+                runs_count_wzn_lap = st.checkbox("Show Runs Count", value=True, key="wzn_lap_runs")
+                show_fours_sixes_wzn_lap = st.checkbox("Show 4s and 6s", value=True, key="wzn_lap_fs")
+                show_bowler_wzn_lap = st.checkbox("Show Bowler", value=True, key="wzn_lap_bowler")
+                show_control_wzn_lap = st.checkbox("Show Control %", value=True, key="wzn_lap_control")
+                show_prod_shot_wzn_lap = st.checkbox("Show Productive Shot", value=True, key="wzn_lap_prod")
+                show_overs_wzn_lap = st.checkbox("Show Overs", value=True, key="wzn_lap_overs")
+                show_phase_wzn_lap = st.checkbox("Show Phase", value=True, key="wzn_lap_phase")
+                show_bowl_type_wzn_lap = st.checkbox("Show Bowl Type", value=True, key="wzn_lap_bowl_type")
+                show_venue_wzn_lap = st.checkbox("Show Venue", value=True, key="wzn_lap_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_lap" not in st.session_state:
+                    st.session_state["run_all_wzn_lap"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_lap'] = True
+                    st.session_state["run_init_wzn_lap"] = True
+
+                def sync_all_to_individual_wzn_lap():
+                    all_selected = st.session_state["run_all_wzn_lap"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_lap'] = all_selected
+
+                def sync_individual_to_all_wzn_lap():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_lap'] for i in range(7))
+                    st.session_state["run_all_wzn_lap"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_lap", on_change=sync_all_to_individual_wzn_lap)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_lap', on_change=sync_individual_to_all_wzn_lap)
+
+                individual_selected_wzn_lap = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_lap', False)]
+                if st.session_state["run_all_wzn_lap"]:
+                    filtered_runs_wzn_lap = None
+                elif individual_selected_wzn_lap:
+                    filtered_runs_wzn_lap = individual_selected_wzn_lap
+                else:
+                    filtered_runs_wzn_lap = []
+                    
+            if filtered_runs_wzn_lap == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_lap = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_lap,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_lap else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Pace"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_lap,
+                    show_summary=show_summary_wzn_lap,
+                    runs_count=runs_count_wzn_lap,
+                    show_fours_sixes=show_fours_sixes_wzn_lap,
+                    show_control=show_control_wzn_lap,
+                    show_prod_shot=show_prod_shot_wzn_lap,
+                    show_bowler=show_bowler_wzn_lap,
+                    show_venue=show_venue_wzn_lap,
+                    show_overs=show_overs_wzn_lap,
+                    show_phase=show_phase_wzn_lap,
+                    show_bowl_type=show_bowl_type_wzn_lap
+                )
+                with col2:
+                    st.pyplot(fig_wzn_lap)
+            
+            with col3:
+                if fig_wzn_lap:
+                    buf = BytesIO()
+                    fig_wzn_lap.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_lap.png",
+                        mime="image/png",
+                        key="wzn_lap_download"
+                    )
+
+        if "━━ Wagon Zone - LAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Left Arm Finger Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_lafs = st.checkbox("Show Plot Title", value=True, key="wzn_lafs_title")
+                show_legend_wzn_lafs = st.checkbox("Show Legend", value=True, key="wzn_lafs_legend")
+                show_summary_wzn_lafs = st.checkbox("Show Runs Summary", value=True, key="wzn_lafs_summary")
+                runs_count_wzn_lafs = st.checkbox("Show Runs Count", value=True, key="wzn_lafs_runs")
+                show_fours_sixes_wzn_lafs = st.checkbox("Show 4s and 6s", value=True, key="wzn_lafs_fs")
+                show_bowler_wzn_lafs = st.checkbox("Show Bowler", value=True, key="wzn_lafs_bowler")
+                show_control_wzn_lafs = st.checkbox("Show Control %", value=True, key="wzn_lafs_control")
+                show_prod_shot_wzn_lafs = st.checkbox("Show Productive Shot", value=True, key="wzn_lafs_prod")
+                show_overs_wzn_lafs = st.checkbox("Show Overs", value=True, key="wzn_lafs_overs")
+                show_phase_wzn_lafs = st.checkbox("Show Phase", value=True, key="wzn_lafs_phase")
+                show_bowl_type_wzn_lafs = st.checkbox("Show Bowl Type", value=True, key="wzn_lafs_bowl_type")
+                show_venue_wzn_lafs = st.checkbox("Show Venue", value=True, key="wzn_lafs_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_lafs" not in st.session_state:
+                    st.session_state["run_all_wzn_lafs"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_lafs'] = True
+                    st.session_state["run_init_wzn_lafs"] = True
+
+                def sync_all_to_individual_wzn_lafs():
+                    all_selected = st.session_state["run_all_wzn_lafs"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_lafs'] = all_selected
+
+                def sync_individual_to_all_wzn_lafs():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_lafs'] for i in range(7))
+                    st.session_state["run_all_wzn_lafs"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_lafs", on_change=sync_all_to_individual_wzn_lafs)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_lafs', on_change=sync_individual_to_all_wzn_lafs)
+
+                individual_selected_wzn_lafs = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_lafs', False)]
+                if st.session_state["run_all_wzn_lafs"]:
+                    filtered_runs_wzn_lafs = None
+                elif individual_selected_wzn_lafs:
+                    filtered_runs_wzn_lafs = individual_selected_wzn_lafs
+                else:
+                    filtered_runs_wzn_lafs = []
+                    
+            if filtered_runs_wzn_lafs == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_lafs = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_lafs,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_lafs else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Figner Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_lafs,
+                    show_summary=show_summary_wzn_lafs,
+                    runs_count=runs_count_wzn_lafs,
+                    show_fours_sixes=show_fours_sixes_wzn_lafs,
+                    show_control=show_control_wzn_lafs,
+                    show_prod_shot=show_prod_shot_wzn_lafs,
+                    show_bowler=show_bowler_wzn_lafs,
+                    show_venue=show_venue_wzn_lafs,
+                    show_overs=show_overs_wzn_lafs,
+                    show_phase=show_phase_wzn_lafs,
+                    show_bowl_type=show_bowl_type_wzn_lafs
+                )
+                with col2:
+                    st.pyplot(fig_wzn_lafs)
+            
+            with col3:
+                if fig_wzn_lafs:
+                    buf = BytesIO()
+                    fig_wzn_lafs.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_lafs.png",
+                        mime="image/png",
+                        key="wzn_lafs_download"
+                    )
+
+        if "━━ Wagon Zone - LAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Left Arm Wrist Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_laws = st.checkbox("Show Plot Title", value=True, key="wzn_laws_title")
+                show_legend_wzn_laws = st.checkbox("Show Legend", value=True, key="wzn_laws_legend")
+                show_summary_wzn_laws = st.checkbox("Show Runs Summary", value=True, key="wzn_laws_summary")
+                runs_count_wzn_laws = st.checkbox("Show Runs Count", value=True, key="wzn_laws_runs")
+                show_fours_sixes_wzn_laws = st.checkbox("Show 4s and 6s", value=True, key="wzn_laws_fs")
+                show_bowler_wzn_laws = st.checkbox("Show Bowler", value=True, key="wzn_laws_bowler")
+                show_control_wzn_laws = st.checkbox("Show Control %", value=True, key="wzn_laws_control")
+                show_prod_shot_wzn_laws = st.checkbox("Show Productive Shot", value=True, key="wzn_laws_prod")
+                show_overs_wzn_laws = st.checkbox("Show Overs", value=True, key="wzn_laws_overs")
+                show_phase_wzn_laws = st.checkbox("Show Phase", value=True, key="wzn_laws_phase")
+                show_bowl_type_wzn_laws = st.checkbox("Show Bowl Type", value=True, key="wzn_laws_bowl_type")
+                show_venue_wzn_laws = st.checkbox("Show Venue", value=True, key="wzn_laws_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_laws" not in st.session_state:
+                    st.session_state["run_all_wzn_laws"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_laws'] = True
+                    st.session_state["run_init_wzn_laws"] = True
+
+                def sync_all_to_individual_wzn_laws():
+                    all_selected = st.session_state["run_all_wzn_laws"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_laws'] = all_selected
+
+                def sync_individual_to_all_wzn_laws():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_laws'] for i in range(7))
+                    st.session_state["run_all_wzn_laws"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_laws", on_change=sync_all_to_individual_wzn_laws)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_laws', on_change=sync_individual_to_all_wzn_laws)
+
+                individual_selected_wzn_laws = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_laws', False)]
+                if st.session_state["run_all_wzn_laws"]:
+                    filtered_runs_wzn_laws = None
+                elif individual_selected_wzn_laws:
+                    filtered_runs_wzn_laws = individual_selected_wzn_laws
+                else:
+                    filtered_runs_wzn_laws = []
+                    
+            if filtered_runs_wzn_laws == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_laws = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_laws,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_laws else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Wrist Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_wzn_laws,
+                    show_summary=show_summary_wzn_laws,
+                    runs_count=runs_count_wzn_laws,
+                    show_fours_sixes=show_fours_sixes_wzn_laws,
+                    show_control=show_control_wzn_laws,
+                    show_prod_shot=show_prod_shot_wzn_laws,
+                    show_bowler=show_bowler_wzn_laws,
+                    show_venue=show_venue_wzn_laws,
+                    show_overs=show_overs_wzn_laws,
+                    show_phase=show_phase_wzn_laws,
+                    show_bowl_type=show_bowl_type_wzn_laws
+                )
+                with col2:
+                    st.pyplot(fig_wzn_laws)
+            
+            with col3:
+                if fig_wzn_laws:
+                    buf = BytesIO()
+                    fig_wzn_laws.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_laws.png",
+                        mime="image/png",
+                        key="wzn_laws_download"
+                    )
+
+        if "━━ Wagon Zone - All Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - All Bowler Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_all_arm = st.checkbox("Show Plot Title", value=True, key="wzn_all_arm_title")
+                show_legend_wzn_all_arm = st.checkbox("Show Legend", value=True, key="wzn_all_arm_legend")
+                show_summary_wzn_all_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_all_arm_summary")
+                runs_count_wzn_all_arm = st.checkbox("Show Runs Count", value=True, key="wzn_all_arm_runs")
+                show_fours_sixes_wzn_all_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_all_arm_fs")
+                show_bowler_wzn_all_arm = st.checkbox("Show Bowler", value=True, key="wzn_all_arm_bowler")
+                show_control_wzn_all_arm = st.checkbox("Show Control %", value=True, key="wzn_all_arm_control")
+                show_prod_shot_wzn_all_arm = st.checkbox("Show Productive Shot", value=True, key="wzn_all_arm_prod")
+                show_overs_wzn_all_arm = st.checkbox("Show Overs", value=True, key="wzn_all_arm_overs")
+                show_phase_wzn_all_arm = st.checkbox("Show Phase", value=True, key="wzn_all_arm_phase")
+                show_venue_wzn_all_arm = st.checkbox("Show Venue", value=True, key="wzn_all_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_all_arm" not in st.session_state:
+                    st.session_state["run_all_wzn_all_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_arm'] = True
+                    st.session_state["run_init_wzn_all_arm"] = True
+
+                def sync_all_to_individual_wzn_all_arm():
+                    all_selected = st.session_state["run_all_wzn_all_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_all_arm'] = all_selected
+
+                def sync_individual_to_all_wzn_all_arm():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_all_arm'] for i in range(7))
+                    st.session_state["run_all_wzn_all_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_all_arm", on_change=sync_all_to_individual_wzn_all_arm)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_all_arm', on_change=sync_individual_to_all_wzn_all_arm)
+
+                individual_selected_wzn_all_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_all_arm', False)]
+                if st.session_state["run_all_wzn_all_arm"]:
+                    filtered_runs_wzn_all_arm = None
+                elif individual_selected_wzn_all_arm:
+                    filtered_runs_wzn_all_arm = individual_selected_wzn_all_arm
+                else:
+                    filtered_runs_wzn_all_arm = []
+                    
+            if filtered_runs_wzn_all_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_all_arm = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_all_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_all_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=None,
+                    show_title=show_title_wzn_all_arm,
+                    show_summary=show_summary_wzn_all_arm,
+                    runs_count=runs_count_wzn_all_arm,
+                    show_fours_sixes=show_fours_sixes_wzn_all_arm,
+                    show_control=show_control_wzn_all_arm,
+                    show_prod_shot=show_prod_shot_wzn_all_arm,
+                    show_bowler=show_bowler_wzn_all_arm,
+                    show_venue=show_venue_wzn_all_arm,
+                    show_overs=show_overs_wzn_all_arm,
+                    show_phase=show_phase_wzn_all_arm
+                )
+                with col2:
+                    st.pyplot(fig_wzn_all_arm)
+            
+            with col3:
+                if fig_wzn_all_arm:
+                    buf = BytesIO()
+                    fig_wzn_all_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_all_arm.png",
+                        mime="image/png",
+                        key="wzn_all_arm_download"
+                    )
+
+        if "━━ Wagon Zone - Right Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Right Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_right_arm = st.checkbox("Show Plot Title", value=True, key="wzn_right_arm_title")
+                show_legend_wzn_right_arm = st.checkbox("Show Legend", value=True, key="wzn_right_arm_legend")
+                show_summary_wzn_right_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_right_arm_summary")
+                runs_count_wzn_right_arm = st.checkbox("Show Runs Count", value=True, key="wzn_right_arm_runs")
+                show_fours_sixes_wzn_right_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_right_arm_fs")
+                show_bowler_wzn_right_arm = st.checkbox("Show Bowler", value=True, key="wzn_right_arm_bowler")
+                show_control_wzn_right_arm = st.checkbox("Show Control %", value=True, key="wzn_right_arm_control")
+                show_prod_shot_wzn_right_arm = st.checkbox("Show Productive Shot", value=True, key="wzn_right_arm_prod")
+                show_overs_wzn_right_arm = st.checkbox("Show Overs", value=True, key="wzn_right_arm_overs")
+                show_phase_wzn_right_arm = st.checkbox("Show Phase", value=True, key="wzn_right_arm_phase")
+                show_venue_wzn_right_arm = st.checkbox("Show Venue", value=True, key="wzn_right_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_right_arm" not in st.session_state:
+                    st.session_state["run_all_wzn_right_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_right_arm'] = True
+                    st.session_state["run_init_wzn_right_arm"] = True
+
+                def sync_all_to_individual_wzn_right_arm():
+                    all_selected = st.session_state["run_all_wzn_right_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_right_arm'] = all_selected
+
+                def sync_individual_to_all_wzn_right_arm():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_right_arm'] for i in range(7))
+                    st.session_state["run_all_wzn_right_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_right_arm", on_change=sync_all_to_individual_wzn_right_arm)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_right_arm', on_change=sync_individual_to_all_wzn_right_arm)
+
+                individual_selected_wzn_right_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_right_arm', False)]
+                if st.session_state["run_all_wzn_right_arm"]:
+                    filtered_runs_wzn_right_arm = None
+                elif individual_selected_wzn_right_arm:
+                    filtered_runs_wzn_right_arm = individual_selected_wzn_right_arm
+                else:
+                    filtered_runs_wzn_right_arm = []
+                    
+            if filtered_runs_wzn_right_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_right_arm = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_right_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_right_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Right Arm"],
+                    show_title=show_title_wzn_right_arm,
+                    show_summary=show_summary_wzn_right_arm,
+                    runs_count=runs_count_wzn_right_arm,
+                    show_fours_sixes=show_fours_sixes_wzn_right_arm,
+                    show_control=show_control_wzn_right_arm,
+                    show_prod_shot=show_prod_shot_wzn_right_arm,
+                    show_bowler=show_bowler_wzn_right_arm,
+                    show_venue=show_venue_wzn_right_arm,
+                    show_overs=show_overs_wzn_right_arm,
+                    show_phase=show_phase_wzn_right_arm
+                )
+                with col2:
+                    st.pyplot(fig_wzn_right_arm)
+            
+            with col3:
+                if fig_wzn_right_arm:
+                    buf = BytesIO()
+                    fig_wzn_right_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_right_arm.png",
+                        mime="image/png",
+                        key="wzn_right_arm_download"
+                    )
+
+        if "━━ Wagon Zone - Left Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Wagon Zone - Left Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_wzn_left_arm = st.checkbox("Show Plot Title", value=True, key="wzn_left_arm_title")
+                show_legend_wzn_left_arm = st.checkbox("Show Legend", value=True, key="wzn_left_arm_legend")
+                show_summary_wzn_left_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_left_arm_summary")
+                runs_count_wzn_left_arm = st.checkbox("Show Runs Count", value=True, key="wzn_left_arm_runs")
+                show_fours_sixes_wzn_left_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_left_arm_fs")
+                show_bowler_wzn_left_arm = st.checkbox("Show Bowler", value=True, key="wzn_left_arm_bowler")
+                show_control_wzn_left_arm = st.checkbox("Show Control %", value=True, key="wzn_left_arm_control")
+                show_prod_shot_wzn_left_arm = st.checkbox("Show Productive Shot", value=True, key="wzn_left_arm_prod")
+                show_overs_wzn_left_arm = st.checkbox("Show Overs", value=True, key="wzn_left_arm_overs")
+                show_phase_wzn_left_arm = st.checkbox("Show Phase", value=True, key="wzn_left_arm_phase")
+                show_venue_wzn_left_arm = st.checkbox("Show Venue", value=True, key="wzn_left_arm_venue")
+
+            with col3:
+                st.markdown("## Run Filter (Wagon Zone)")
+                if "run_init_wzn_left_arm" not in st.session_state:
+                    st.session_state["run_all_wzn_left_arm"] = True
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_left_arm'] = True
+                    st.session_state["run_init_wzn_left_arm"] = True
+
+                def sync_all_to_individual_wzn_left_arm():
+                    all_selected = st.session_state["run_all_wzn_left_arm"]
+                    for i in range(7):
+                        st.session_state[f'run_{i}_wzn_left_arm'] = all_selected
+
+                def sync_individual_to_all_wzn_left_arm():
+                    all_selected = all(st.session_state[f'run_{i}_wzn_left_arm'] for i in range(7))
+                    st.session_state["run_all_wzn_left_arm"] = all_selected
+
+                st.checkbox("All", key="run_all_wzn_left_arm", on_change=sync_all_to_individual_wzn_left_arm)
+                for i in range(7):
+                    st.checkbox(str(i), key=f'run_{i}_wzn_left_arm', on_change=sync_individual_to_all_wzn_left_arm)
+
+                individual_selected_wzn_left_arm = [i for i in range(7) if st.session_state.get(f'run_{i}_wzn_left_arm', False)]
+                if st.session_state["run_all_wzn_left_arm"]:
+                    filtered_runs_wzn_left_arm = None
+                elif individual_selected_wzn_left_arm:
+                    filtered_runs_wzn_left_arm = individual_selected_wzn_left_arm
+                else:
+                    filtered_runs_wzn_left_arm = []
+                    
+            if filtered_runs_wzn_left_arm == []:
+                st.warning("Please select at least one run value to display the plot.")
+            else:
+                fig_wzn_left_arm = wagon_zone_plot_descriptive(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    run_values=filtered_runs_wzn_left_arm,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_wzn_left_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Left Arm"],
+                    show_title=show_title_wzn_left_arm,
+                    show_summary=show_summary_wzn_left_arm,
+                    runs_count=runs_count_wzn_left_arm,
+                    show_fours_sixes=show_fours_sixes_wzn_left_arm,
+                    show_control=show_control_wzn_left_arm,
+                    show_prod_shot=show_prod_shot_wzn_left_arm,
+                    show_bowler=show_bowler_wzn_left_arm,
+                    show_venue=show_venue_wzn_left_arm,
+                    show_overs=show_overs_wzn_left_arm,
+                    show_phase=show_phase_wzn_left_arm
+                )
+                with col2:
+                    st.pyplot(fig_wzn_left_arm)
+            
+            with col3:
+                if fig_wzn_left_arm:
+                    buf = BytesIO()
+                    fig_wzn_left_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_wzn_left_arm.png",
+                        mime="image/png",
+                        key="wzn_left_arm_download"
+                    )
+
         if "Dismissal Plot" in plot_types:
             st.markdown("<h2 style='text-align: center;'>Dismissal Plot</h2>", unsafe_allow_html=True)
             col1, col2, col3 = st.columns([2, 2, 2])
@@ -4396,6 +6143,57 @@ if df is not None:
         
         if fig_whl_left_arm is not None:
             all_figures[f"{selected_player}_whl_left_arm.png"] = fig_whl_left_arm
+        
+        if fig_wzn_all_type is not None:
+            all_figures[f"{selected_player}_wzn_all_type.png"] = fig_wzn_all_type
+        
+        if fig_wzn_pace is not None:
+            all_figures[f"{selected_player}_wzn_pace.png"] = fig_wzn_pace
+        
+        if fig_wzn_spin is not None:
+            all_figures[f"{selected_player}_wzn_spin.png"] = fig_wzn_spin
+        
+        if fig_wzn_all_phase is not None:
+            all_figures[f"{selected_player}_wzn_all_phase.png"] = fig_wzn_all_phase
+        
+        if fig_wzn_pp is not None:
+            all_figures[f"{selected_player}_wzn_pp.png"] = fig_wzn_pp
+        
+        if fig_wzn_mid is not None:
+            all_figures[f"{selected_player}_wzn_mid.png"] = fig_wzn_mid
+        
+        if fig_wzn_slog is not None:
+            all_figures[f"{selected_player}_wzn_slog.png"] = fig_wzn_slog
+        
+        if fig_wzn_all_kind is not None:
+            all_figures[f"{selected_player}_wzn_all_kind.png"] = fig_wzn_all_kind
+        
+        if fig_wzn_rap is not None:
+            all_figures[f"{selected_player}_wzn_rap.png"] = fig_wzn_rap
+        
+        if fig_wzn_rafs is not None:
+            all_figures[f"{selected_player}_wzn_rafs.png"] = fig_wzn_rafs
+        
+        if fig_wzn_raws is not None:
+            all_figures[f"{selected_player}_wzn_raws.png"] = fig_wzn_raws
+        
+        if fig_wzn_lap is not None:
+            all_figures[f"{selected_player}_wzn_lap.png"] = fig_wzn_lap
+        
+        if fig_wzn_lafs is not None:
+            all_figures[f"{selected_player}_wzn_lafs.png"] = fig_wzn_lafs
+        
+        if fig_wzn_laws is not None:
+            all_figures[f"{selected_player}_wzn_laws.png"] = fig_wzn_laws
+        
+        if fig_wzn_all_arm is not None:
+            all_figures[f"{selected_player}_wzn_all_arm.png"] = fig_wzn_all_arm
+        
+        if fig_wzn_right_arm is not None:
+            all_figures[f"{selected_player}_wzn_right_arm.png"] = fig_wzn_right_arm
+        
+        if fig_wzn_left_arm is not None:
+            all_figures[f"{selected_player}_wzn_left_arm.png"] = fig_wzn_left_arm
         
         if all_figures:
             player_text = selected_player if selected_player != "All" else "AllPlayers"

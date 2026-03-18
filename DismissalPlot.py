@@ -10,24 +10,24 @@ import matplotlib.image as mpimg
 #  dismissal plot
 def dismissal_plot(
     df, player_name=None, pid=None, inns=None, mat_num = None, team_bat=None, team_bowl=None,
-    run_values=None, bowler_name=None, competition=None, date_from=None, date_to=None,
+    bowler_name=None, competition=None, date_from=None, date_to=None,
     transparent=False, over_values=None, phase=None, bowler_id=None, ground=None, mcode=None,
     title_components=["title", "filters"], shots_breakdown_options=['0s', '1s', '2s', '3s', '4s', '6s'],
     bat_hand=None , bowl_type=None, bowl_kind=None, bowl_arm=None,
-    show_title=True, show_legend=True, show_summary=True, show_shots_breakdown=True,
+    show_title=True,  show_summary=True, show_shots_breakdown=True,
     show_fours_sixes=True, show_control=True, show_prod_shot=True, 
     show_bowl_type=True, show_bowl_kind=True, show_bowl_arm=True, show_venue=False,
     runs_count=True, show_bowler=True, show_ground=True, show_overs=True, show_phase=True
 ):
-    score_colors = {
-        0:  "#706B6C",   
-        1:  "#FF5733",   
-        2:  '#1F51FF',   
-        3:  '#D16FBC',   
-        4:  '#0B9B67',
-        5:  '#FFA500',   
-        6:  '#7A41D8',   
-    }
+    # score_colors = {
+    #     0:  "#706B6C",   
+    #     1:  "#FF5733",   
+    #     2:  '#1F51FF',   
+    #     3:  '#D16FBC',   
+    #     4:  '#0B9B67',
+    #     5:  '#FFA500',   
+    #     6:  '#7A41D8',   
+    # }
 
     local_df = df.copy()
 
