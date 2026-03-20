@@ -152,7 +152,7 @@ if 'filter_bowler' not in st.session_state:
 if 'filter_bowler_id' not in st.session_state:
     st.session_state['filter_bowler_id'] = None
 if 'filter_bat_hand' not in st.session_state:
-    st.session_state['filter_bat_hand'] = None
+    st.session_state['filter_bat_hand'] = []
 if 'filter_mcode' not in st.session_state:
     st.session_state['filter_mcode'] = None
 if 'filter_ground' not in st.session_state:
@@ -480,8 +480,8 @@ if st.session_state.df is not None:
                                         filter_bowler_id = st.session_state.get('filter_bowler_id', None)
                                         filter_bowler_id_val = filter_bowler_id
                                         
-                                        filter_bat_hand = st.session_state.get('filter_bat_hand', None)
-                                        filter_bat_hand_val = filter_bat_hand
+                                        filter_bat_hand = st.session_state.get('filter_bat_hand', [])
+                                        filter_bat_hand_val = filter_bat_hand if filter_bat_hand else None
                                         
                                         filter_mcode = st.session_state.get('filter_mcode', [])
                                         filter_mcode_val = filter_mcode if filter_mcode else None
@@ -809,13 +809,16 @@ if df is not None:
         # Batter Hand Filter (from working_df)
         if 'bat_hand' in working_df.columns:
             bat_hand_options = sorted(working_df['bat_hand'].dropna().unique())
-            bat_hand_display = ["All"] + list(bat_hand_options)
-            selected_bat_hand_str = st.selectbox("Batter Hand", bat_hand_display, index=0)
-            
-            if selected_bat_hand_str != "All":
-                bat_hand = selected_bat_hand_str
-            else:
-                bat_hand = None
+            stored_bat_hands = st.session_state.get('filter_bat_hand', []) if isinstance(st.session_state.get('filter_bat_hand', []), list) else []
+            selected_bat_hands = st.multiselect(
+                "Batter Hand(s)",
+                options=list(bat_hand_options),
+                default=stored_bat_hands,
+                help="Leave empty to include all"
+            )
+            bat_hand = selected_bat_hands if selected_bat_hands else None
+            # Save immediately for persistence
+            st.session_state['filter_bat_hand'] = selected_bat_hands
         else:
             bat_hand = None
     
@@ -872,7 +875,7 @@ if df is not None:
             # updated multiselect
             stored_bowl_types = st.session_state.get('filter_bowl_type', []) if isinstance(st.session_state.get('filter_bowl_type', []), list) else []
             selected_bowl_types = st.multiselect(
-                "Bowler Type(s)",
+                "Bowler Kind(s)",
                 options=list(bowl_type_options),  # No "All" needed
                 default=stored_bowl_types,  # Empty = All (no filter)
                 help="Leave empty to include all types"
@@ -897,7 +900,7 @@ if df is not None:
 
             stored_bowl_kinds = st.session_state.get('filter_bowl_kind', []) if isinstance(st.session_state.get('filter_bowl_kind', []), list) else []
             selected_bowl_kinds = st.multiselect(
-                "Bowler Pace(s)",
+                "Bowler Type(s)",
                 options=list(bowl_kind_options),
                 default=stored_bowl_kinds,
                 help="Leave empty to include all"
@@ -1111,11 +1114,28 @@ if df is not None:
             "━━ Wagon Zone - Right Arm",
             "━━ Wagon Zone - Left Arm",
             "Dismissal Plot",
-            "Dismissal Plot (Trans)"
+            "Dismissal Plot (Trans)",
+            "━━ Dis Plot - vs All Types",
+            "━━ Dis Plot - vs Pace",
+            "━━ Dis Plot - vs Spin",
+            "━━ Dis Plot - All Phases",
+            "━━ Dis Plot - Powerplay",
+            "━━ Dis Plot - Middle",
+            "━━ Dis Plot - Slog",
+            "━━ Dis Plot - All Kinds",
+            "━━ Dis Plot - RAP",
+            "━━ Dis Plot - RAFS",
+            "━━ Dis Plot - RAWS",
+            "━━ Dis Plot - LAP",
+            "━━ Dis Plot - LAFS",
+            "━━ Dis Plot - LAWS",
+            "━━ Dis Plot - All Arm",
+            "━━ Dis Plot - Right Arm",
+            "━━ Dis Plot - Left Arm"
         ]
     )
 
-    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws, fig_whl_all_arm, fig_whl_right_arm, fig_whl_left_arm, fig_wzn_all_type, fig_wzn_pace, fig_wzn_spin, fig_wzn_all_phase, fig_wzn_pp, fig_wzn_mid, fig_wzn_slog, fig_wzn_all_kind, fig_wzn_rap, fig_wzn_rafs, fig_wzn_raws, fig_wzn_lap, fig_wzn_lafs, fig_wzn_laws, fig_wzn_all_arm, fig_wzn_right_arm, fig_wzn_left_arm = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
+    fig_spike, fig_wagon, fig_spike_trans, fig_wagon_trans, fig_spike_desc, fig_wagon_desc, fig_spike_desc_trans, fig_wagon_desc_trans, fig_dismissal, fig_dismissal_trans, fig_spike_desc_pace, fig_spike_desc_spin, fig_whl_phs_all, fig_whl_phs_pp, fig_whl_phs_mid, fig_whl_phs_slog, fig_whl_all_kind, fig_whl_all_type, fig_whl_rap, fig_whl_rafs, fig_whl_raws, fig_whl_lap, fig_whl_lafs, fig_whl_laws, fig_whl_all_arm, fig_whl_right_arm, fig_whl_left_arm, fig_wzn_all_type, fig_wzn_pace, fig_wzn_spin, fig_wzn_all_phase, fig_wzn_pp, fig_wzn_mid, fig_wzn_slog, fig_wzn_all_kind, fig_wzn_rap, fig_wzn_rafs, fig_wzn_raws, fig_wzn_lap, fig_wzn_lafs, fig_wzn_laws, fig_wzn_all_arm, fig_wzn_right_arm, fig_wzn_left_arm, fig_dis_all_type, fig_dis_pace, fig_dis_spin, fig_dis_all_phase, fig_dis_pp, fig_dis_mid, fig_dis_slog, fig_dis_all_kind, fig_dis_rap, fig_dis_rafs, fig_dis_raws, fig_dis_lap, fig_dis_lafs, fig_dis_laws, fig_dis_all_arm, fig_dis_right_arm, fig_dis_left_arm = None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None
 
     # Ensure variables persist in session state
     for var_name in ['fig_whl_phs_all', 'fig_whl_phs_pp', 'fig_whl_phs_mid', 'fig_whl_phs_slog', 'fig_whl_all_kind', 'fig_whl_all_type', 'fig_whl_rap', 'fig_whl_rafs', 'fig_whl_raws', 'fig_whl_lap', 'fig_whl_lafs', 'fig_whl_laws', 'fig_whl_all_arm', 'fig_whl_right_arm', 'fig_whl_left_arm']:
@@ -6202,9 +6222,1217 @@ if df is not None:
                         key="dismissal_trans_download"
                     )
 
+        # ===== 17 DISMISSAL PLOT VARIANTS =====
+        if "━━ Dis Plot - vs All Types" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - All Bowler Types</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_all_type = st.checkbox("Show Plot Title", value=True, key="dis_all_type_title")
+                show_summary_dis_all_type = st.checkbox("Show Runs Summary", value=True, key="dis_all_type_summary")
+                runs_count_dis_all_type = st.checkbox("Show Runs Count", value=True, key="dis_all_type_runs")
+                show_fours_sixes_dis_all_type = st.checkbox("Show 4s and 6s", value=True, key="dis_all_type_fs")
+                show_bowler_dis_all_type = st.checkbox("Show Bowler", value=True, key="dis_all_type_bowler")
+                show_control_dis_all_type = st.checkbox("Show Control %", value=True, key="dis_all_type_control")
+                show_prod_shot_dis_all_type = st.checkbox("Show Productive Shot", value=True, key="dis_all_type_prod")
+                show_overs_dis_all_type = st.checkbox("Show Overs", value=True, key="dis_all_type_overs")
+                show_phase_dis_all_type = st.checkbox("Show Phase", value=True, key="dis_all_type_phase")
+                show_bowl_type_dis_all_type = st.checkbox("Show Bowl Type", value=True, key="dis_all_type_bowl_type")
+                
+            try:
+                fig_dis_all_type = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_all_type else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=None,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_all_type,
+                    show_summary=show_summary_dis_all_type,
+                    runs_count=runs_count_dis_all_type,
+                    show_fours_sixes=show_fours_sixes_dis_all_type,
+                    show_control=show_control_dis_all_type,
+                    show_prod_shot=show_prod_shot_dis_all_type,
+                    show_bowler=show_bowler_dis_all_type,
+                    show_overs=show_overs_dis_all_type,
+                    show_phase=show_phase_dis_all_type,
+                    show_bowl_type=show_bowl_type_dis_all_type
+                )
+                with col2:
+                    st.pyplot(fig_dis_all_type)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_all_type = None
+            
+            with col3:
+                if fig_dis_all_type:
+                    buf = BytesIO()
+                    fig_dis_all_type.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_all_type.png",
+                        mime="image/png",
+                        key="dis_all_type_download"
+                    )
+
+        if "━━ Dis Plot - vs Pace" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - vs Pace Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_pace = st.checkbox("Show Plot Title", value=True, key="dis_pace_title")
+                show_summary_dis_pace = st.checkbox("Show Runs Summary", value=True, key="dis_pace_summary")
+                runs_count_dis_pace = st.checkbox("Show Runs Count", value=True, key="dis_pace_runs")
+                show_fours_sixes_dis_pace = st.checkbox("Show 4s and 6s", value=True, key="dis_pace_fs")
+                show_bowler_dis_pace = st.checkbox("Show Bowler", value=True, key="dis_pace_bowler")
+                show_control_dis_pace = st.checkbox("Show Control %", value=True, key="dis_pace_control")
+                show_prod_shot_dis_pace = st.checkbox("Show Productive Shot", value=True, key="dis_pace_prod")
+                show_overs_dis_pace = st.checkbox("Show Overs", value=True, key="dis_pace_overs")
+                show_phase_dis_pace = st.checkbox("Show Phase", value=True, key="dis_pace_phase")
+                show_bowl_type_dis_pace = st.checkbox("Show Bowl Type", value=True, key="dis_pace_bowl_type")
+                
+            try:
+                fig_dis_pace = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_pace else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["pace bowler"],
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_pace,
+                    show_summary=show_summary_dis_pace,
+                    runs_count=runs_count_dis_pace,
+                    show_fours_sixes=show_fours_sixes_dis_pace,
+                    show_control=show_control_dis_pace,
+                    show_prod_shot=show_prod_shot_dis_pace,
+                    show_bowler=show_bowler_dis_pace,
+                    show_overs=show_overs_dis_pace,
+                    show_phase=show_phase_dis_pace,
+                    show_bowl_type=show_bowl_type_dis_pace
+                )
+                with col2:
+                    st.pyplot(fig_dis_pace)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_pace = None
+            
+            with col3:
+                if fig_dis_pace:
+                    buf = BytesIO()
+                    fig_dis_pace.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_pace.png",
+                        mime="image/png",
+                        key="dis_pace_download"
+                    )
+
+        if "━━ Dis Plot - vs Spin" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - vs Spin Bowlers</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_spin = st.checkbox("Show Plot Title", value=True, key="dis_spin_title")
+                show_summary_dis_spin = st.checkbox("Show Runs Summary", value=True, key="dis_spin_summary")
+                runs_count_dis_spin = st.checkbox("Show Runs Count", value=True, key="dis_spin_runs")
+                show_fours_sixes_dis_spin = st.checkbox("Show 4s and 6s", value=True, key="dis_spin_fs")
+                show_bowler_dis_spin = st.checkbox("Show Bowler", value=True, key="dis_spin_bowler")
+                show_control_dis_spin = st.checkbox("Show Control %", value=True, key="dis_spin_control")
+                show_prod_shot_dis_spin = st.checkbox("Show Productive Shot", value=True, key="dis_spin_prod")
+                show_overs_dis_spin = st.checkbox("Show Overs", value=True, key="dis_spin_overs")
+                show_phase_dis_spin = st.checkbox("Show Phase", value=True, key="dis_spin_phase")
+                show_bowl_type_dis_spin = st.checkbox("Show Bowl Type", value=True, key="dis_spin_bowl_type")
+                
+            try:
+                fig_dis_spin = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_spin else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=["spin bowler"],
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_spin,
+                    show_summary=show_summary_dis_spin,
+                    runs_count=runs_count_dis_spin,
+                    show_fours_sixes=show_fours_sixes_dis_spin,
+                    show_control=show_control_dis_spin,
+                    show_prod_shot=show_prod_shot_dis_spin,
+                    show_bowler=show_bowler_dis_spin,
+                    show_overs=show_overs_dis_spin,
+                    show_phase=show_phase_dis_spin,
+                    show_bowl_type=show_bowl_type_dis_spin
+                )
+                with col2:
+                    st.pyplot(fig_dis_spin)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_spin = None
+            
+            with col3:
+                if fig_dis_spin:
+                    buf = BytesIO()
+                    fig_dis_spin.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_spin.png",
+                        mime="image/png",
+                        key="dis_spin_download"
+                    )
+
+        if "━━ Dis Plot - All Phases" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - All Phases</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_all_phase = st.checkbox("Show Plot Title", value=True, key="dis_all_phase_title")
+                show_summary_dis_all_phase = st.checkbox("Show Runs Summary", value=True, key="dis_all_phase_summary")
+                runs_count_dis_all_phase = st.checkbox("Show Runs Count", value=True, key="dis_all_phase_runs")
+                show_fours_sixes_dis_all_phase = st.checkbox("Show 4s and 6s", value=True, key="dis_all_phase_fs")
+                show_bowler_dis_all_phase = st.checkbox("Show Bowler", value=True, key="dis_all_phase_bowler")
+                show_control_dis_all_phase = st.checkbox("Show Control %", value=True, key="dis_all_phase_control")
+                show_prod_shot_dis_all_phase = st.checkbox("Show Productive Shot", value=True, key="dis_all_phase_prod")
+                show_overs_dis_all_phase = st.checkbox("Show Overs", value=True, key="dis_all_phase_overs")
+                show_phase_dis_all_phase = st.checkbox("Show Phase", value=True, key="dis_all_phase_phase")
+                show_bowl_type_dis_all_phase = st.checkbox("Show Bowl Type", value=True, key="dis_all_phase_bowl_type")
+                
+            try:
+                fig_dis_all_phase = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=None,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_all_phase else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_all_phase,
+                    show_summary=show_summary_dis_all_phase,
+                    runs_count=runs_count_dis_all_phase,
+                    show_fours_sixes=show_fours_sixes_dis_all_phase,
+                    show_control=show_control_dis_all_phase,
+                    show_prod_shot=show_prod_shot_dis_all_phase,
+                    show_bowler=show_bowler_dis_all_phase,
+                    show_overs=show_overs_dis_all_phase,
+                    show_phase=show_phase_dis_all_phase,
+                    show_bowl_type=show_bowl_type_dis_all_phase
+                )
+                with col2:
+                    st.pyplot(fig_dis_all_phase)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_all_phase = None
+            
+            with col3:
+                if fig_dis_all_phase:
+                    buf = BytesIO()
+                    fig_dis_all_phase.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_all_phase.png",
+                        mime="image/png",
+                        key="dis_all_phase_download"
+                    )
+
+        if "━━ Dis Plot - Powerplay" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Powerplay Phase</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_pp = st.checkbox("Show Plot Title", value=True, key="dis_pp_title")
+                show_summary_dis_pp = st.checkbox("Show Runs Summary", value=True, key="dis_pp_summary")
+                runs_count_dis_pp = st.checkbox("Show Runs Count", value=True, key="dis_pp_runs")
+                show_fours_sixes_dis_pp = st.checkbox("Show 4s and 6s", value=True, key="dis_pp_fs")
+                show_bowler_dis_pp = st.checkbox("Show Bowler", value=True, key="dis_pp_bowler")
+                show_control_dis_pp = st.checkbox("Show Control %", value=True, key="dis_pp_control")
+                show_prod_shot_dis_pp = st.checkbox("Show Productive Shot", value=True, key="dis_pp_prod")
+                show_overs_dis_pp = st.checkbox("Show Overs", value=True, key="dis_pp_overs")
+                show_phase_dis_pp = st.checkbox("Show Phase", value=True, key="dis_pp_phase")
+                show_bowl_type_dis_pp = st.checkbox("Show Bowl Type", value=True, key="dis_pp_bowl_type")
+                
+            try:
+                fig_dis_pp = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[1],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_pp else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_pp,
+                    show_summary=show_summary_dis_pp,
+                    runs_count=runs_count_dis_pp,
+                    show_fours_sixes=show_fours_sixes_dis_pp,
+                    show_control=show_control_dis_pp,
+                    show_prod_shot=show_prod_shot_dis_pp,
+                    show_bowler=show_bowler_dis_pp,
+                    show_overs=show_overs_dis_pp,
+                    show_phase=show_phase_dis_pp,
+                    show_bowl_type=show_bowl_type_dis_pp
+                )
+                with col2:
+                    st.pyplot(fig_dis_pp)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_pp = None
+            
+            with col3:
+                if fig_dis_pp:
+                    buf = BytesIO()
+                    fig_dis_pp.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_pp.png",
+                        mime="image/png",
+                        key="dis_pp_download"
+                    )
+
+        if "━━ Dis Plot - Middle" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Middle Phase</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_mid = st.checkbox("Show Plot Title", value=True, key="dis_mid_title")
+                show_summary_dis_mid = st.checkbox("Show Runs Summary", value=True, key="dis_mid_summary")
+                runs_count_dis_mid = st.checkbox("Show Runs Count", value=True, key="dis_mid_runs")
+                show_fours_sixes_dis_mid = st.checkbox("Show 4s and 6s", value=True, key="dis_mid_fs")
+                show_bowler_dis_mid = st.checkbox("Show Bowler", value=True, key="dis_mid_bowler")
+                show_control_dis_mid = st.checkbox("Show Control %", value=True, key="dis_mid_control")
+                show_prod_shot_dis_mid = st.checkbox("Show Productive Shot", value=True, key="dis_mid_prod")
+                show_overs_dis_mid = st.checkbox("Show Overs", value=True, key="dis_mid_overs")
+                show_phase_dis_mid = st.checkbox("Show Phase", value=True, key="dis_mid_phase")
+                show_bowl_type_dis_mid = st.checkbox("Show Bowl Type", value=True, key="dis_mid_bowl_type")
+                
+            try:
+                fig_dis_mid = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[2],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_mid else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_mid,
+                    show_summary=show_summary_dis_mid,
+                    runs_count=runs_count_dis_mid,
+                    show_fours_sixes=show_fours_sixes_dis_mid,
+                    show_control=show_control_dis_mid,
+                    show_prod_shot=show_prod_shot_dis_mid,
+                    show_bowler=show_bowler_dis_mid,
+                    show_overs=show_overs_dis_mid,
+                    show_phase=show_phase_dis_mid,
+                    show_bowl_type=show_bowl_type_dis_mid
+                )
+                with col2:
+                    st.pyplot(fig_dis_mid)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_mid = None
+            
+            with col3:
+                if fig_dis_mid:
+                    buf = BytesIO()
+                    fig_dis_mid.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_mid.png",
+                        mime="image/png",
+                        key="dis_mid_download"
+                    )
+
+        if "━━ Dis Plot - Slog" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Slog Phase</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_slog = st.checkbox("Show Plot Title", value=True, key="dis_slog_title")
+                show_summary_dis_slog = st.checkbox("Show Runs Summary", value=True, key="dis_slog_summary")
+                runs_count_dis_slog = st.checkbox("Show Runs Count", value=True, key="dis_slog_runs")
+                show_fours_sixes_dis_slog = st.checkbox("Show 4s and 6s", value=True, key="dis_slog_fs")
+                show_bowler_dis_slog = st.checkbox("Show Bowler", value=True, key="dis_slog_bowler")
+                show_control_dis_slog = st.checkbox("Show Control %", value=True, key="dis_slog_control")
+                show_prod_shot_dis_slog = st.checkbox("Show Productive Shot", value=True, key="dis_slog_prod")
+                show_overs_dis_slog = st.checkbox("Show Overs", value=True, key="dis_slog_overs")
+                show_phase_dis_slog = st.checkbox("Show Phase", value=True, key="dis_slog_phase")
+                show_bowl_type_dis_slog = st.checkbox("Show Bowl Type", value=True, key="dis_slog_bowl_type")
+                
+            try:
+                fig_dis_slog = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=[3],
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_slog else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_slog,
+                    show_summary=show_summary_dis_slog,
+                    runs_count=runs_count_dis_slog,
+                    show_fours_sixes=show_fours_sixes_dis_slog,
+                    show_control=show_control_dis_slog,
+                    show_prod_shot=show_prod_shot_dis_slog,
+                    show_bowler=show_bowler_dis_slog,
+                    show_overs=show_overs_dis_slog,
+                    show_phase=show_phase_dis_slog,
+                    show_bowl_type=show_bowl_type_dis_slog
+                )
+                with col2:
+                    st.pyplot(fig_dis_slog)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_slog = None
+            
+            with col3:
+                if fig_dis_slog:
+                    buf = BytesIO()
+                    fig_dis_slog.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_slog.png",
+                        mime="image/png",
+                        key="dis_slog_download"
+                    )
+
+        if "━━ Dis Plot - All Kinds" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - All Bowling Kinds</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_all_kind = st.checkbox("Show Plot Title", value=True, key="dis_all_kind_title")
+                show_summary_dis_all_kind = st.checkbox("Show Runs Summary", value=True, key="dis_all_kind_summary")
+                runs_count_dis_all_kind = st.checkbox("Show Runs Count", value=True, key="dis_all_kind_runs")
+                show_fours_sixes_dis_all_kind = st.checkbox("Show 4s and 6s", value=True, key="dis_all_kind_fs")
+                show_bowler_dis_all_kind = st.checkbox("Show Bowler", value=True, key="dis_all_kind_bowler")
+                show_control_dis_all_kind = st.checkbox("Show Control %", value=True, key="dis_all_kind_control")
+                show_prod_shot_dis_all_kind = st.checkbox("Show Productive Shot", value=True, key="dis_all_kind_prod")
+                show_overs_dis_all_kind = st.checkbox("Show Overs", value=True, key="dis_all_kind_overs")
+                show_phase_dis_all_kind = st.checkbox("Show Phase", value=True, key="dis_all_kind_phase")
+                show_bowl_type_dis_all_kind = st.checkbox("Show Bowl Type", value=True, key="dis_all_kind_bowl_type")
+                
+            try:
+                fig_dis_all_kind = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_all_kind else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=None,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_all_kind,
+                    show_summary=show_summary_dis_all_kind,
+                    runs_count=runs_count_dis_all_kind,
+                    show_fours_sixes=show_fours_sixes_dis_all_kind,
+                    show_control=show_control_dis_all_kind,
+                    show_prod_shot=show_prod_shot_dis_all_kind,
+                    show_bowler=show_bowler_dis_all_kind,
+                    show_overs=show_overs_dis_all_kind,
+                    show_phase=show_phase_dis_all_kind,
+                    show_bowl_type=show_bowl_type_dis_all_kind
+                )
+                with col2:
+                    st.pyplot(fig_dis_all_kind)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_all_kind = None
+            
+            with col3:
+                if fig_dis_all_kind:
+                    buf = BytesIO()
+                    fig_dis_all_kind.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_all_kind.png",
+                        mime="image/png",
+                        key="dis_all_kind_download"
+                    )
+
+        if "━━ Dis Plot - RAP" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Right Arm Pace</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_rap = st.checkbox("Show Plot Title", value=True, key="dis_rap_title")
+                show_summary_dis_rap = st.checkbox("Show Runs Summary", value=True, key="dis_rap_summary")
+                runs_count_dis_rap = st.checkbox("Show Runs Count", value=True, key="dis_rap_runs")
+                show_fours_sixes_dis_rap = st.checkbox("Show 4s and 6s", value=True, key="dis_rap_fs")
+                show_bowler_dis_rap = st.checkbox("Show Bowler", value=True, key="dis_rap_bowler")
+                show_control_dis_rap = st.checkbox("Show Control %", value=True, key="dis_rap_control")
+                show_prod_shot_dis_rap = st.checkbox("Show Productive Shot", value=True, key="dis_rap_prod")
+                show_overs_dis_rap = st.checkbox("Show Overs", value=True, key="dis_rap_overs")
+                show_phase_dis_rap = st.checkbox("Show Phase", value=True, key="dis_rap_phase")
+                show_bowl_type_dis_rap = st.checkbox("Show Bowl Type", value=True, key="dis_rap_bowl_type")
+                
+            try:
+                fig_dis_rap = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_rap else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Pace"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_rap,
+                    show_summary=show_summary_dis_rap,
+                    runs_count=runs_count_dis_rap,
+                    show_fours_sixes=show_fours_sixes_dis_rap,
+                    show_control=show_control_dis_rap,
+                    show_prod_shot=show_prod_shot_dis_rap,
+                    show_bowler=show_bowler_dis_rap,
+                    show_overs=show_overs_dis_rap,
+                    show_phase=show_phase_dis_rap,
+                    show_bowl_type=show_bowl_type_dis_rap
+                )
+                with col2:
+                    st.pyplot(fig_dis_rap)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_rap = None
+            
+            with col3:
+                if fig_dis_rap:
+                    buf = BytesIO()
+                    fig_dis_rap.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_rap.png",
+                        mime="image/png",
+                        key="dis_rap_download"
+                    )
+
+        if "━━ Dis Plot - RAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Right Arm Fast Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_rafs = st.checkbox("Show Plot Title", value=True, key="dis_rafs_title")
+                show_summary_dis_rafs = st.checkbox("Show Runs Summary", value=True, key="dis_rafs_summary")
+                runs_count_dis_rafs = st.checkbox("Show Runs Count", value=True, key="dis_rafs_runs")
+                show_fours_sixes_dis_rafs = st.checkbox("Show 4s and 6s", value=True, key="dis_rafs_fs")
+                show_bowler_dis_rafs = st.checkbox("Show Bowler", value=True, key="dis_rafs_bowler")
+                show_control_dis_rafs = st.checkbox("Show Control %", value=True, key="dis_rafs_control")
+                show_prod_shot_dis_rafs = st.checkbox("Show Productive Shot", value=True, key="dis_rafs_prod")
+                show_overs_dis_rafs = st.checkbox("Show Overs", value=True, key="dis_rafs_overs")
+                show_phase_dis_rafs = st.checkbox("Show Phase", value=True, key="dis_rafs_phase")
+                show_bowl_type_dis_rafs = st.checkbox("Show Bowl Type", value=True, key="dis_rafs_bowl_type")
+                
+            try:
+                fig_dis_rafs = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_rafs else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Fast Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_rafs,
+                    show_summary=show_summary_dis_rafs,
+                    runs_count=runs_count_dis_rafs,
+                    show_fours_sixes=show_fours_sixes_dis_rafs,
+                    show_control=show_control_dis_rafs,
+                    show_prod_shot=show_prod_shot_dis_rafs,
+                    show_bowler=show_bowler_dis_rafs,
+                    show_overs=show_overs_dis_rafs,
+                    show_phase=show_phase_dis_rafs,
+                    show_bowl_type=show_bowl_type_dis_rafs
+                )
+                with col2:
+                    st.pyplot(fig_dis_rafs)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_rafs = None
+            
+            with col3:
+                if fig_dis_rafs:
+                    buf = BytesIO()
+                    fig_dis_rafs.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_rafs.png",
+                        mime="image/png",
+                        key="dis_rafs_download"
+                    )
+
+        if "━━ Dis Plot - RAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Right Arm Wrist Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_raws = st.checkbox("Show Plot Title", value=True, key="dis_raws_title")
+                show_summary_dis_raws = st.checkbox("Show Runs Summary", value=True, key="dis_raws_summary")
+                runs_count_dis_raws = st.checkbox("Show Runs Count", value=True, key="dis_raws_runs")
+                show_fours_sixes_dis_raws = st.checkbox("Show 4s and 6s", value=True, key="dis_raws_fs")
+                show_bowler_dis_raws = st.checkbox("Show Bowler", value=True, key="dis_raws_bowler")
+                show_control_dis_raws = st.checkbox("Show Control %", value=True, key="dis_raws_control")
+                show_prod_shot_dis_raws = st.checkbox("Show Productive Shot", value=True, key="dis_raws_prod")
+                show_overs_dis_raws = st.checkbox("Show Overs", value=True, key="dis_raws_overs")
+                show_phase_dis_raws = st.checkbox("Show Phase", value=True, key="dis_raws_phase")
+                show_bowl_type_dis_raws = st.checkbox("Show Bowl Type", value=True, key="dis_raws_bowl_type")
+                
+            try:
+                fig_dis_raws = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_raws else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Right Arm Wrist Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_raws,
+                    show_summary=show_summary_dis_raws,
+                    runs_count=runs_count_dis_raws,
+                    show_fours_sixes=show_fours_sixes_dis_raws,
+                    show_control=show_control_dis_raws,
+                    show_prod_shot=show_prod_shot_dis_raws,
+                    show_bowler=show_bowler_dis_raws,
+                    show_overs=show_overs_dis_raws,
+                    show_phase=show_phase_dis_raws,
+                    show_bowl_type=show_bowl_type_dis_raws
+                )
+                with col2:
+                    st.pyplot(fig_dis_raws)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_raws = None
+            
+            with col3:
+                if fig_dis_raws:
+                    buf = BytesIO()
+                    fig_dis_raws.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_raws.png",
+                        mime="image/png",
+                        key="dis_raws_download"
+                    )
+
+        if "━━ Dis Plot - LAP" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Left Arm Pace</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_lap = st.checkbox("Show Plot Title", value=True, key="dis_lap_title")
+                show_summary_dis_lap = st.checkbox("Show Runs Summary", value=True, key="dis_lap_summary")
+                runs_count_dis_lap = st.checkbox("Show Runs Count", value=True, key="dis_lap_runs")
+                show_fours_sixes_dis_lap = st.checkbox("Show 4s and 6s", value=True, key="dis_lap_fs")
+                show_bowler_dis_lap = st.checkbox("Show Bowler", value=True, key="dis_lap_bowler")
+                show_control_dis_lap = st.checkbox("Show Control %", value=True, key="dis_lap_control")
+                show_prod_shot_dis_lap = st.checkbox("Show Productive Shot", value=True, key="dis_lap_prod")
+                show_overs_dis_lap = st.checkbox("Show Overs", value=True, key="dis_lap_overs")
+                show_phase_dis_lap = st.checkbox("Show Phase", value=True, key="dis_lap_phase")
+                show_bowl_type_dis_lap = st.checkbox("Show Bowl Type", value=True, key="dis_lap_bowl_type")
+                
+            try:
+                fig_dis_lap = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_lap else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Pace"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_lap,
+                    show_summary=show_summary_dis_lap,
+                    runs_count=runs_count_dis_lap,
+                    show_fours_sixes=show_fours_sixes_dis_lap,
+                    show_control=show_control_dis_lap,
+                    show_prod_shot=show_prod_shot_dis_lap,
+                    show_bowler=show_bowler_dis_lap,
+                    show_overs=show_overs_dis_lap,
+                    show_phase=show_phase_dis_lap,
+                    show_bowl_type=show_bowl_type_dis_lap
+                )
+                with col2:
+                    st.pyplot(fig_dis_lap)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_lap = None
+            
+            with col3:
+                if fig_dis_lap:
+                    buf = BytesIO()
+                    fig_dis_lap.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_lap.png",
+                        mime="image/png",
+                        key="dis_lap_download"
+                    )
+
+        if "━━ Dis Plot - LAFS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Left Arm Fast Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_lafs = st.checkbox("Show Plot Title", value=True, key="dis_lafs_title")
+                show_summary_dis_lafs = st.checkbox("Show Runs Summary", value=True, key="dis_lafs_summary")
+                runs_count_dis_lafs = st.checkbox("Show Runs Count", value=True, key="dis_lafs_runs")
+                show_fours_sixes_dis_lafs = st.checkbox("Show 4s and 6s", value=True, key="dis_lafs_fs")
+                show_bowler_dis_lafs = st.checkbox("Show Bowler", value=True, key="dis_lafs_bowler")
+                show_control_dis_lafs = st.checkbox("Show Control %", value=True, key="dis_lafs_control")
+                show_prod_shot_dis_lafs = st.checkbox("Show Productive Shot", value=True, key="dis_lafs_prod")
+                show_overs_dis_lafs = st.checkbox("Show Overs", value=True, key="dis_lafs_overs")
+                show_phase_dis_lafs = st.checkbox("Show Phase", value=True, key="dis_lafs_phase")
+                show_bowl_type_dis_lafs = st.checkbox("Show Bowl Type", value=True, key="dis_lafs_bowl_type")
+                
+            try:
+                fig_dis_lafs = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_lafs else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Fast Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_lafs,
+                    show_summary=show_summary_dis_lafs,
+                    runs_count=runs_count_dis_lafs,
+                    show_fours_sixes=show_fours_sixes_dis_lafs,
+                    show_control=show_control_dis_lafs,
+                    show_prod_shot=show_prod_shot_dis_lafs,
+                    show_bowler=show_bowler_dis_lafs,
+                    show_overs=show_overs_dis_lafs,
+                    show_phase=show_phase_dis_lafs,
+                    show_bowl_type=show_bowl_type_dis_lafs
+                )
+                with col2:
+                    st.pyplot(fig_dis_lafs)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_lafs = None
+            
+            with col3:
+                if fig_dis_lafs:
+                    buf = BytesIO()
+                    fig_dis_lafs.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_lafs.png",
+                        mime="image/png",
+                        key="dis_lafs_download"
+                    )
+
+        if "━━ Dis Plot - LAWS" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Left Arm Wrist Spin</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_laws = st.checkbox("Show Plot Title", value=True, key="dis_laws_title")
+                show_summary_dis_laws = st.checkbox("Show Runs Summary", value=True, key="dis_laws_summary")
+                runs_count_dis_laws = st.checkbox("Show Runs Count", value=True, key="dis_laws_runs")
+                show_fours_sixes_dis_laws = st.checkbox("Show 4s and 6s", value=True, key="dis_laws_fs")
+                show_bowler_dis_laws = st.checkbox("Show Bowler", value=True, key="dis_laws_bowler")
+                show_control_dis_laws = st.checkbox("Show Control %", value=True, key="dis_laws_control")
+                show_prod_shot_dis_laws = st.checkbox("Show Productive Shot", value=True, key="dis_laws_prod")
+                show_overs_dis_laws = st.checkbox("Show Overs", value=True, key="dis_laws_overs")
+                show_phase_dis_laws = st.checkbox("Show Phase", value=True, key="dis_laws_phase")
+                show_bowl_type_dis_laws = st.checkbox("Show Bowl Type", value=True, key="dis_laws_bowl_type")
+                
+            try:
+                fig_dis_laws = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_laws else [],
+                    bat_hand=bat_hand,
+                    bowl_type=["Left Arm Wrist Spin"],
+                    bowl_kind=bowl_kind,
+                    bowl_arm=bowl_arm,
+                    show_title=show_title_dis_laws,
+                    show_summary=show_summary_dis_laws,
+                    runs_count=runs_count_dis_laws,
+                    show_fours_sixes=show_fours_sixes_dis_laws,
+                    show_control=show_control_dis_laws,
+                    show_prod_shot=show_prod_shot_dis_laws,
+                    show_bowler=show_bowler_dis_laws,
+                    show_overs=show_overs_dis_laws,
+                    show_phase=show_phase_dis_laws,
+                    show_bowl_type=show_bowl_type_dis_laws
+                )
+                with col2:
+                    st.pyplot(fig_dis_laws)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_laws = None
+            
+            with col3:
+                if fig_dis_laws:
+                    buf = BytesIO()
+                    fig_dis_laws.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_laws.png",
+                        mime="image/png",
+                        key="dis_laws_download"
+                    )
+
+        if "━━ Dis Plot - All Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - All Bowling Arms</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_all_arm = st.checkbox("Show Plot Title", value=True, key="dis_all_arm_title")
+                show_summary_dis_all_arm = st.checkbox("Show Runs Summary", value=True, key="dis_all_arm_summary")
+                runs_count_dis_all_arm = st.checkbox("Show Runs Count", value=True, key="dis_all_arm_runs")
+                show_fours_sixes_dis_all_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_all_arm_fs")
+                show_bowler_dis_all_arm = st.checkbox("Show Bowler", value=True, key="dis_all_arm_bowler")
+                show_control_dis_all_arm = st.checkbox("Show Control %", value=True, key="dis_all_arm_control")
+                show_prod_shot_dis_all_arm = st.checkbox("Show Productive Shot", value=True, key="dis_all_arm_prod")
+                show_overs_dis_all_arm = st.checkbox("Show Overs", value=True, key="dis_all_arm_overs")
+                show_phase_dis_all_arm = st.checkbox("Show Phase", value=True, key="dis_all_arm_phase")
+                show_bowl_type_dis_all_arm = st.checkbox("Show Bowl Type", value=True, key="dis_all_arm_bowl_type")
+                
+            try:
+                fig_dis_all_arm = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_all_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=None,
+                    show_title=show_title_dis_all_arm,
+                    show_summary=show_summary_dis_all_arm,
+                    runs_count=runs_count_dis_all_arm,
+                    show_fours_sixes=show_fours_sixes_dis_all_arm,
+                    show_control=show_control_dis_all_arm,
+                    show_prod_shot=show_prod_shot_dis_all_arm,
+                    show_bowler=show_bowler_dis_all_arm,
+                    show_overs=show_overs_dis_all_arm,
+                    show_phase=show_phase_dis_all_arm,
+                    show_bowl_type=show_bowl_type_dis_all_arm
+                )
+                with col2:
+                    st.pyplot(fig_dis_all_arm)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_all_arm = None
+            
+            with col3:
+                if fig_dis_all_arm:
+                    buf = BytesIO()
+                    fig_dis_all_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_all_arm.png",
+                        mime="image/png",
+                        key="dis_all_arm_download"
+                    )
+
+        if "━━ Dis Plot - Right Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Right Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_right_arm = st.checkbox("Show Plot Title", value=True, key="dis_right_arm_title")
+                show_summary_dis_right_arm = st.checkbox("Show Runs Summary", value=True, key="dis_right_arm_summary")
+                runs_count_dis_right_arm = st.checkbox("Show Runs Count", value=True, key="dis_right_arm_runs")
+                show_fours_sixes_dis_right_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_right_arm_fs")
+                show_bowler_dis_right_arm = st.checkbox("Show Bowler", value=True, key="dis_right_arm_bowler")
+                show_control_dis_right_arm = st.checkbox("Show Control %", value=True, key="dis_right_arm_control")
+                show_prod_shot_dis_right_arm = st.checkbox("Show Productive Shot", value=True, key="dis_right_arm_prod")
+                show_overs_dis_right_arm = st.checkbox("Show Overs", value=True, key="dis_right_arm_overs")
+                show_phase_dis_right_arm = st.checkbox("Show Phase", value=True, key="dis_right_arm_phase")
+                show_bowl_type_dis_right_arm = st.checkbox("Show Bowl Type", value=True, key="dis_right_arm_bowl_type")
+                
+            try:
+                fig_dis_right_arm = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_right_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Right Arm"],
+                    show_title=show_title_dis_right_arm,
+                    show_summary=show_summary_dis_right_arm,
+                    runs_count=runs_count_dis_right_arm,
+                    show_fours_sixes=show_fours_sixes_dis_right_arm,
+                    show_control=show_control_dis_right_arm,
+                    show_prod_shot=show_prod_shot_dis_right_arm,
+                    show_bowler=show_bowler_dis_right_arm,
+                    show_overs=show_overs_dis_right_arm,
+                    show_phase=show_phase_dis_right_arm,
+                    show_bowl_type=show_bowl_type_dis_right_arm
+                )
+                with col2:
+                    st.pyplot(fig_dis_right_arm)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_right_arm = None
+            
+            with col3:
+                if fig_dis_right_arm:
+                    buf = BytesIO()
+                    fig_dis_right_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_right_arm.png",
+                        mime="image/png",
+                        key="dis_right_arm_download"
+                    )
+
+        if "━━ Dis Plot - Left Arm" in plot_types:
+            st.markdown("<h2 style='text-align: center;'>Dismissal Plot - Left Arm</h2>", unsafe_allow_html=True)
+            col1, col2, col3 = st.columns([2, 2, 2])
+            
+            with col1:
+                st.markdown("## Customize Plot Info")
+                show_title_dis_left_arm = st.checkbox("Show Plot Title", value=True, key="dis_left_arm_title")
+                show_summary_dis_left_arm = st.checkbox("Show Runs Summary", value=True, key="dis_left_arm_summary")
+                runs_count_dis_left_arm = st.checkbox("Show Runs Count", value=True, key="dis_left_arm_runs")
+                show_fours_sixes_dis_left_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_left_arm_fs")
+                show_bowler_dis_left_arm = st.checkbox("Show Bowler", value=True, key="dis_left_arm_bowler")
+                show_control_dis_left_arm = st.checkbox("Show Control %", value=True, key="dis_left_arm_control")
+                show_prod_shot_dis_left_arm = st.checkbox("Show Productive Shot", value=True, key="dis_left_arm_prod")
+                show_overs_dis_left_arm = st.checkbox("Show Overs", value=True, key="dis_left_arm_overs")
+                show_phase_dis_left_arm = st.checkbox("Show Phase", value=True, key="dis_left_arm_phase")
+                show_bowl_type_dis_left_arm = st.checkbox("Show Bowl Type", value=True, key="dis_left_arm_bowl_type")
+                
+            try:
+                fig_dis_left_arm = dismissal_plot(
+                    df=df,
+                    player_name=selected_player_value,
+                    pid=selected_pid,
+                    inns=selected_inns,
+                    mat_num=selected_mat_num,
+                    team_bat=selected_team_value,
+                    team_bowl=selected_team_bowl_value,
+                    bowler_name=bowler_name,
+                    bowler_id=bowler_id,
+                    competition=selected_competition_value,
+                    transparent=False,
+                    over_values=over_values,
+                    phase=phase,
+                    ground=selected_ground,
+                    mcode=selected_mcode,
+                    date_from=date_from,
+                    date_to=date_to,
+                    title_components=title_components if show_title_dis_left_arm else [],
+                    bat_hand=bat_hand,
+                    bowl_type=bowl_type,
+                    bowl_kind=bowl_kind,
+                    bowl_arm=["Left Arm"],
+                    show_title=show_title_dis_left_arm,
+                    show_summary=show_summary_dis_left_arm,
+                    runs_count=runs_count_dis_left_arm,
+                    show_fours_sixes=show_fours_sixes_dis_left_arm,
+                    show_control=show_control_dis_left_arm,
+                    show_prod_shot=show_prod_shot_dis_left_arm,
+                    show_bowler=show_bowler_dis_left_arm,
+                    show_overs=show_overs_dis_left_arm,
+                    show_phase=show_phase_dis_left_arm,
+                    show_bowl_type=show_bowl_type_dis_left_arm
+                )
+                with col2:
+                    st.pyplot(fig_dis_left_arm)
+            except Exception as e:
+                st.error(f"Error generating dismissal plot: {str(e)}")
+                fig_dis_left_arm = None
+            
+            with col3:
+                if fig_dis_left_arm:
+                    buf = BytesIO()
+                    fig_dis_left_arm.savefig(buf, format="png", transparent=False, dpi=300, bbox_inches='tight')
+                    buf.seek(0)
+                    st.download_button(
+                        label="📅 Download Plot as PNG",
+                        data=buf.getvalue(),
+                        file_name=f"{selected_player}_dis_left_arm.png",
+                        mime="image/png",
+                        key="dis_left_arm_download"
+                    )
+
         # ZIP Download Section
         # After all 8 plot sections
-    # ===== DOWNLOAD ALL PLOTS AS ZIP =====
+    # ===== DOWNLOAD ALL PLOTS AS ZIP =====""
     if plot_types:
         st.markdown("---")
         st.markdown("### 📦 Download All Generated Plots")
@@ -6343,6 +7571,57 @@ if df is not None:
         
         if fig_wzn_left_arm is not None:
             all_figures[f"{selected_player}_wzn_left_arm.png"] = fig_wzn_left_arm
+        
+        if fig_dis_all_type is not None:
+            all_figures[f"{selected_player}_dis_all_type.png"] = fig_dis_all_type
+        
+        if fig_dis_pace is not None:
+            all_figures[f"{selected_player}_dis_pace.png"] = fig_dis_pace
+        
+        if fig_dis_spin is not None:
+            all_figures[f"{selected_player}_dis_spin.png"] = fig_dis_spin
+        
+        if fig_dis_all_phase is not None:
+            all_figures[f"{selected_player}_dis_all_phase.png"] = fig_dis_all_phase
+        
+        if fig_dis_pp is not None:
+            all_figures[f"{selected_player}_dis_pp.png"] = fig_dis_pp
+        
+        if fig_dis_mid is not None:
+            all_figures[f"{selected_player}_dis_mid.png"] = fig_dis_mid
+        
+        if fig_dis_slog is not None:
+            all_figures[f"{selected_player}_dis_slog.png"] = fig_dis_slog
+        
+        if fig_dis_all_kind is not None:
+            all_figures[f"{selected_player}_dis_all_kind.png"] = fig_dis_all_kind
+        
+        if fig_dis_rap is not None:
+            all_figures[f"{selected_player}_dis_rap.png"] = fig_dis_rap
+        
+        if fig_dis_rafs is not None:
+            all_figures[f"{selected_player}_dis_rafs.png"] = fig_dis_rafs
+        
+        if fig_dis_raws is not None:
+            all_figures[f"{selected_player}_dis_raws.png"] = fig_dis_raws
+        
+        if fig_dis_lap is not None:
+            all_figures[f"{selected_player}_dis_lap.png"] = fig_dis_lap
+        
+        if fig_dis_lafs is not None:
+            all_figures[f"{selected_player}_dis_lafs.png"] = fig_dis_lafs
+        
+        if fig_dis_laws is not None:
+            all_figures[f"{selected_player}_dis_laws.png"] = fig_dis_laws
+        
+        if fig_dis_all_arm is not None:
+            all_figures[f"{selected_player}_dis_all_arm.png"] = fig_dis_all_arm
+        
+        if fig_dis_right_arm is not None:
+            all_figures[f"{selected_player}_dis_right_arm.png"] = fig_dis_right_arm
+        
+        if fig_dis_left_arm is not None:
+            all_figures[f"{selected_player}_dis_left_arm.png"] = fig_dis_left_arm
         
         if all_figures:
             player_text = selected_player if selected_player != "All" else "AllPlayers"

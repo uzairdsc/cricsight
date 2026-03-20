@@ -126,8 +126,8 @@ def wagon_zone_plot(
         local_df = local_df[local_df['ground'].isin(ground)]
 
 
-    if bat_hand is not None:
-        local_df = local_df[local_df['bat_hand'] == bat_hand]
+    if bat_hand is not None and len(bat_hand) > 0:
+        local_df = local_df[local_df['bat_hand'].isin(bat_hand)]
 
     # updated change of multiselect
     if bowl_type is not None and len(bowl_type) > 0:
@@ -284,13 +284,14 @@ def wagon_zone_plot(
         degree = (np.degrees(angle) + 360) % 360
         return int(degree // 45)
 
-    player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
-    # if not player_data.empty:
-    #     player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
-    # else:
-    #     player_data['quadrant'] = pd.Series(dtype='int')
-    quadrant_totals = [player_data[player_data['quadrant'] == q][score_col].sum() for q in range(8)]
-    total_score = sum(quadrant_totals)
+    # ✅ CHECK IF DATA IS EMPTY BEFORE ASSIGNING QUADRANT
+    if not player_data.empty:
+        player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
+        quadrant_totals = [player_data[player_data['quadrant'] == q][score_col].sum() for q in range(8)]
+        total_score = sum(quadrant_totals)
+    else:
+        quadrant_totals = [0] * 8
+        total_score = 0
 
     # Plot
     fig, ax = plt.subplots(figsize=(7, 7), facecolor='none' if transparent else 'white')
@@ -308,8 +309,8 @@ def wagon_zone_plot(
         y_end = center_y + 180 * np.sin(rad)
         ax.plot([center_x, x_end], [center_y, y_end], color='#8c8c8c', linewidth=1.3)
 
-    # Highlight Top Zones
-    top_quadrants = sorted(range(8), key=lambda i: quadrant_totals[i], reverse=True)[:2]
+    # ✅ HIGHLIGHT TOP ZONES ONLY IF THEY HAVE RUNS > 0
+    top_quadrants = [i for i in sorted(range(8), key=lambda i: quadrant_totals[i], reverse=True) if quadrant_totals[i] > 0][:2]
     rank_color = {top_quadrants[i]: 1.0 - i * 0.3 for i in range(len(top_quadrants))}
     cmap = cm.get_cmap('Blues')
 
@@ -324,6 +325,10 @@ def wagon_zone_plot(
         ax.text(label_x, label_y, f"{quadrant_totals[i]} runs", fontsize=10.5,
                 color='black' if i in top_quadrants else '#000',
                 ha='center', va='center',fontweight = 'bold')
+
+    # ✅ ADD "NO SHOTS" MESSAGE IF DATA IS EMPTY
+    if player_data.empty:
+        ax.text(220, 410, "No shots for selected filter(s)", ha='center', fontsize=12, color='red', fontweight='bold')
 
     ax.set_xlim(-20, 470)
     ax.set_ylim(-50, 370)
@@ -672,8 +677,8 @@ def wagon_zone_plot_descriptive(
     if ground is not None and len(ground) > 0:
         local_df = local_df[local_df['ground'].isin(ground)]
 
-    if bat_hand is not None:
-        local_df = local_df[local_df['bat_hand'] == bat_hand]
+    if bat_hand is not None and len(bat_hand) > 0:
+        local_df = local_df[local_df['bat_hand'].isin(bat_hand)]
 
     # if bowl_type is not None:
     #     local_df = local_df[local_df['bowl_type'] == bowl_type]
@@ -781,8 +786,8 @@ def wagon_zone_plot_descriptive(
             'isSix': 'sum'
         }).sort_values(by='score', ascending=False) #score
     else:
-        valid_balls = local_df[local_df['wide'] == 0]
-        # valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
+        # valid_balls = local_df[local_df['wide'] == 0]
+        valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
         # valid_shots = local_df[
         #     ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0))
         # ].dropna(subset=['wagonX', 'wagonY'])
@@ -861,13 +866,23 @@ def wagon_zone_plot_descriptive(
         degree = (np.degrees(angle) + 360) % 360
         return int(degree // 45)
 
-    player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
-    # if not player_data.empty:
-    #     player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
-    # else:
-    #     player_data['quadrant'] = pd.Series(dtype='int')
-    quadrant_totals = [player_data[player_data['quadrant'] == q][score_col].sum() for q in range(8)]
-    total_score = sum(quadrant_totals)
+    # player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
+    # # if not player_data.empty:
+    # #     player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
+    # # else:
+    # #     player_data['quadrant'] = pd.Series(dtype='int')
+    # quadrant_totals = [player_data[player_data['quadrant'] == q][score_col].sum() for q in range(8)]
+    # total_score = sum(quadrant_totals)
+
+    # ✅ CHECK IF DATA IS EMPTY BEFORE ASSIGNING QUADRANT
+    if not player_data.empty:
+        player_data['quadrant'] = player_data.apply(lambda row: get_quadrant(row['wagonX'], row['wagonY']), axis=1)
+        quadrant_totals = [player_data[player_data['quadrant'] == q][score_col].sum() for q in range(8)]
+        total_score = sum(quadrant_totals)
+    else:
+        # Handle empty data case - initialize empty quadrant data
+        quadrant_totals = [0] * 8
+        total_score = 0
 
     # Plot
     fig, ax = plt.subplots(figsize=(7, 7), facecolor='none' if transparent else 'white')
@@ -885,8 +900,8 @@ def wagon_zone_plot_descriptive(
         y_end = center_y + 180 * np.sin(rad)
         ax.plot([center_x, x_end], [center_y, y_end], color='#8c8c8c', linewidth=1.3)
 
-    # Highlight Top Zones
-    top_quadrants = sorted(range(8), key=lambda i: quadrant_totals[i], reverse=True)[:2]
+    # ✅ HIGHLIGHT TOP ZONES ONLY IF THEY HAVE RUNS > 0
+    top_quadrants = [i for i in sorted(range(8), key=lambda i: quadrant_totals[i], reverse=True) if quadrant_totals[i] > 0][:2]
     rank_color = {top_quadrants[i]: 1.0 - i * 0.3 for i in range(len(top_quadrants))}
     cmap = cm.get_cmap('Blues')
 
@@ -901,6 +916,10 @@ def wagon_zone_plot_descriptive(
         ax.text(label_x, label_y, f"{quadrant_totals[i]} runs", fontsize=10.5,
                 color='black' if i in top_quadrants else '#000',
                 ha='center', va='center',fontweight = 'bold')
+
+    # ✅ ADD "NO SHOTS" MESSAGE IF DATA IS EMPTY
+    if player_data.empty:
+        ax.text(180, 380, "No shots for selected filter(s)", ha='center', fontsize=13, color='red', fontweight='bold')
 
     # ax.set_xlim(-20, 470)
     # ax.set_ylim(-50, 370)
@@ -1081,7 +1100,7 @@ def wagon_zone_plot_descriptive(
             ax.text(180, 475, f"{total_score} ({balls_faced} balls)",
                 fontsize=11, ha='center', fontweight='bold')
         else:
-            ax.text(50, 475, f"{total_score} ({balls_faced} balls)",
+            ax.text(30, 475, f"{total_score} ({balls_faced} balls)",
                 fontsize=11, ha='center', fontweight='bold')
         # ax.text(50, 475, f"{total_score} ({balls_faced} balls)",
         #         fontsize=11, ha='center', fontweight='bold')
@@ -1172,7 +1191,7 @@ def wagon_zone_plot_descriptive(
             ax.text(180, 520, f"Phase: {phase_text}", 
                 fontsize=10, ha='center', color='crimson', fontweight='bold')
         else:
-            ax.text(220, 520, f"Phase: {phase_text}", 
+            ax.text(240, 520, f"Phase: {phase_text}", 
                 fontsize=10, ha='center', color='crimson', fontweight='bold')
 
         # ax.text(220, 520, f"Phase: {phase_text}", 

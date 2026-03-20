@@ -114,8 +114,10 @@ def dismissal_plot(
         local_df = local_df[local_df['ground'].isin(ground)]
 
 
-    if bat_hand is not None:
-        local_df = local_df[local_df['bat_hand'] == bat_hand]
+    # if bat_hand is not None:
+    #     local_df = local_df[local_df['bat_hand'] == bat_hand]
+    if bat_hand is not None and len(bat_hand) > 0:
+        local_df = local_df[local_df['bat_hand'].isin(bat_hand)]
 
     # if bowl_type is not None:
     #     local_df = local_df[local_df['bowl_type'] == bowl_type]
@@ -511,7 +513,7 @@ def dismissal_plot(
         )
     else:
         # print("DEBUG: player_data_sorted is EMPTY - showing error message")
-        ax.text(180, 390, "No dismissals for selected filters", ha='center', fontsize=12, color='red', fontweight='bold')
+        ax.text(180, 390, "No dismissals for selected filter(s)", ha='center', fontsize=12, color='red', fontweight='bold')
 
     # plot the point (dot) at batter position which is at 180, 164, not rectangle only dot
     #batter position dot

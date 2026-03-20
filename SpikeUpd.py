@@ -121,8 +121,8 @@ def spike_graph_plot(
         local_df = local_df[local_df['mcode'].isin(mcode)]
 
 
-    if bat_hand is not None:
-        local_df = local_df[local_df['bat_hand'] == bat_hand]
+    if bat_hand is not None and len(bat_hand) > 0:
+        local_df = local_df[local_df['bat_hand'].isin(bat_hand)]
 
     # updated change of multiselect
     if bowl_type is not None and len(bowl_type) > 0:
@@ -466,7 +466,7 @@ def spike_graph_plot(
                 color=row['color'], linewidth=lw, alpha=0.8, zorder=1
             )
     else:
-        ax.text(220, 410, "No shots for selected run(s)", ha='center', fontsize=12, color='red', fontweight='bold')
+        ax.text(220, 410, "No shots for selected filter(s)", ha='center', fontsize=12, color='red', fontweight='bold')
     # Draw lines
     # for _, row in player_data.iterrows():
     #     ax.plot([center_x, row['wagonX']], [center_y, row['wagonY']],
@@ -909,8 +909,8 @@ def spike_graph_plot_descriptive(
         local_df = local_df[local_df['ground'].isin(ground)]
 
 
-    if bat_hand is not None:
-        local_df = local_df[local_df['bat_hand'] == bat_hand]
+    if bat_hand is not None and len(bat_hand) > 0:
+        local_df = local_df[local_df['bat_hand'].isin(bat_hand)]
 
     # if bowl_type is not None:
     #     local_df = local_df[local_df['bowl_type'] == bowl_type]
@@ -1143,7 +1143,8 @@ def spike_graph_plot_descriptive(
         total_score = valid_shots['batruns'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
-        balls_faced = player_data.shape[0]
+        balls_faced = valid_shots.shape[0]
+        # balls_faced = player_data.shape[0]
 
     # Guard clause: check if valid_balls has data before calculating control_pct
     if len(valid_balls) == 0:
@@ -1264,7 +1265,7 @@ def spike_graph_plot_descriptive(
                 color=row['color'], linewidth=lw, alpha=0.8, zorder=1
             )
     else:
-        ax.text(180, 390, "No shots for selected run(s)", ha='center', fontsize=12, color='red', fontweight='bold')
+        ax.text(180, 390, "No shots for selected filter(s)", ha='center', fontsize=12, color='red', fontweight='bold')
     # Draw lines
     # for _, row in player_data.iterrows():
     #     ax.plot([center_x, row['wagonX']], [center_y, row['wagonY']],
@@ -1499,7 +1500,7 @@ def spike_graph_plot_descriptive(
              ax.text(180, 499, f"{total_score} ({balls_faced} balls)",
                 fontsize=11, ha='center', fontweight='bold')
         else:
-            ax.text(40, 499, f"{total_score} ({balls_faced} balls)",
+            ax.text(30, 499, f"{total_score} ({balls_faced} balls)",
                     fontsize=11, ha='center', fontweight='bold')
         
     if show_fours_sixes:
