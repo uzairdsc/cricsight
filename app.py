@@ -8,6 +8,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError
 import zipfile
 import os
+import time
 
 # Set your custom password here
 APP_PASSWORD = st.secrets["auth"]["password"]
@@ -34,7 +35,7 @@ from WagonUpd import wagon_zone_plot, wagon_zone_plot_descriptive
 from DismissalPlot import dismissal_plot
 
 st.set_page_config(page_title="PSL Cricket Wagon Wheel App" ,page_icon="🏏" ,layout="wide")
-st.title("🏏 PSL - Wagon Wheel Analysis Dashboard")
+st.title("🏏 PSL - Wagons Analysis Dashboard")
 
 
 def normalize_data(df):
@@ -133,6 +134,43 @@ df = st.session_state.df
 if 'title_components' not in st.session_state:
     st.session_state.title_components = ['title', 'filters']
 title_components = st.session_state.title_components
+
+# ===== INITIALIZE FILTER SESSION STATE (before batch section) =====
+# This prevents filters from being overwritten when main app logic reruns
+if 'filter_competition' not in st.session_state:
+    st.session_state['filter_competition'] = None
+if 'filter_team_bat' not in st.session_state:
+    st.session_state['filter_team_bat'] = None
+if 'filter_team_bowl' not in st.session_state:
+    st.session_state['filter_team_bowl'] = None
+if 'filter_inns' not in st.session_state:
+    st.session_state['filter_inns'] = None
+if 'filter_match' not in st.session_state:
+    st.session_state['filter_match'] = None
+if 'filter_bowler' not in st.session_state:
+    st.session_state['filter_bowler'] = None
+if 'filter_bowler_id' not in st.session_state:
+    st.session_state['filter_bowler_id'] = None
+if 'filter_bat_hand' not in st.session_state:
+    st.session_state['filter_bat_hand'] = None
+if 'filter_mcode' not in st.session_state:
+    st.session_state['filter_mcode'] = None
+if 'filter_ground' not in st.session_state:
+    st.session_state['filter_ground'] = None
+if 'filter_bowl_type' not in st.session_state:
+    st.session_state['filter_bowl_type'] = None
+if 'filter_bowl_kind' not in st.session_state:
+    st.session_state['filter_bowl_kind'] = None
+if 'filter_bowl_arm' not in st.session_state:
+    st.session_state['filter_bowl_arm'] = None
+if 'filter_over_values' not in st.session_state:
+    st.session_state['filter_over_values'] = None
+if 'filter_phase' not in st.session_state:
+    st.session_state['filter_phase'] = None
+if 'filter_phase_display' not in st.session_state:
+    st.session_state['filter_phase_display'] = []
+if 'date_range_filter' not in st.session_state:
+    st.session_state['date_range_filter'] = (None, None)
 
 if data_source == "Upload Data File":
     uploaded_file = st.sidebar.file_uploader("Upload CSV File", type=["csv"])
@@ -350,7 +388,8 @@ if st.session_state.df is not None:
                     # Plot type selection
                     batch_plot_types = st.sidebar.multiselect(
                         "Select plots to generate:",
-                    ["Wagon Wheel Plot", "Wagon Wheel", "Wagon Zone Plot", "Wagon Zone", "Dismissal Plot"],
+                    ["Wagon Wheel","Wagon Zone", "Dismissal Plot"],
+                    # ["Wagon Wheel R", "Wagon Wheel", "Wagon Zone R", "Wagon Zone", "Dismissal Plot"],
                     )
                     
                     # Transparent option
@@ -369,7 +408,19 @@ if st.session_state.df is not None:
                     )
                     
                     # Generate button
-                    if st.sidebar.button("🚀 Generate Batch Plots", type="primary", key="batch_generate_btn"):
+                    col_gen, col_term = st.sidebar.columns(2)
+                    with col_gen:
+                        generate_batch = st.button("🚀 Generate Batch Plots", type="primary", key="batch_generate_btn", use_container_width=True)
+                    with col_term:
+                        clear_batch = st.button("🛑 Clear Job", key="batch_clear_btn", use_container_width=True)
+                    
+                    # Handle clear batch button
+                    if clear_batch:
+                        st.session_state['batch_job_cleared'] = True
+                        st.sidebar.info("✓ Batch job cleared. You can start a new one.")
+                        st.rerun()
+                    
+                    if generate_batch:
                         if batch_plot_types:
                             # Ensure date column is datetime format
                             if 'date' in df.columns and df['date'].dtype == 'object':
@@ -408,23 +459,50 @@ if st.session_state.df is not None:
                                     # Set filters - get values from session state if apply_filters is checked
                                     if apply_filters_to_batch:
                                         # Get filter values from session state (these are set in main app)
-                                        filter_comp = st.session_state.get('filter_competition', 'All')
-                                        filter_comp_val = None if filter_comp == "All" else filter_comp
+                                        filter_comp = st.session_state.get('filter_competition', None)
+                                        filter_comp_val = filter_comp
                                         
-                                        filter_team_bat = st.session_state.get('filter_team_bat', 'All')
-                                        filter_team_bat_val = None if filter_team_bat == "All" else filter_team_bat
+                                        filter_team_bat = st.session_state.get('filter_team_bat', None)
+                                        filter_team_bat_val = filter_team_bat
                                         
-                                        filter_team_bowl = st.session_state.get('filter_team_bowl', 'All')
-                                        filter_team_bowl_val = None if filter_team_bowl == "All" else filter_team_bowl
+                                        filter_team_bowl = st.session_state.get('filter_team_bowl', None)
+                                        filter_team_bowl_val = filter_team_bowl
                                         
-                                        filter_inns = st.session_state.get('filter_inns', 'All')
-                                        filter_inns_val = None if filter_inns == "All" else int(filter_inns)
+                                        filter_inns = st.session_state.get('filter_inns', None)
+                                        filter_inns_val = filter_inns if filter_inns else None
                                         
-                                        filter_match = st.session_state.get('filter_match', 'All')
-                                        filter_match_val = None if filter_match == "All" else int(filter_match)
+                                        filter_match = st.session_state.get('filter_match', None)
+                                        filter_match_val = filter_match if filter_match else None
                                         
-                                        filter_bowler = st.session_state.get('filter_bowler', 'All')
-                                        filter_bowler_val = None if filter_bowler == "All" else filter_bowler
+                                        filter_bowler = st.session_state.get('filter_bowler', None)
+                                        filter_bowler_val = filter_bowler
+                                        
+                                        filter_bowler_id = st.session_state.get('filter_bowler_id', None)
+                                        filter_bowler_id_val = filter_bowler_id
+                                        
+                                        filter_bat_hand = st.session_state.get('filter_bat_hand', None)
+                                        filter_bat_hand_val = filter_bat_hand
+                                        
+                                        filter_mcode = st.session_state.get('filter_mcode', [])
+                                        filter_mcode_val = filter_mcode if filter_mcode else None
+                                        
+                                        filter_ground = st.session_state.get('filter_ground', [])
+                                        filter_ground_val = filter_ground if filter_ground else None
+                                        
+                                        filter_bowl_type = st.session_state.get('filter_bowl_type', [])
+                                        filter_bowl_type_val = filter_bowl_type if filter_bowl_type else None
+                                        
+                                        filter_bowl_kind = st.session_state.get('filter_bowl_kind', [])
+                                        filter_bowl_kind_val = filter_bowl_kind if filter_bowl_kind else None
+                                        
+                                        filter_bowl_arm = st.session_state.get('filter_bowl_arm', [])
+                                        filter_bowl_arm_val = filter_bowl_arm if filter_bowl_arm else None
+                                        
+                                        filter_over_values = st.session_state.get('filter_over_values', [])
+                                        filter_over_values_val = filter_over_values if filter_over_values else None
+                                        
+                                        filter_phase = st.session_state.get('filter_phase', [])
+                                        filter_phase_val = filter_phase if filter_phase else None
                                         
                                         # Get date range from session state and convert to datetime
                                         date_range_state = st.session_state.get('date_range_filter', None)
@@ -444,10 +522,16 @@ if st.session_state.df is not None:
                                             'team_bat': filter_team_bat_val,
                                             'team_bowl': filter_team_bowl_val,
                                             'bowler_name': filter_bowler_val,
-                                            'bowler_id': None,
+                                            'bowler_id': filter_bowler_id_val,
+                                            'bat_hand': filter_bat_hand_val,
+                                            'mcode': filter_mcode_val,
+                                            'ground': filter_ground_val,
+                                            'bowl_type': filter_bowl_type_val,
+                                            'bowl_kind': filter_bowl_kind_val,
+                                            'bowl_arm': filter_bowl_arm_val,
                                             'run_values': None,
-                                            'over_values': None,
-                                            'phase': None,
+                                            'over_values': filter_over_values_val,
+                                            'phase': filter_phase_val,
                                             'title_components': title_components,
                                             'transparent': batch_transparent,
                                             'show_title': True,
@@ -476,6 +560,12 @@ if st.session_state.df is not None:
                                             'team_bowl': None,
                                             'bowler_name': None,
                                             'bowler_id': None,
+                                            'bat_hand': None,
+                                            'mcode': None,
+                                            'ground': None,
+                                            'bowl_type': None,
+                                            'bowl_kind': None,
+                                            'bowl_arm': None,
                                             'run_values': None,
                                             'over_values': None,
                                             'phase': None,
@@ -499,7 +589,7 @@ if st.session_state.df is not None:
                                     
                                     # Generate selected plots
                                     try:
-                                        if "Wagon Wheel Plot" in batch_plot_types:
+                                        if "Wagon Wheel R" in batch_plot_types:
                                             spike_filters = {k: v for k, v in batch_filters.items()}
                                             fig = spike_plot_custom(df=df, pid=pid, player_name=None, **spike_filters)
                                             if fig is not None:
@@ -513,7 +603,7 @@ if st.session_state.df is not None:
                                                 all_batch_figures[f"{player_name}_wagon_wheel_desc.png"] = fig
                                                 success_count += 1
                                         
-                                        if "Wagon Zone Plot" in batch_plot_types:
+                                        if "Wagon Zone R" in batch_plot_types:
                                             # Wagon plots don't have show_legend or show_ground parameters
                                             wagon_filters = {k: v for k, v in batch_filters.items() if k not in ['show_legend', 'show_ground']}
                                             fig = wagon_zone_plot(df=df, pid=pid, player_name=None, **wagon_filters)
@@ -543,6 +633,10 @@ if st.session_state.df is not None:
                                     except Exception as e:
                                         error_count += 1
                                         st.sidebar.warning(f"⚠️ {player_name}: {str(e)[:100]}")
+                                    
+                                    # Add delay between players (2.5 seconds)
+                                    if idx < len(team_pids) - 1:  # Don't delay after last player
+                                        time.sleep(2.5)
                                 
                                 progress_bar.empty()
                                 status_text.empty()
@@ -653,10 +747,13 @@ if df is not None:
 
         if 'mcode' in working_df.columns:
             mcode_options = sorted(working_df['mcode'].dropna().unique())
-            selected_mcode = st.multiselect("Match Code", mcode_options, default=[])
+            stored_mcode = st.session_state.get('filter_mcode', []) if isinstance(st.session_state.get('filter_mcode', []), list) else []
+            selected_mcode = st.multiselect("Match Code", mcode_options, default=stored_mcode)
             # Filtering logic (if you want to filter working_df here)
             if selected_mcode:
                 working_df = working_df[working_df['mcode'].isin(selected_mcode)]
+            # Save immediately for persistence
+            st.session_state['filter_mcode'] = selected_mcode
         else:
             selected_mcode = None
         
@@ -676,8 +773,8 @@ if df is not None:
         # Batting Team Filter (from working_df)
         batting_teams = sorted(working_df['team_bat'].dropna().unique())
         team_bat_options = ["All"] + list(batting_teams)
-        # selected_team = st.selectbox("Batting Team", team_bat_options, index=0)
-        selected_team = st.multiselect("Batting Team", team_bat_options, default=[])
+        stored_team = st.session_state.get('filter_team_bat', []) if isinstance(st.session_state.get('filter_team_bat', []), list) and st.session_state.get('filter_team_bat') != "All" else []
+        selected_team = st.multiselect("Batting Team", team_bat_options, default=stored_team)
         
         # if selected_team != "All":
         #     working_df = working_df[working_df['team_bat'] == selected_team]
@@ -686,6 +783,8 @@ if df is not None:
             selected_team_value = selected_team
         else:
             selected_team_value = None
+        # Save immediately for persistence
+        st.session_state['filter_team_bat'] = selected_team
         
         # Player Filter (from working_df, only from selected batting team)
         player_list = sorted(working_df['bat'].dropna().unique())
@@ -729,13 +828,16 @@ if df is not None:
         if selected_team and len(selected_team) > 0:
             bowling_teams = [t for t in bowling_teams if t not in selected_team]
         team_bowl_options = ["All"] + list(bowling_teams)
-        selected_team_bowl = st.multiselect("Bowling Team", team_bowl_options, default=[])
+        stored_team_bowl = st.session_state.get('filter_team_bowl', []) if isinstance(st.session_state.get('filter_team_bowl', []), list) and st.session_state.get('filter_team_bowl') != "All" else []
+        selected_team_bowl = st.multiselect("Bowling Team", team_bowl_options, default=stored_team_bowl)
         
         if selected_team_bowl and len(selected_team_bowl) > 0:
             working_df = working_df[working_df['team_bowl'].isin(selected_team_bowl)]
             selected_team_bowl_value = selected_team_bowl
         else:
             selected_team_bowl_value = None
+        # Save immediately for persistence
+        st.session_state['filter_team_bowl'] = selected_team_bowl
         
         # Bowler Filter (from working_df, only from bowling team)
         bowler_list = sorted(working_df['bowl'].dropna().unique())
@@ -768,13 +870,16 @@ if df is not None:
             # else:
             #     bowl_type = None
             # updated multiselect
+            stored_bowl_types = st.session_state.get('filter_bowl_type', []) if isinstance(st.session_state.get('filter_bowl_type', []), list) else []
             selected_bowl_types = st.multiselect(
                 "Bowler Type(s)",
                 options=list(bowl_type_options),  # No "All" needed
-                default=[],  # Empty = All (no filter)
+                default=stored_bowl_types,  # Empty = All (no filter)
                 help="Leave empty to include all types"
             )
             bowl_type = selected_bowl_types if selected_bowl_types else None
+            # Save immediately for persistence
+            st.session_state['filter_bowl_type'] = selected_bowl_types
 
         else:
             bowl_type = None
@@ -790,13 +895,16 @@ if df is not None:
             # else:
             #     bowl_kind = None
 
+            stored_bowl_kinds = st.session_state.get('filter_bowl_kind', []) if isinstance(st.session_state.get('filter_bowl_kind', []), list) else []
             selected_bowl_kinds = st.multiselect(
                 "Bowler Pace(s)",
                 options=list(bowl_kind_options),
-                default=[],
+                default=stored_bowl_kinds,
                 help="Leave empty to include all"
             )
             bowl_kind = selected_bowl_kinds if selected_bowl_kinds else None
+            # Save immediately for persistence
+            st.session_state['filter_bowl_kind'] = selected_bowl_kinds
 
         else:
             bowl_kind = None
@@ -812,13 +920,16 @@ if df is not None:
             # else:
             #     bowl_arm = None
 
+            stored_bowl_arms = st.session_state.get('filter_bowl_arm', []) if isinstance(st.session_state.get('filter_bowl_arm', []), list) else []
             selected_bowl_arms = st.multiselect(
                 "Bowler Arm(s)",
                 options=list(bowl_arm_options),
-                default=[],
+                default=stored_bowl_arms,
                 help="Leave empty to include all"
             )
             bowl_arm = selected_bowl_arms if selected_bowl_arms else None
+            # Save immediately for persistence
+            st.session_state['filter_bowl_arm'] = selected_bowl_arms
 
         else:
             bowl_arm = None
@@ -838,22 +949,28 @@ if df is not None:
         #     selected_inns = None
 
         innings_options = sorted(working_df['inns'].dropna().unique())
-        selected_inns = st.multiselect("Innings", [int(i) for i in innings_options], default=[])
+        stored_inns = st.session_state.get('filter_inns', []) if isinstance(st.session_state.get('filter_inns', []), list) else []
+        selected_inns = st.multiselect("Innings", [int(i) for i in innings_options], default=stored_inns)
         if selected_inns:
             working_df = working_df[working_df['inns'].isin(selected_inns)]
         else:
             selected_inns = None
+        # Save immediately for persistence
+        st.session_state['filter_inns'] = selected_inns
         
         # Overs Filter (multiselect)
         if 'over' in working_df.columns:
             over_options = sorted(working_df['over'].dropna().unique())
+            stored_overs = st.session_state.get('filter_over_values', []) if isinstance(st.session_state.get('filter_over_values', []), list) else []
             selected_overs = st.multiselect(
                 "Overs",
                 options=[int(o) for o in over_options],
-                default=None,
+                default=stored_overs,
                 help="Select specific overs (leave empty for all)"
             )
             over_values = selected_overs if selected_overs else None
+            # Save immediately for persistence
+            st.session_state['filter_over_values'] = selected_overs
         else:
             over_values = None
         
@@ -869,13 +986,21 @@ if df is not None:
         # phase = phase_map.get(selected_phase_str, None)
 
         phase_options = ["Powerplay (1-6)", "Middle (7-15)", "Slog (16-20)"]
-        selected_phase_str = st.multiselect("Phase", phase_options, default=[])
+        
+        # Reverse map to convert stored numeric phases back to display names
+        phase_reverse_map = {1: "Powerplay (1-6)", 2: "Middle (7-15)", 3: "Slog (16-20)"}
+        stored_phase = st.session_state.get('filter_phase_display', [])
+        
+        selected_phase_str = st.multiselect("Phase", phase_options, default=stored_phase)
         phase_map = {
             "Powerplay (1-6)": 1,
             "Middle (7-15)": 2,
             "Slog (16-20)": 3
         }
         phase = [phase_map[p] for p in selected_phase_str] if selected_phase_str else None
+        
+        # Store both display names and numeric values
+        st.session_state['filter_phase_display'] = selected_phase_str
 
 
         # Ground Filter (dropdown)
@@ -896,14 +1021,36 @@ if df is not None:
         #updated ground filters
         if 'ground' in working_df.columns:
             ground_options = sorted(working_df['ground'].dropna().unique())
-            selected_ground_str = st.multiselect("Venue", ground_options, default=[])
+            stored_ground = st.session_state.get('filter_ground', []) if isinstance(st.session_state.get('filter_ground', []), list) else []
+            selected_ground_str = st.multiselect("Venue", ground_options, default=stored_ground)
             if selected_ground_str:
                 working_df = working_df[working_df['ground'].isin(selected_ground_str)]
                 selected_ground = selected_ground_str
             else:
                 selected_ground = None
+            # Save immediately for persistence
+            st.session_state['filter_ground'] = selected_ground_str
         else:
             selected_ground = None
+    
+    # ===== UPDATE FILTER SESSION STATE AT END OF FILTER SECTION =====
+    # Update with actual filter values so batch section reads latest values
+    st.session_state['filter_competition'] = selected_competition_value
+    st.session_state['filter_team_bat'] = selected_team_value
+    st.session_state['filter_team_bowl'] = selected_team_bowl_value
+    st.session_state['filter_inns'] = selected_inns
+    st.session_state['filter_match'] = selected_mat_num
+    st.session_state['filter_bowler'] = bowler_name
+    st.session_state['filter_bowler_id'] = bowler_id
+    st.session_state['filter_bat_hand'] = bat_hand
+    st.session_state['filter_mcode'] = selected_mcode
+    st.session_state['filter_ground'] = selected_ground
+    st.session_state['filter_bowl_type'] = bowl_type
+    st.session_state['filter_bowl_kind'] = bowl_kind
+    st.session_state['filter_bowl_arm'] = bowl_arm
+    st.session_state['filter_over_values'] = over_values
+    st.session_state['filter_phase'] = phase
+    st.session_state['date_range_filter'] = (date_from, date_to) if 'date_from' in locals() else (None, None)
     
     # ===== DATA VALIDATION ====
     st.markdown("---")

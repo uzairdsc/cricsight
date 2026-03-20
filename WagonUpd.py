@@ -191,8 +191,17 @@ def wagon_zone_plot(
         # )#shotControl to control
 
         # Control calculation like spike graph
-        controlled_balls = valid_balls[valid_balls['control'] == 1]
-        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        # controlled_balls = valid_balls[valid_balls['control'] == 1]
+        # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+
+        if len(valid_balls) == 0:
+            control_pct = 0.0
+        else:
+            # Convert mixed-type control column to numeric FIRST
+            control_numeric = pd.to_numeric(valid_balls['control'], errors='coerce')
+            # Now count all 1.0 values (regardless of original type)
+            controlled = (control_numeric == 1).sum()
+            control_pct = round(controlled / len(valid_balls) * 100, 2)
 
         
 
@@ -206,6 +215,13 @@ def wagon_zone_plot(
         valid_shots = local_df[
             ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0))
         ].dropna(subset=['wagonX', 'wagonY'])
+
+        # ✅ ADD: Filter valid_shots the same way - exclude wides AND control nulls
+        # valid_shots = local_df[
+        #     (local_df['wide'] == 0) & 
+        #     ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0)) &
+        #     (~local_df['control'].isna())  # ← ADD THIS
+        # ].dropna(subset=['wagonX', 'wagonY'])
 
         # ADD THESE TWO LINES:
         valid_shots['isFour'] = (valid_shots['outcome'] == 'four').astype(int)
@@ -228,8 +244,16 @@ def wagon_zone_plot(
         # ) #shotControl to control
         
         #  Control calculation like spike graph
-        controlled_balls = valid_balls[valid_balls['control'] == 1]
-        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        # controlled_balls = valid_balls[valid_balls['control'] == 1]
+        # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        if len(valid_balls) == 0:
+            control_pct = 0.0
+        else:
+            # Convert mixed-type control column to numeric FIRST
+            control_numeric = pd.to_numeric(valid_balls['control'], errors='coerce')
+            # Now count all 1.0 values (regardless of original type)
+            controlled = (control_numeric == 1).sum()
+            control_pct = round(controlled / len(valid_balls) * 100, 2)
 
         shot_summary = valid_shots.groupby('shot').agg({ #shot
             'batruns': 'sum', #batruns
@@ -739,8 +763,16 @@ def wagon_zone_plot_descriptive(
         # )#shotControl to control
 
         # Control calculation like spike graph
-        controlled_balls = valid_balls[valid_balls['control'] == 1]
-        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        # controlled_balls = valid_balls[valid_balls['control'] == 1]
+        # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        if len(valid_balls) == 0:
+            control_pct = 0.0
+        else:
+            # Convert mixed-type control column to numeric FIRST
+            control_numeric = pd.to_numeric(valid_balls['control'], errors='coerce')
+            # Now count all 1.0 values (regardless of original type)
+            controlled = (control_numeric == 1).sum()
+            control_pct = round(controlled / len(valid_balls) * 100, 2)
 
 
         shot_summary = valid_shots.groupby('shot').agg({ #shot
@@ -751,8 +783,15 @@ def wagon_zone_plot_descriptive(
     else:
         valid_balls = local_df[local_df['wide'] == 0]
         # valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
+        # valid_shots = local_df[
+        #     ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0))
+        # ].dropna(subset=['wagonX', 'wagonY'])
+
+        # ✅ ADD: Filter valid_shots the same way - exclude wides AND control nulls
         valid_shots = local_df[
-            ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0))
+            (local_df['wide'] == 0) & 
+            ~((local_df['wagonX'] == 0) & (local_df['wagonY'] == 0)) &
+            (~local_df['control'].isna())
         ].dropna(subset=['wagonX', 'wagonY'])
 
         # ADD THESE TWO LINES:
@@ -782,8 +821,16 @@ def wagon_zone_plot_descriptive(
         # ) #shotControl to control
         
         #  Control calculation like spike graph
-        controlled_balls = valid_balls[valid_balls['control'] == 1]
-        control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        # controlled_balls = valid_balls[valid_balls['control'] == 1]
+        # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2) if len(valid_balls) > 0 else 0.0
+        if len(valid_balls) == 0:
+            control_pct = 0.0
+        else:
+            # Convert mixed-type control column to numeric FIRST
+            control_numeric = pd.to_numeric(valid_balls['control'], errors='coerce')
+            # Now count all 1.0 values (regardless of original type)
+            controlled = (control_numeric == 1).sum()
+            control_pct = round(controlled / len(valid_balls) * 100, 2)
 
         shot_summary = valid_shots.groupby('shot').agg({ #shot
             'batruns': 'sum', #batruns

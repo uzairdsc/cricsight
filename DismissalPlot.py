@@ -342,14 +342,20 @@ def dismissal_plot(
         total_6s = valid_shots['isSix'].sum()
         balls_faced = balls_faced_df.shape[0]
 
-    # if len(valid_balls) == 0:
-    #     control_pct = 0.0
-    # else:
-    #     controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
-    #     control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+    if len(valid_balls) == 0:
+        control_pct = 0.0
+    else:
+        # Convert mixed-type control column to numeric FIRST
+        control_numeric = pd.to_numeric(valid_balls['control'], errors='coerce')
+        # Now count all 1.0 values (regardless of original type)
+        controlled = (control_numeric == 1).sum()
+        control_pct = round(controlled / len(valid_balls) * 100, 2)
+        # controlled_balls = valid_balls[valid_balls['shotControl'] == 1]
+        # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
 
-    controlled_balls = valid_balls[valid_balls['control'] ==1]
-    control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
+
+    # controlled_balls = valid_balls[valid_balls['control'] ==1]
+    # control_pct = round(len(controlled_balls) / len(valid_balls) * 100, 2)
     # valid_balls = df[
     #     (df['batsmanName'] == player_name) &
     #     (df['inningNumber'] == inns) &
