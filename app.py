@@ -110,8 +110,9 @@ def create_zip_of_plots(figures_dict):
                            dpi=300, bbox_inches='tight')
                 img_buffer.seek(0)
                 
-                # Add to ZIP
-                zip_file.writestr(filename, img_buffer.getvalue())
+                # Add to ZIP with .png extension
+                png_filename = f"{filename}.png"
+                zip_file.writestr(png_filename, img_buffer.getvalue())
                 img_buffer.close()
     
     zip_buffer.seek(0)
@@ -1067,6 +1068,404 @@ if df is not None:
         pass
         # st.success(f"Found {len(working_df):,} balls matching your filters")
 
+    # ===== GENERATE ALL PLOTS SECTION =====
+    st.markdown("**🚀 Quick Actions:**")
+    col_btn1, col_btn2, col_blank = st.columns([2, 2, 4])
+    
+    with col_btn1:
+        generate_all = st.button(
+            "🎬 Generate All Plots", 
+            key="generate_all_plots_button",
+            help="Generates all available plots with current filters and creates a ZIP file"
+        )
+    
+    # Generate all plots if button clicked
+    if generate_all:
+        # Create batter name for filename (sanitize for file naming)
+        batter_name_for_file = selected_player_value.replace(" ", "_").replace("/", "_") if selected_player_value else "AllBatters"
+        
+        with col_btn2:
+            st.info("⏳ Generating all plots... This may take a few minutes.")
+        
+        progress_placeholder = st.empty()
+        status_placeholder = st.empty()
+        
+        all_generated_figures = {}
+        all_plot_types = [
+            "Wagon Wheel", "Wagon Wheel (Trans)",
+            "━━ Wagon Wheel - vs All Types", "━━ Wagon Wheel - vs Pace", "━━ Wagon Wheel - vs Spin",
+            "━━ Wagon Wheel - All Phases", "━━ Wagon Wheel - Powerplay", "━━ Wagon Wheel - Middle", "━━ Wagon Wheel - Slog",
+            "━━ Wagon Wheel - All Kinds", "━━ Wagon Wheel - RAP", "━━ Wagon Wheel - RAFS", "━━ Wagon Wheel - RAWS",
+            "━━ Wagon Wheel - LAP", "━━ Wagon Wheel - LAFS", "━━ Wagon Wheel - LAWS",
+            "━━ Wagon Wheel - All Arm", "━━ Wagon Wheel - Right Arm", "━━ Wagon Wheel - Left Arm",
+            "Wagon Zone", "Wagon Zone (Trans)",
+            "━━ Wagon Zone - vs All Types", "━━ Wagon Zone - vs Pace", "━━ Wagon Zone - vs Spin",
+            "━━ Wagon Zone - All Phases", "━━ Wagon Zone - Powerplay", "━━ Wagon Zone - Middle", "━━ Wagon Zone - Slog",
+            "━━ Wagon Zone - All Kinds", "━━ Wagon Zone - RAP", "━━ Wagon Zone - RAFS", "━━ Wagon Zone - RAWS",
+            "━━ Wagon Zone - LAP", "━━ Wagon Zone - LAFS", "━━ Wagon Zone - LAWS",
+            "━━ Wagon Zone - All Arm", "━━ Wagon Zone - Right Arm", "━━ Wagon Zone - Left Arm",
+            "Dismissal Plot", "Dismissal Plot (Trans)",
+            "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
+            "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
+            "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
+            "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
+            "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
+        ]
+        
+        # Define run values for all plots
+        all_run_values = [0, 1, 2, 3, 4, 5, 6]
+        
+        # Build mapping of plot types to their generation logic
+        plot_generation_map = {
+            # ===== WAGON WHEEL PLOTS =====
+            "Wagon Wheel": ("spike_desc", None),
+            "Wagon Wheel (Trans)": ("spike_desc", "trans"),
+            "━━ Wagon Wheel - vs All Types": ("spike_desc_bowl_type", None, "all_types"),
+            "━━ Wagon Wheel - vs Pace": ("spike_desc_bowl_type", None, "pace"),
+            "━━ Wagon Wheel - vs Spin": ("spike_desc_bowl_type", None, "spin"),
+            "━━ Wagon Wheel - All Phases": ("spike_desc_phase", None, None),
+            "━━ Wagon Wheel - Powerplay": ("spike_desc_phase", None, "powerplay"),
+            "━━ Wagon Wheel - Middle": ("spike_desc_phase", None, "middle"),
+            "━━ Wagon Wheel - Slog": ("spike_desc_phase", None, "slog"),
+            "━━ Wagon Wheel - All Kinds": ("spike_desc_bowl_kind", None, None),
+            # Fixed - variant strings now match the "in" substring checks
+            "━━ Wagon Wheel - RAP":  ("spike_desc_bat_arm_bowl_kind", None, "rap"),
+            "━━ Wagon Wheel - RAFS": ("spike_desc_bat_arm_bowl_kind", None, "rafs"),
+            "━━ Wagon Wheel - RAWS": ("spike_desc_bat_arm_bowl_kind", None, "raws"),
+            "━━ Wagon Wheel - LAP":  ("spike_desc_bat_arm_bowl_kind", None, "lap"),
+            "━━ Wagon Wheel - LAFS": ("spike_desc_bat_arm_bowl_kind", None, "lafs"),
+            "━━ Wagon Wheel - LAWS": ("spike_desc_bat_arm_bowl_kind", None, "laws"),
+            "━━ Wagon Wheel - All Arm": ("spike_desc_bowl_arm", None, None),
+            "━━ Wagon Wheel - Right Arm": ("spike_desc_bowl_arm", None, "right"),
+            "━━ Wagon Wheel - Left Arm": ("spike_desc_bowl_arm", None, "left"),
+            # # ===== WAGON ZONE PLOTS =====
+            "Wagon Zone": ("wagon_zone", None),
+            "Wagon Zone (Trans)": ("wagon_zone", "trans"),
+            "━━ Wagon Zone - vs All Types": ("wagon_zone_bowl_type", None, "all_types"),
+            "━━ Wagon Zone - vs Pace": ("wagon_zone_bowl_type", None, "pace"),
+            "━━ Wagon Zone - vs Spin": ("wagon_zone_bowl_type", None, "spin"),
+            "━━ Wagon Zone - All Phases": ("wagon_zone_phase", None, None),
+            "━━ Wagon Zone - Powerplay": ("wagon_zone_phase", None, "powerplay"),
+            "━━ Wagon Zone - Middle": ("wagon_zone_phase", None, "middle"),
+            "━━ Wagon Zone - Slog": ("wagon_zone_phase", None, "slog"),
+            "━━ Wagon Zone - All Kinds": ("wagon_zone_bowl_kind", None, None),
+            # Wagon Zone - Fixed
+            "━━ Wagon Zone - RAP":  ("wagon_zone_bat_arm_bowl_kind", None, "rap"),
+            "━━ Wagon Zone - RAFS": ("wagon_zone_bat_arm_bowl_kind", None, "rafs"),
+            "━━ Wagon Zone - RAWS": ("wagon_zone_bat_arm_bowl_kind", None, "raws"),
+            "━━ Wagon Zone - LAP":  ("wagon_zone_bat_arm_bowl_kind", None, "lap"),
+            "━━ Wagon Zone - LAFS": ("wagon_zone_bat_arm_bowl_kind", None, "lafs"),
+            "━━ Wagon Zone - LAWS": ("wagon_zone_bat_arm_bowl_kind", None, "laws"),
+            "━━ Wagon Zone - All Arm": ("wagon_zone_bowl_arm", None, None),
+            "━━ Wagon Zone - Right Arm": ("wagon_zone_bowl_arm", None, "right"),
+            "━━ Wagon Zone - Left Arm": ("wagon_zone_bowl_arm", None, "left"),
+            # ===== DISMISSAL PLOTS =====
+            "Dismissal Plot": ("dismissal", None),
+            "Dismissal Plot (Trans)": ("dismissal", "trans"),
+            "━━ Dis Plot - vs All Types": ("dismissal_bowl_type", None, "all_types"),
+            "━━ Dis Plot - vs Pace": ("dismissal_bowl_type", None, "pace"),
+            "━━ Dis Plot - vs Spin": ("dismissal_bowl_type", None, "spin"),
+            "━━ Dis Plot - All Phases": ("dismissal_phase", None, None),
+            "━━ Dis Plot - Powerplay": ("dismissal_phase", None, "powerplay"),
+            "━━ Dis Plot - Middle": ("dismissal_phase", None, "middle"),
+            "━━ Dis Plot - Slog": ("dismissal_phase", None, "slog"),
+            "━━ Dis Plot - All Kinds": ("dismissal_bowl_kind", None, None),
+            # Dismissal - Fixed
+            "━━ Dis Plot - RAP":  ("dismissal_bat_arm_bowl_kind", None, "rap"),
+            "━━ Dis Plot - RAFS": ("dismissal_bat_arm_bowl_kind", None, "rafs"),
+            "━━ Dis Plot - RAWS": ("dismissal_bat_arm_bowl_kind", None, "raws"),
+            "━━ Dis Plot - LAP":  ("dismissal_bat_arm_bowl_kind", None, "lap"),
+            "━━ Dis Plot - LAFS": ("dismissal_bat_arm_bowl_kind", None, "lafs"),
+            "━━ Dis Plot - LAWS": ("dismissal_bat_arm_bowl_kind", None, "laws"),
+            "━━ Dis Plot - All Arm": ("dismissal_bowl_arm", None, None),
+            "━━ Dis Plot - Right Arm": ("dismissal_bowl_arm", None, "right"),
+            "━━ Dis Plot - Left Arm": ("dismissal_bowl_arm", None, "left"),
+        }
+        
+        # Generate each plot
+        for idx, plot_name in enumerate(all_plot_types):
+            try:
+                status_placeholder.write(f"⏳ Generating: **{plot_name}** ({idx+1}/{len(all_plot_types)})")
+                progress_placeholder.progress((idx + 1) / len(all_plot_types))
+                
+                plot_info = plot_generation_map.get(plot_name)
+                if not plot_info:
+                    status_placeholder.write(f"⚠️ Skipped: {plot_name} (not configured)")
+                    time.sleep(1)
+                    continue
+                
+                plot_type = plot_info[0]
+                transparent = plot_info[1] == "trans"
+                variant = plot_info[2] if len(plot_info) > 2 else None
+                
+                # ===== SPIKE PLOTS =====
+                if plot_type == "spike_desc":
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=bowl_type,
+                        bowl_kind=bowl_kind, bowl_arm=bowl_arm
+                    )
+                
+                # ===== SPIKE WITH BOWL TYPE FILTER =====
+                elif plot_type == "spike_desc_bowl_type":
+                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=None,
+                        bowl_kind=filter_bowl_kind, bowl_arm=None
+                    )
+                
+                # ===== SPIKE WITH PHASE FILTER =====
+                elif plot_type == "spike_desc_phase":
+                    phase_filter = None
+                    if variant == "powerplay":
+                        phase_filter = [1]
+                    elif variant == "middle":
+                        phase_filter = [2]
+                    elif variant == "slog":
+                        phase_filter = [3]
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase_filter, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=bowl_type,
+                        bowl_kind=bowl_kind, bowl_arm=bowl_arm
+                    )
+                
+                # ===== SPIKE WITH BOWL KIND FILTER =====
+                elif plot_type == "spike_desc_bowl_kind":
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=bowl_type,
+                        bowl_kind=bowl_kind, bowl_arm=bowl_arm
+                    )
+                
+                # ===== SPIKE WITH Bowl ARM & BOWL KIND FILTER =====
+                elif plot_type == "spike_desc_bat_arm_bowl_kind":
+                    # bat_arm_filter = ["Right Arm"] if "right" in variant else ["Left Arm"]
+                    bowl_type_filter = ["Right Arm Pace"] if "rap" in variant else (["Right Arm Finger Spin"] if "rafs" in variant else (["Right Arm Wrist Spin"] if "raws" in variant else (["Left Arm Pace"] if "lap" in variant else (["Left Arm Finger Spin"] if "lafs" in variant else (["Left Arm Wrist Spin"] if "laws" in variant else None)))))
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=bowl_type_filter,
+                        bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== SPIKE WITH BOWL ARM FILTER =====
+                elif plot_type == "spike_desc_bowl_arm":
+                    filter_bowl_arm = ["Right Arm"] if variant == "right" else (["Left Arm"] if variant == "left" else None)
+                    fig = spike_graph_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        run_values=all_run_values, bowler_name=bowler_name, bowler_id=bowler_id,
+                        competition=selected_competition_value, transparent=transparent, over_values=over_values,
+                        phase=phase, ground=selected_ground, mcode=selected_mcode, date_from=date_from, date_to=date_to,
+                        title_components=title_components, bat_hand=bat_hand, bowl_type=None,
+                        bowl_kind=None, bowl_arm=filter_bowl_arm
+                    )
+                
+                # ===== WAGON ZONE PLOTS =====
+                elif plot_type == "wagon_zone":
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== WAGON ZONE WITH BOWL TYPE FILTER =====
+                elif plot_type == "wagon_zone_bowl_type":
+                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=filter_bowl_kind, bowl_arm=None
+                    )
+                
+                # ===== WAGON ZONE WITH PHASE FILTER =====
+                elif plot_type == "wagon_zone_phase":
+                    phase_filter = None
+                    if variant == "powerplay":
+                        phase_filter = [1]
+                    elif variant == "middle":
+                        phase_filter = [2]
+                    elif variant == "slog":
+                        phase_filter = [3]
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase_filter, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== WAGON ZONE WITH BOWL KIND FILTER =====
+                elif plot_type == "wagon_zone_bowl_kind":
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== WAGON ZONE WITH BAT ARM & BOWL KIND FILTER =====
+                elif plot_type == "wagon_zone_bat_arm_bowl_kind":
+                    # bat_arm_filter = ["Right Arm"] if "right" in variant else ["Left Arm"]
+                    bowl_type_filter = ["Right Arm Pace"] if "rap" in variant else (["Right Arm Finger Spin"] if "rafs" in variant else (["Right Arm Wrist Spin"] if "raws" in variant else (["Left Arm Pace"] if "lap" in variant else (["Left Arm Finger Spin"] if "lafs" in variant else (["Left Arm Wrist Spin"] if "laws" in variant else None)))))
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=bowl_type_filter, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== WAGON ZONE WITH BOWL ARM FILTER =====
+                elif plot_type == "wagon_zone_bowl_arm":
+                    filter_bowl_arm = ["Right Arm"] if variant == "right" else (["Left Arm"] if variant == "left" else None)
+                    fig = wagon_zone_plot_descriptive(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=filter_bowl_arm
+                    )
+                
+                # ===== DISMISSAL PLOTS =====
+                elif plot_type == "dismissal":
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== DISMISSAL WITH BOWL TYPE FILTER =====
+                elif plot_type == "dismissal_bowl_type":
+                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=filter_bowl_kind, bowl_arm=None
+                    )
+                
+                # ===== DISMISSAL WITH PHASE FILTER =====
+                elif plot_type == "dismissal_phase":
+                    phase_filter = None
+                    if variant == "powerplay":
+                        phase_filter = [1]
+                    elif variant == "middle":
+                        phase_filter = [2]
+                    elif variant == "slog":
+                        phase_filter = [3]
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase_filter, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== DISMISSAL WITH BOWL KIND FILTER =====
+                elif plot_type == "dismissal_bowl_kind":
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== DISMISSAL WITH BAT ARM & BOWL KIND FILTER =====
+                elif plot_type == "dismissal_bat_arm_bowl_kind":
+                    # bat_arm_filter = ["Right Arm"] if "right" in variant else ["Left Arm"]
+                    bowl_type_filter = ["Right Arm Pace"] if "rap" in variant else (["Right Arm Finger Spin"] if "rafs" in variant else (["Right Arm Wrist Spin"] if "raws" in variant else (["Left Arm Pace"] if "lap" in variant else (["Left Arm Finger Spin"] if "lafs" in variant else (["Left Arm Wrist Spin"] if "laws" in variant else None)))))
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=bowl_type_filter, bowl_kind=None, bowl_arm=None
+                    )
+                
+                # ===== DISMISSAL WITH BOWL ARM FILTER =====
+                elif plot_type == "dismissal_bowl_arm":
+                    filter_bowl_arm = ["Right Arm"] if variant == "right" else (["Left Arm"] if variant == "left" else None)
+                    fig = dismissal_plot(
+                        df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
+                        mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
+                        bowler_name=bowler_name, bowler_id=bowler_id, competition=selected_competition_value,
+                        transparent=transparent, over_values=over_values, phase=phase, ground=selected_ground,
+                        mcode=selected_mcode, date_from=date_from, date_to=date_to, title_components=title_components,
+                        bat_hand=bat_hand, bowl_type=None, bowl_kind=None, bowl_arm=filter_bowl_arm
+                    )
+                
+                else:
+                    fig = None
+                
+                # Store figure if generated with batter name in filename
+                if fig is not None:
+                    filename_with_batter = f"{batter_name_for_file}_{plot_name}"
+                    all_generated_figures[filename_with_batter] = fig
+                
+                time.sleep(3)  # 3-second delay between plots
+                
+            except Exception as e:
+                status_placeholder.write(f"❌ Error generating {plot_name}: {str(e)}")
+                time.sleep(1)
+        
+        # Create ZIP file with all generated plots
+        if all_generated_figures:
+            status_placeholder.write(f"✅ Generated {len(all_generated_figures)}/{len(all_plot_types)} plots! Creating ZIP file...")
+            zip_buffer = create_zip_of_plots(all_generated_figures)
+            
+            st.success(f"🎉 Successfully generated {len(all_generated_figures)} plots!")
+            st.download_button(
+                label=f"📥 Download {batter_name_for_file}_plots.zip",
+                data=zip_buffer,
+                # file_name="Multiple_plots.zip",
+                file_name=f"{batter_name_for_file}_plots.zip",
+                mime="application/zip",
+                key="download_all_plots"
+            )
+        else:
+            st.error("❌ No plots were generated. Please check your filters and try again.")
+
     st.markdown("**Select Plot Types to Display:**")
     plot_types = st.multiselect(
         "Choose plot(s):",
@@ -1382,7 +1781,7 @@ if df is not None:
                     st.download_button(
                         label="📅 Download Plot as PNG",
                         data=buf.getvalue(),
-                        file_name=f"{selected_player}_spike_plot_transparent.png",
+                        file_name=f"{selected_player}_wagon_wheel_transparent.png",
                         mime="image/png",
                         key="spike_trans_download"
                     )
@@ -1513,7 +1912,7 @@ if df is not None:
                     st.download_button(
                         label="📅 Download Plot as PNG",
                         data=buf.getvalue(),
-                        file_name=f"{selected_player}_spike_graph_descriptive.png",
+                        file_name=f"{selected_player}_wagon_wheel_descriptive.png",
                         mime="image/png",
                         key="spike_desc_download"
                     )
@@ -1770,7 +2169,7 @@ if df is not None:
                     st.download_button(
                         label="📅 Download Plot as PNG",
                         data=buf.getvalue(),
-                        file_name=f"{selected_player}_spike_graph_descriptive_vs_pace.png",
+                        file_name=f"{selected_player}_wagon_wheel_descriptive_vs_pace.png",
                         mime="image/png",
                         key="spike_desc_pace_download"
                     )
@@ -1898,7 +2297,7 @@ if df is not None:
                     st.download_button(
                         label="📅 Download Plot as PNG",
                         data=buf.getvalue(),
-                        file_name=f"{selected_player}_spike_graph_descriptive_vs_spin.png",
+                        file_name=f"{selected_player}_wagon_wheel_descriptive_vs_spin.png",
                         mime="image/png",
                         key="spike_desc_spin_download"
                     )
@@ -2025,7 +2424,7 @@ if df is not None:
                     st.download_button(
                         label="📅 Download Plot as PNG",
                         data=buf.getvalue(),
-                        file_name=f"{selected_player}_spike_graph_descriptive_transparent.png",
+                        file_name=f"{selected_player}_wagon_wheel_descriptive_transparent.png",
                         mime="image/png",
                         key="spike_desc_trans_download"
                     )
@@ -7441,187 +7840,187 @@ if df is not None:
         all_figures = {}
         
         if fig_spike is not None:
-            all_figures[f"{selected_player}_spike_plot.png"] = fig_spike
+            all_figures[f"{selected_player}_wagon_wheel"] = fig_spike
             
         if fig_spike_trans is not None:
-            all_figures[f"{selected_player}_spike_plot_transparent.png"] = fig_spike_trans
+            all_figures[f"{selected_player}_wagon_wheel_trans"] = fig_spike_trans
             
         if fig_spike_desc is not None:
-            all_figures[f"{selected_player}_spike_graph_descriptive.png"] = fig_spike_desc
+            all_figures[f"{selected_player}_wagon_wheel"] = fig_spike_desc
         
         if fig_spike_desc_pace is not None:
-            all_figures[f"{selected_player}_spike_graph_descriptive_vs_pace.png"] = fig_spike_desc_pace
+            all_figures[f"{selected_player}_wagon_wheel_vs_pace"] = fig_spike_desc_pace
         
         if fig_spike_desc_spin is not None:
-            all_figures[f"{selected_player}_spike_graph_descriptive_vs_spin.png"] = fig_spike_desc_spin
+            all_figures[f"{selected_player}_wagon_wheel_vs_spin"] = fig_spike_desc_spin
             
         if fig_wagon is not None:
-            all_figures[f"{selected_player}_wagon_plot.png"] = fig_wagon
+            all_figures[f"{selected_player}_wagon_plot"] = fig_wagon
             
         if fig_wagon_trans is not None:
-            all_figures[f"{selected_player}_wagon_plot_transparent.png"] = fig_wagon_trans
+            all_figures[f"{selected_player}_wagon_zone_transparent"] = fig_wagon_trans
             
         if fig_wagon_desc is not None:
-            all_figures[f"{selected_player}_wagon_zone_descriptive.png"] = fig_wagon_desc
+            all_figures[f"{selected_player}_wagon_zone_descriptive"] = fig_wagon_desc
             
         if fig_spike_desc_trans is not None:
-            all_figures[f"{selected_player}_spike_graph_descriptive_transparent.png"] = fig_spike_desc_trans
+            all_figures[f"{selected_player}_wagon_wheel_descriptive_transparent"] = fig_spike_desc_trans
             
         if fig_wagon_desc_trans is not None:
-            all_figures[f"{selected_player}_wagon_zone_descriptive_transparent.png"] = fig_wagon_desc_trans
+            all_figures[f"{selected_player}_wagon_zone_descriptive_transparent"] = fig_wagon_desc_trans
         
         if fig_dismissal is not None:
-            all_figures[f"{selected_player}_dismissal_plot.png"] = fig_dismissal
+            all_figures[f"{selected_player}_dismissal_plot"] = fig_dismissal
             
         if fig_dismissal_trans is not None:
-            all_figures[f"{selected_player}_dismissal_plot_transparent.png"] = fig_dismissal_trans
+            all_figures[f"{selected_player}_dismissal_plot_transparent"] = fig_dismissal_trans
         
         if fig_whl_phs_all is not None:
-            all_figures[f"{selected_player}_whl_phase_all.png"] = fig_whl_phs_all
+            all_figures[f"{selected_player}_whl_phase_all"] = fig_whl_phs_all
         
         if fig_whl_phs_pp is not None:
-            all_figures[f"{selected_player}_whl_phase_powerplay.png"] = fig_whl_phs_pp
+            all_figures[f"{selected_player}_whl_phase_powerplay"] = fig_whl_phs_pp
         
         if fig_whl_phs_mid is not None:
-            all_figures[f"{selected_player}_whl_phase_middle.png"] = fig_whl_phs_mid
+            all_figures[f"{selected_player}_whl_phase_middle"] = fig_whl_phs_mid
         
         if fig_whl_phs_slog is not None:
-            all_figures[f"{selected_player}_whl_phase_slog.png"] = fig_whl_phs_slog
+            all_figures[f"{selected_player}_whl_phase_slog"] = fig_whl_phs_slog
         
         if fig_whl_all_kind is not None:
-            all_figures[f"{selected_player}_whl_all_kind.png"] = fig_whl_all_kind
+            all_figures[f"{selected_player}_whl_all_kind"] = fig_whl_all_kind
         
         if fig_whl_all_type is not None:
-            all_figures[f"{selected_player}_whl_all_type.png"] = fig_whl_all_type
+            all_figures[f"{selected_player}_whl_all_type"] = fig_whl_all_type
         
         if fig_whl_rap is not None:
-            all_figures[f"{selected_player}_whl_rap.png"] = fig_whl_rap
+            all_figures[f"{selected_player}_whl_rap"] = fig_whl_rap
         
         if fig_whl_rafs is not None:
-            all_figures[f"{selected_player}_whl_rafs.png"] = fig_whl_rafs
+            all_figures[f"{selected_player}_whl_rafs"] = fig_whl_rafs
         
         if fig_whl_raws is not None:
-            all_figures[f"{selected_player}_whl_raws.png"] = fig_whl_raws
+            all_figures[f"{selected_player}_whl_raws"] = fig_whl_raws
         
         if fig_whl_lap is not None:
-            all_figures[f"{selected_player}_whl_lap.png"] = fig_whl_lap
+            all_figures[f"{selected_player}_whl_lap"] = fig_whl_lap
         
         if fig_whl_lafs is not None:
-            all_figures[f"{selected_player}_whl_lafs.png"] = fig_whl_lafs
+            all_figures[f"{selected_player}_whl_lafs"] = fig_whl_lafs
         
         if fig_whl_laws is not None:
-            all_figures[f"{selected_player}_whl_laws.png"] = fig_whl_laws
+            all_figures[f"{selected_player}_whl_laws"] = fig_whl_laws
         
         if fig_whl_all_arm is not None:
-            all_figures[f"{selected_player}_whl_all_arm.png"] = fig_whl_all_arm
+            all_figures[f"{selected_player}_whl_all_arm"] = fig_whl_all_arm
         
         if fig_whl_right_arm is not None:
-            all_figures[f"{selected_player}_whl_right_arm.png"] = fig_whl_right_arm
+            all_figures[f"{selected_player}_whl_right_arm"] = fig_whl_right_arm
         
         if fig_whl_left_arm is not None:
-            all_figures[f"{selected_player}_whl_left_arm.png"] = fig_whl_left_arm
+            all_figures[f"{selected_player}_whl_left_arm"] = fig_whl_left_arm
         
         if fig_wzn_all_type is not None:
-            all_figures[f"{selected_player}_wzn_all_type.png"] = fig_wzn_all_type
+            all_figures[f"{selected_player}_wzn_all_type"] = fig_wzn_all_type
         
         if fig_wzn_pace is not None:
-            all_figures[f"{selected_player}_wzn_pace.png"] = fig_wzn_pace
+            all_figures[f"{selected_player}_wzn_pace"] = fig_wzn_pace
         
         if fig_wzn_spin is not None:
-            all_figures[f"{selected_player}_wzn_spin.png"] = fig_wzn_spin
+            all_figures[f"{selected_player}_wzn_spin"] = fig_wzn_spin
         
         if fig_wzn_all_phase is not None:
-            all_figures[f"{selected_player}_wzn_all_phase.png"] = fig_wzn_all_phase
+            all_figures[f"{selected_player}_wzn_all_phase"] = fig_wzn_all_phase
         
         if fig_wzn_pp is not None:
-            all_figures[f"{selected_player}_wzn_pp.png"] = fig_wzn_pp
+            all_figures[f"{selected_player}_wzn_pp"] = fig_wzn_pp
         
         if fig_wzn_mid is not None:
-            all_figures[f"{selected_player}_wzn_mid.png"] = fig_wzn_mid
+            all_figures[f"{selected_player}_wzn_mid"] = fig_wzn_mid
         
         if fig_wzn_slog is not None:
-            all_figures[f"{selected_player}_wzn_slog.png"] = fig_wzn_slog
+            all_figures[f"{selected_player}_wzn_slog"] = fig_wzn_slog
         
         if fig_wzn_all_kind is not None:
-            all_figures[f"{selected_player}_wzn_all_kind.png"] = fig_wzn_all_kind
+            all_figures[f"{selected_player}_wzn_all_kind"] = fig_wzn_all_kind
         
         if fig_wzn_rap is not None:
-            all_figures[f"{selected_player}_wzn_rap.png"] = fig_wzn_rap
+            all_figures[f"{selected_player}_wzn_rap"] = fig_wzn_rap
         
         if fig_wzn_rafs is not None:
-            all_figures[f"{selected_player}_wzn_rafs.png"] = fig_wzn_rafs
+            all_figures[f"{selected_player}_wzn_rafs"] = fig_wzn_rafs
         
         if fig_wzn_raws is not None:
-            all_figures[f"{selected_player}_wzn_raws.png"] = fig_wzn_raws
+            all_figures[f"{selected_player}_wzn_raws"] = fig_wzn_raws
         
         if fig_wzn_lap is not None:
-            all_figures[f"{selected_player}_wzn_lap.png"] = fig_wzn_lap
+            all_figures[f"{selected_player}_wzn_lap"] = fig_wzn_lap
         
         if fig_wzn_lafs is not None:
-            all_figures[f"{selected_player}_wzn_lafs.png"] = fig_wzn_lafs
+            all_figures[f"{selected_player}_wzn_lafs"] = fig_wzn_lafs
         
         if fig_wzn_laws is not None:
-            all_figures[f"{selected_player}_wzn_laws.png"] = fig_wzn_laws
+            all_figures[f"{selected_player}_wzn_laws"] = fig_wzn_laws
         
         if fig_wzn_all_arm is not None:
-            all_figures[f"{selected_player}_wzn_all_arm.png"] = fig_wzn_all_arm
+            all_figures[f"{selected_player}_wzn_all_arm"] = fig_wzn_all_arm
         
         if fig_wzn_right_arm is not None:
-            all_figures[f"{selected_player}_wzn_right_arm.png"] = fig_wzn_right_arm
+            all_figures[f"{selected_player}_wzn_right_arm"] = fig_wzn_right_arm
         
         if fig_wzn_left_arm is not None:
-            all_figures[f"{selected_player}_wzn_left_arm.png"] = fig_wzn_left_arm
+            all_figures[f"{selected_player}_wzn_left_arm"] = fig_wzn_left_arm
         
         if fig_dis_all_type is not None:
-            all_figures[f"{selected_player}_dis_all_type.png"] = fig_dis_all_type
+            all_figures[f"{selected_player}_dis_all_type"] = fig_dis_all_type
         
         if fig_dis_pace is not None:
-            all_figures[f"{selected_player}_dis_pace.png"] = fig_dis_pace
+            all_figures[f"{selected_player}_dis_pace"] = fig_dis_pace
         
         if fig_dis_spin is not None:
-            all_figures[f"{selected_player}_dis_spin.png"] = fig_dis_spin
+            all_figures[f"{selected_player}_dis_spin"] = fig_dis_spin
         
         if fig_dis_all_phase is not None:
-            all_figures[f"{selected_player}_dis_all_phase.png"] = fig_dis_all_phase
+            all_figures[f"{selected_player}_dis_all_phase"] = fig_dis_all_phase
         
         if fig_dis_pp is not None:
-            all_figures[f"{selected_player}_dis_pp.png"] = fig_dis_pp
+            all_figures[f"{selected_player}_dis_pp"] = fig_dis_pp
         
         if fig_dis_mid is not None:
-            all_figures[f"{selected_player}_dis_mid.png"] = fig_dis_mid
+            all_figures[f"{selected_player}_dis_mid"] = fig_dis_mid
         
         if fig_dis_slog is not None:
-            all_figures[f"{selected_player}_dis_slog.png"] = fig_dis_slog
+            all_figures[f"{selected_player}_dis_slog"] = fig_dis_slog
         
         if fig_dis_all_kind is not None:
-            all_figures[f"{selected_player}_dis_all_kind.png"] = fig_dis_all_kind
+            all_figures[f"{selected_player}_dis_all_kind"] = fig_dis_all_kind
         
         if fig_dis_rap is not None:
-            all_figures[f"{selected_player}_dis_rap.png"] = fig_dis_rap
+            all_figures[f"{selected_player}_dis_rap"] = fig_dis_rap
         
         if fig_dis_rafs is not None:
-            all_figures[f"{selected_player}_dis_rafs.png"] = fig_dis_rafs
+            all_figures[f"{selected_player}_dis_rafs"] = fig_dis_rafs
         
         if fig_dis_raws is not None:
-            all_figures[f"{selected_player}_dis_raws.png"] = fig_dis_raws
+            all_figures[f"{selected_player}_dis_raws"] = fig_dis_raws
         
         if fig_dis_lap is not None:
-            all_figures[f"{selected_player}_dis_lap.png"] = fig_dis_lap
+            all_figures[f"{selected_player}_dis_lap"] = fig_dis_lap
         
         if fig_dis_lafs is not None:
-            all_figures[f"{selected_player}_dis_lafs.png"] = fig_dis_lafs
+            all_figures[f"{selected_player}_dis_lafs"] = fig_dis_lafs
         
         if fig_dis_laws is not None:
-            all_figures[f"{selected_player}_dis_laws.png"] = fig_dis_laws
+            all_figures[f"{selected_player}_dis_laws"] = fig_dis_laws
         
         if fig_dis_all_arm is not None:
-            all_figures[f"{selected_player}_dis_all_arm.png"] = fig_dis_all_arm
+            all_figures[f"{selected_player}_dis_all_arm"] = fig_dis_all_arm
         
         if fig_dis_right_arm is not None:
-            all_figures[f"{selected_player}_dis_right_arm.png"] = fig_dis_right_arm
+            all_figures[f"{selected_player}_dis_right_arm"] = fig_dis_right_arm
         
         if fig_dis_left_arm is not None:
-            all_figures[f"{selected_player}_dis_left_arm.png"] = fig_dis_left_arm
+            all_figures[f"{selected_player}_dis_left_arm"] = fig_dis_left_arm
         
         if all_figures:
             player_text = selected_player if selected_player != "All" else "AllPlayers"
