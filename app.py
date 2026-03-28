@@ -122,7 +122,7 @@ def create_zip_of_plots(figures_dict):
 st.sidebar.header("📂 Select Dataset Source")
 data_source = st.sidebar.selectbox(
     "Choose data source:",
-    ["Upload Data File", "S3_since24", "S3_WT20", "S3_all", "S3_HG_2026-WT20-bbb", "Cache_all", "Cache_since24",]
+    ["Upload Data File", "S3_since24", "S3_PSL-26", "S3_all", "S3_HG_2026-WT20-bbb", "Cache_all", "Cache_since24",]
 )
 
 # Initialize session state for df
@@ -205,7 +205,7 @@ elif data_source == "S3_since24":
     else:
         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
 
-elif data_source == "S3_WT20":
+elif data_source == "S3_PSL-26":
     if "aws" in st.secrets:
         bucket = st.secrets["aws"]["bucket_name"]
         access_key = st.secrets["aws"]["access_key_id"]
@@ -214,7 +214,7 @@ elif data_source == "S3_WT20":
         
         s3_file_key = st.sidebar.text_input(
             "Enter S3 file path:",
-            value="2026-WT20-bbb-data.csv"
+            value="PSL_26_bbb.csv"
         )
         
         if st.sidebar.button("Load from S3", key="load_2025"):
