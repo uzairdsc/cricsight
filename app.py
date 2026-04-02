@@ -1223,7 +1223,7 @@ if df is not None:
                 
                 # ===== SPIKE WITH BOWL TYPE FILTER =====
                 elif plot_type == "spike_desc_bowl_type":
-                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    filter_bowl_kind = ["pace bowler", "Pace"] if variant == "pace" else (["spin bowler", "Spin"] if variant == "spin" else None)
                     fig = spike_graph_plot_descriptive(
                         df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
                         mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
@@ -1305,7 +1305,7 @@ if df is not None:
                 
                 # ===== WAGON ZONE WITH BOWL TYPE FILTER =====
                 elif plot_type == "wagon_zone_bowl_type":
-                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    filter_bowl_kind = ["pace bowler", "Pace"] if variant == "pace" else (["spin bowler", "Spin"] if variant == "spin" else None)
                     fig = wagon_zone_plot_descriptive(
                         df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
                         mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
@@ -1382,7 +1382,7 @@ if df is not None:
                 
                 # ===== DISMISSAL WITH BOWL TYPE FILTER =====
                 elif plot_type == "dismissal_bowl_type":
-                    filter_bowl_kind = ["pace bowler"] if variant == "pace" else (["spin bowler"] if variant == "spin" else None)
+                    filter_bowl_kind = ["pace bowler", "Pace"] if variant == "pace" else (["spin bowler", "Spin"] if variant == "spin" else None)
                     fig = dismissal_plot(
                         df=df, player_name=selected_player_value, pid=selected_pid, inns=selected_inns,
                         mat_num=selected_mat_num, team_bat=selected_team_value, team_bowl=selected_team_bowl_value,
@@ -2149,7 +2149,7 @@ if df is not None:
                     title_components=title_components if show_title_pace else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["pace bowler"],  # HARDCODED: vs Pace
+                    bowl_kind=["pace bowler", "Pace"],  # HARDCODED: vs Pace
                     bowl_arm=bowl_arm,
                     show_title=show_title_pace,
                     show_summary=show_summary_pace,
@@ -2277,7 +2277,7 @@ if df is not None:
                     title_components=title_components if show_title_spin else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["spin bowler"],  # HARDCODED: vs Spin
+                    bowl_kind=["spin bowler", "Spin"],  # HARDCODED: vs Spin
                     bowl_arm=bowl_arm,
                     show_title=show_title_spin,
                     show_summary=show_summary_spin,
@@ -4883,7 +4883,7 @@ if df is not None:
                     title_components=title_components if show_title_wzn_pace else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["pace bowler"],
+                    bowl_kind=["pace bowler", "Pace"],
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_pace,
                     show_summary=show_summary_wzn_pace,
@@ -4985,7 +4985,7 @@ if df is not None:
                     title_components=title_components if show_title_wzn_spin else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["spin bowler"],
+                    bowl_kind=["spin bowler", "Spin"],
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_spin,
                     show_summary=show_summary_wzn_spin,
@@ -6817,7 +6817,7 @@ if df is not None:
                     title_components=title_components if show_title_dis_pace else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["pace bowler"],
+                    bowl_kind=["pace bowler", "Pace"],
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_pace,
                     show_summary=show_summary_dis_pace,
@@ -6908,7 +6908,7 @@ if df is not None:
                     title_components=title_components if show_title_dis_spin else [],
                     bat_hand=bat_hand,
                     bowl_type=bowl_type,
-                    bowl_kind=["spin bowler"],
+                    bowl_kind=["spin bowler", "Spin"],
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_spin,
                     show_summary=show_summary_dis_spin,
