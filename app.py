@@ -122,7 +122,7 @@ def create_zip_of_plots(figures_dict):
 st.sidebar.header("📂 Select Dataset Source")
 data_source = st.sidebar.selectbox(
     "Choose data source:",
-    ["Upload Data File", "S3_since24", "S3_PSL-26", "S3_all", "S3_HG_2026-WT20-bbb", "Cache_all", "Cache_since24",]
+    ["Upload Data File", "S3_since24", "S3_PSL-26", "S3_all", "Cache_all", "Cache_since24"]
 )
 
 # Initialize session state for df
@@ -229,29 +229,6 @@ elif data_source == "S3_PSL-26":
     else:
         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
 
-elif data_source == "S3_HG_2026-WT20-bbb":
-    if "aws" in st.secrets:
-        bucket = st.secrets["aws"]["bucket_name"]
-        access_key = st.secrets["aws"]["access_key_id"]
-        secret_key = st.secrets["aws"]["secret_access_key"]
-        region = st.secrets["aws"].get("region_name", "ap-south-1")
-        
-        s3_file_key = st.sidebar.text_input(
-            "Enter S3 file path:",
-            value="t20_bbb_wt20.csv"
-        )
-        
-        if st.sidebar.button("Load from S3", key="load_2025"):
-            loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
-            if loaded_df is not None:
-                st.session_state.df = loaded_df
-                df = loaded_df
-        
-        # Show current loaded data info
-        if st.session_state.df is not None:
-            st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
-    else:
-        st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
 
 elif data_source == "S3_all":
     if "aws" in st.secrets:
@@ -277,7 +254,7 @@ elif data_source == "S3_all":
             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
     else:
         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
-
+        
 elif data_source == "Cache_all":
     local_file_path = st.sidebar.text_input(
         "Enter local file path:",
@@ -349,18 +326,41 @@ if st.session_state.df is not None:
     # squad_file = "../data/daily_updated_t20_data/2026-WT20-Squads.xlsx"
 
     
+    # # List of possible file paths (in order of preference)
+    # possible_paths = [
+    #     "data/S2026_PSL.xlsx",
+    #     "data/S2026_IPL.xlsx",
+    #     "../data/daily_updated_t20_data/S2026_PSL.xlsx",
+    # ]
+
+    # squad_file = None
+    # for path in possible_paths:
+    #     if os.path.exists(path):
+    #         squad_file = path
+    #         break
+
+    # New Dropdown option
     # List of possible file paths (in order of preference)
     possible_paths = [
-        "../data/daily_updated_t20_data/S2026_PSL.xlsx",
-        # "../data/daily_updated_t20_data/2026-WT20-Squads.xlsx",
-        "data/S2026_PSL.xlsx"
+        "data/S2026_PSL.xlsx",
+        "data/S2026_IPL.xlsx",
     ]
 
-    squad_file = None
-    for path in possible_paths:
-        if os.path.exists(path):
-            squad_file = path
-            break
+    # Find which files actually exist
+    existing_squad_files = [path for path in possible_paths if os.path.exists(path)]
+
+    if existing_squad_files:
+        # Show dropdown to let user select
+        selected_squad_path = st.sidebar.selectbox(
+            "Select Squad File:",
+            existing_squad_files,
+            help="Choose which squad file to use for batch generation"
+        )
+        squad_file = selected_squad_path
+        st.sidebar.success(f"✓ Selected: {squad_file}")
+    else:
+        st.sidebar.error("⚠️ No squad files found!")
+        squad_file = None
 
     if squad_file:
         # Read squad file
@@ -621,8 +621,9 @@ if st.session_state.df is not None:
                                                 success_count += 1
                                         
                                         if "Dismissal Plot" in batch_plot_types:
-                                            # Dismissal plots have all parameters like Wagon Wheels
-                                            dismissal_filters = {k: v for k, v in batch_filters.items()}
+                                            # Dismissal plots don't have run_values or show_legend parameters
+                                            # dismissal_filters = {k: v for k, v in batch_filters.items()}
+                                            dismissal_filters = {k: v for k, v in batch_filters.items() if k not in ['run_values', 'show_legend']}
                                             fig = dismissal_plot(df=df, pid=pid, player_name=None, **dismissal_filters)
                                             if fig is not None:
                                                 all_batch_figures[f"{player_name}_dismissal_plot.png"] = fig
