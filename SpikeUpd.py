@@ -146,12 +146,21 @@ def spike_graph_plot(
     # innings_valid_balls = local_df[local_df['wides'] == 0]
     # innings_runs = innings_valid_balls['batsmanRuns'].sum()
     # innings_balls = innings_valid_balls.shape[0]
-    innings_valid_balls = local_df[local_df['wide'] == 0]
+    # innings_valid_balls = local_df[local_df['wide'] == 0]
+
+    # if player_name is None:
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_runs = innings_valid_balls['batruns'].sum()
 
     if player_name is None:
-        innings_runs = innings_valid_balls['score'].sum()
+        innings_valid_balls = local_df.copy()  # include all for team
+        innings_runs = innings_valid_balls['score'].sum() #score
     else:
-        innings_runs = innings_valid_balls['batruns'].sum()
+        innings_valid_balls = local_df[local_df['wide'] == 0]
+        innings_runs = innings_valid_balls['batruns'].sum() #batruns
+
+    innings_balls = innings_valid_balls.shape[0]
 
     #ground filter
     # if ground is not None:
@@ -336,7 +345,9 @@ def spike_graph_plot(
         total_score = valid_shots['score'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
+
         balls_faced = valid_balls.shape[0]
+        
     else:
         # Player-level stats (exclude wides + keep only player's shots)
         valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
@@ -348,6 +359,9 @@ def spike_graph_plot(
         total_score = valid_shots['batruns'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
+        # balls_faced = balls_faced_df.shape[0]
+
+        balls_faced_df = valid_balls
         balls_faced = balls_faced_df.shape[0]
 
 
@@ -943,12 +957,21 @@ def spike_graph_plot_descriptive(
     # innings_valid_balls = local_df[local_df['wides'] == 0]
     # innings_runs = innings_valid_balls['batsmanRuns'].sum()
     # innings_balls = innings_valid_balls.shape[0]
-    innings_valid_balls = local_df[local_df['wide'] == 0]
+    # innings_valid_balls = local_df[local_df['wide'] == 0]
+
+    # if player_name is None:
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_runs = innings_valid_balls['batruns'].sum()
+
+    # innings_balls = innings_valid_balls.shape[0]
 
     if player_name is None:
-        innings_runs = innings_valid_balls['score'].sum()
+        innings_valid_balls = local_df.copy()  # include all for team
+        innings_runs = innings_valid_balls['score'].sum() #score
     else:
-        innings_runs = innings_valid_balls['batruns'].sum()
+        innings_valid_balls = local_df[local_df['wide'] == 0]
+        innings_runs = innings_valid_balls['batruns'].sum() #batruns
 
     innings_balls = innings_valid_balls.shape[0]
     
@@ -1130,7 +1153,10 @@ def spike_graph_plot_descriptive(
         total_score = valid_shots['score'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
-        balls_faced = valid_shots[~((valid_shots['wagonX'] == 0) & (valid_shots['wagonY'] == 0))].shape[0]
+        # balls_faced = valid_shots[~((valid_shots['wagonX'] == 0) & (valid_shots['wagonY'] == 0))].shape[0]
+
+        balls_faced_df = valid_balls
+        balls_faced = balls_faced_df.shape[0]
 
     else:
         # Player-level stats (exclude wides + keep only player's shots) - from filtered local_df
@@ -1143,7 +1169,11 @@ def spike_graph_plot_descriptive(
         total_score = valid_shots['batruns'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
-        balls_faced = valid_shots.shape[0]
+
+
+        balls_faced_df = valid_balls
+        balls_faced = balls_faced_df.shape[0]
+        # balls_faced = valid_shots.shape[0]
         # balls_faced = player_data.shape[0]
 
     # Guard clause: check if valid_balls has data before calculating control_pct

@@ -150,25 +150,6 @@ def dismissal_plot(
     # innings_valid_balls = local_df[local_df['wides'] == 0]
     # innings_runs = innings_valid_balls['batsmanRuns'].sum()
     # innings_balls = innings_valid_balls.shape[0]
-    innings_valid_balls = local_df[local_df['wide'] == 0]
-
-    if player_name is None:
-        innings_runs = innings_valid_balls['score'].sum()
-    else:
-        innings_runs = innings_valid_balls['batruns'].sum()
-
-    innings_balls = innings_valid_balls.shape[0]
-    
-    # innings_4s = innings_valid_balls['isFour'].sum()
-    # innings_6s = innings_valid_balls['isSix'].sum()
-    
-    innings_4s = (innings_valid_balls['outcome'] == 'four').sum()
-    innings_6s = (innings_valid_balls['outcome'] == 'six').sum()
-
-    innings_0s = (innings_valid_balls['batruns'] == 0).sum()
-    innings_1s = (innings_valid_balls['batruns'] == 1).sum()
-    innings_2s = (innings_valid_balls['batruns'] == 2).sum()
-    innings_3s = (innings_valid_balls['batruns'] == 3).sum()
 
 
     if bowler_id is not None:
@@ -183,7 +164,34 @@ def dismissal_plot(
     if bowler_name:
         local_df = local_df[local_df['bowl'] == bowler_name]
 
-  
+    # innings_valid_balls = local_df[local_df['wide'] == 0]
+
+    # if player_name is None:
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_runs = innings_valid_balls['batruns'].sum()
+
+    # innings_balls = innings_valid_balls.shape[0]
+    if player_name is None:
+        innings_valid_balls = local_df.copy()  # include all for team
+        innings_runs = innings_valid_balls['score'].sum() #score
+    else:
+        innings_valid_balls = local_df[local_df['wide'] == 0]
+        innings_runs = innings_valid_balls['batruns'].sum() #batruns
+
+    innings_balls = innings_valid_balls.shape[0]
+    
+    # innings_4s = innings_valid_balls['isFour'].sum()
+    # innings_6s = innings_valid_balls['isSix'].sum()
+    
+    innings_4s = (innings_valid_balls['outcome'] == 'four').sum()
+    innings_6s = (innings_valid_balls['outcome'] == 'six').sum()
+
+    innings_0s = (innings_valid_balls['batruns'] == 0).sum()
+    innings_1s = (innings_valid_balls['batruns'] == 1).sum()
+    innings_2s = (innings_valid_balls['batruns'] == 2).sum()
+    innings_3s = (innings_valid_balls['batruns'] == 3).sum()
+    
     # Get unique batting teams
     batting_teams = local_df['team_bat'].dropna().unique()
     all_teams = pd.concat([local_df['team_bat'], local_df['team_bowl']]).dropna().unique()
@@ -303,14 +311,14 @@ def dismissal_plot(
     # else:
     #     player_data_sorted = player_data.sort_values(by='batsmanRuns')
     #     player_data['color'] = player_data['batsmanRuns'].map(score_colors).fillna('black')
-    if player_name is None:
-        innings_valid_balls = local_df.copy()  # include all for team
-        innings_runs = innings_valid_balls['score'].sum()
-    else:
-        innings_valid_balls = local_df[local_df['wide'] == 0]
-        innings_runs = innings_valid_balls['batruns'].sum()
+    # if player_name is None:
+    #     innings_valid_balls = local_df.copy()  # include all for team
+    #     innings_runs = innings_valid_balls['score'].sum()
+    # else:
+    #     innings_valid_balls = local_df[local_df['wide'] == 0]
+    #     innings_runs = innings_valid_balls['batruns'].sum()
 
-    innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
+    # innings_balls = innings_valid_balls[innings_valid_balls['wide'] == 0].shape[0]  # consistent valid balls
 
 
 
@@ -330,7 +338,9 @@ def dismissal_plot(
         total_score = valid_shots['score'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
+        
         balls_faced = valid_balls.shape[0]
+
     else:
         # Player-level stats (exclude wides + keep only player's shots)
         valid_balls = local_df[(local_df['wide'] == 0) & (~local_df['control'].isna())]
@@ -342,6 +352,9 @@ def dismissal_plot(
         total_score = valid_shots['batruns'].sum()
         total_4s = valid_shots['isFour'].sum()
         total_6s = valid_shots['isSix'].sum()
+        # balls_faced = balls_faced_df.shape[0]
+
+        balls_faced_df = valid_balls
         balls_faced = balls_faced_df.shape[0]
 
     if len(valid_balls) == 0:

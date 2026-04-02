@@ -5422,8 +5422,20 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_all_kind = st.checkbox("Show Plot Title", value=True, key="wzn_all_kind_title")
-                show_legend_wzn_all_kind = st.checkbox("Show Legend", value=True, key="wzn_all_kind_legend")
                 show_summary_wzn_all_kind = st.checkbox("Show Runs Summary", value=True, key="wzn_all_kind_summary")
+                
+                show_shots_breakdown_wzn_all_kind = st.checkbox("Show Shots Breakdown", value=True, key="wzn_all_kind_shots_breakdown")
+                if show_shots_breakdown_wzn_all_kind:
+                    shots_breakdown_options_wzn_all_kind = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="wzn_all_kind_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_wzn_all_kind = []
+                
                 runs_count_wzn_all_kind = st.checkbox("Show Runs Count", value=True, key="wzn_all_kind_runs")
                 show_fours_sixes_wzn_all_kind = st.checkbox("Show 4s and 6s", value=True, key="wzn_all_kind_fs")
                 show_bowler_wzn_all_kind = st.checkbox("Show Bowler", value=True, key="wzn_all_kind_bowler")
@@ -5431,7 +5443,9 @@ if df is not None:
                 show_prod_shot_wzn_all_kind = st.checkbox("Show Productive Shot", value=True, key="wzn_all_kind_prod")
                 show_overs_wzn_all_kind = st.checkbox("Show Overs", value=True, key="wzn_all_kind_overs")
                 show_phase_wzn_all_kind = st.checkbox("Show Phase", value=True, key="wzn_all_kind_phase")
+                show_bowl_type_wzn_all_kind = st.checkbox("Show Bowl Type", value=True, key="wzn_all_kind_bowl_type")
                 show_bowl_kind_wzn_all_kind = st.checkbox("Show Bowl Pace", value=True, key="wzn_all_kind_bowl_kind")
+                show_bowl_arm_wzn_all_kind = st.checkbox("Show Bowl Arm", value=True, key="wzn_all_kind_bowl_arm")
                 show_venue_wzn_all_kind = st.checkbox("Show Venue", value=True, key="wzn_all_kind_venue")
 
             with col3:
@@ -5492,6 +5506,8 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_all_kind,
                     show_summary=show_summary_wzn_all_kind,
+                    show_shots_breakdown=show_shots_breakdown_wzn_all_kind,
+                    shots_breakdown_options=shots_breakdown_options_wzn_all_kind,
                     runs_count=runs_count_wzn_all_kind,
                     show_fours_sixes=show_fours_sixes_wzn_all_kind,
                     show_control=show_control_wzn_all_kind,
@@ -5500,7 +5516,9 @@ if df is not None:
                     show_venue=show_venue_wzn_all_kind,
                     show_overs=show_overs_wzn_all_kind,
                     show_phase=show_phase_wzn_all_kind,
-                    show_bowl_kind=show_bowl_kind_wzn_all_kind
+                    show_bowl_type=show_bowl_type_wzn_all_kind,
+                    show_bowl_kind=show_bowl_kind_wzn_all_kind,
+                    show_bowl_arm=show_bowl_arm_wzn_all_kind
                 )
                 with col2:
                     st.pyplot(fig_wzn_all_kind)
@@ -5525,8 +5543,20 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_rap = st.checkbox("Show Plot Title", value=True, key="wzn_rap_title")
-                show_legend_wzn_rap = st.checkbox("Show Legend", value=True, key="wzn_rap_legend")
                 show_summary_wzn_rap = st.checkbox("Show Runs Summary", value=True, key="wzn_rap_summary")
+                
+                show_shots_breakdown_wzn_rap = st.checkbox("Show Shots Breakdown", value=True, key="wzn_rap_shots_breakdown")
+                if show_shots_breakdown_wzn_rap:
+                    shots_breakdown_options_wzn_rap = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="wzn_rap_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_wzn_rap = []
+                
                 runs_count_wzn_rap = st.checkbox("Show Runs Count", value=True, key="wzn_rap_runs")
                 show_fours_sixes_wzn_rap = st.checkbox("Show 4s and 6s", value=True, key="wzn_rap_fs")
                 show_bowler_wzn_rap = st.checkbox("Show Bowler", value=True, key="wzn_rap_bowler")
@@ -5535,6 +5565,7 @@ if df is not None:
                 show_overs_wzn_rap = st.checkbox("Show Overs", value=True, key="wzn_rap_overs")
                 show_phase_wzn_rap = st.checkbox("Show Phase", value=True, key="wzn_rap_phase")
                 show_bowl_type_wzn_rap = st.checkbox("Show Bowl Type", value=True, key="wzn_rap_bowl_type")
+                show_bowl_arm_wzn_rap = st.checkbox("Show Bowl Arm", value=True, key="wzn_rap_bowl_arm")
                 show_venue_wzn_rap = st.checkbox("Show Venue", value=True, key="wzn_rap_venue")
 
             with col3:
@@ -5595,6 +5626,8 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_rap,
                     show_summary=show_summary_wzn_rap,
+                    show_shots_breakdown=show_shots_breakdown_wzn_rap,
+                    shots_breakdown_options=shots_breakdown_options_wzn_rap,
                     runs_count=runs_count_wzn_rap,
                     show_fours_sixes=show_fours_sixes_wzn_rap,
                     show_control=show_control_wzn_rap,
@@ -5603,7 +5636,8 @@ if df is not None:
                     show_venue=show_venue_wzn_rap,
                     show_overs=show_overs_wzn_rap,
                     show_phase=show_phase_wzn_rap,
-                    show_bowl_type=show_bowl_type_wzn_rap
+                    show_bowl_type=show_bowl_type_wzn_rap,
+                    show_bowl_arm=show_bowl_arm_wzn_rap
                 )
                 with col2:
                     st.pyplot(fig_wzn_rap)
@@ -5628,8 +5662,20 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_rafs = st.checkbox("Show Plot Title", value=True, key="wzn_rafs_title")
-                show_legend_wzn_rafs = st.checkbox("Show Legend", value=True, key="wzn_rafs_legend")
                 show_summary_wzn_rafs = st.checkbox("Show Runs Summary", value=True, key="wzn_rafs_summary")
+                
+                show_shots_breakdown_wzn_rafs = st.checkbox("Show Shots Breakdown", value=True, key="wzn_rafs_shots_breakdown")
+                if show_shots_breakdown_wzn_rafs:
+                    shots_breakdown_options_wzn_rafs = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="wzn_rafs_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_wzn_rafs = []
+                
                 runs_count_wzn_rafs = st.checkbox("Show Runs Count", value=True, key="wzn_rafs_runs")
                 show_fours_sixes_wzn_rafs = st.checkbox("Show 4s and 6s", value=True, key="wzn_rafs_fs")
                 show_bowler_wzn_rafs = st.checkbox("Show Bowler", value=True, key="wzn_rafs_bowler")
@@ -5638,6 +5684,7 @@ if df is not None:
                 show_overs_wzn_rafs = st.checkbox("Show Overs", value=True, key="wzn_rafs_overs")
                 show_phase_wzn_rafs = st.checkbox("Show Phase", value=True, key="wzn_rafs_phase")
                 show_bowl_type_wzn_rafs = st.checkbox("Show Bowl Type", value=True, key="wzn_rafs_bowl_type")
+                show_bowl_arm_wzn_rafs = st.checkbox("Show Bowl Arm", value=True, key="wzn_rafs_bowl_arm")
                 show_venue_wzn_rafs = st.checkbox("Show Venue", value=True, key="wzn_rafs_venue")
 
             with col3:
@@ -5698,6 +5745,8 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_rafs,
                     show_summary=show_summary_wzn_rafs,
+                    show_shots_breakdown=show_shots_breakdown_wzn_rafs,
+                    shots_breakdown_options=shots_breakdown_options_wzn_rafs,
                     runs_count=runs_count_wzn_rafs,
                     show_fours_sixes=show_fours_sixes_wzn_rafs,
                     show_control=show_control_wzn_rafs,
@@ -5706,7 +5755,8 @@ if df is not None:
                     show_venue=show_venue_wzn_rafs,
                     show_overs=show_overs_wzn_rafs,
                     show_phase=show_phase_wzn_rafs,
-                    show_bowl_type=show_bowl_type_wzn_rafs
+                    show_bowl_type=show_bowl_type_wzn_rafs,
+                    show_bowl_arm=show_bowl_arm_wzn_rafs
                 )
                 with col2:
                     st.pyplot(fig_wzn_rafs)
@@ -5731,8 +5781,20 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_raws = st.checkbox("Show Plot Title", value=True, key="wzn_raws_title")
-                show_legend_wzn_raws = st.checkbox("Show Legend", value=True, key="wzn_raws_legend")
                 show_summary_wzn_raws = st.checkbox("Show Runs Summary", value=True, key="wzn_raws_summary")
+                
+                show_shots_breakdown_wzn_raws = st.checkbox("Show Shots Breakdown", value=True, key="wzn_raws_shots_breakdown")
+                if show_shots_breakdown_wzn_raws:
+                    shots_breakdown_options_wzn_raws = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="wzn_raws_shots_options",
+                        help="Select which run types to display in breakdown"
+                    )
+                else:
+                    shots_breakdown_options_wzn_raws = []
+                
                 runs_count_wzn_raws = st.checkbox("Show Runs Count", value=True, key="wzn_raws_runs")
                 show_fours_sixes_wzn_raws = st.checkbox("Show 4s and 6s", value=True, key="wzn_raws_fs")
                 show_bowler_wzn_raws = st.checkbox("Show Bowler", value=True, key="wzn_raws_bowler")
@@ -5741,6 +5803,7 @@ if df is not None:
                 show_overs_wzn_raws = st.checkbox("Show Overs", value=True, key="wzn_raws_overs")
                 show_phase_wzn_raws = st.checkbox("Show Phase", value=True, key="wzn_raws_phase")
                 show_bowl_type_wzn_raws = st.checkbox("Show Bowl Type", value=True, key="wzn_raws_bowl_type")
+                show_bowl_arm_wzn_raws = st.checkbox("Show Bowl Arm", value=True, key="wzn_raws_bowl_arm")
                 show_venue_wzn_raws = st.checkbox("Show Venue", value=True, key="wzn_raws_venue")
 
             with col3:
@@ -5801,6 +5864,8 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_wzn_raws,
                     show_summary=show_summary_wzn_raws,
+                    show_shots_breakdown=show_shots_breakdown_wzn_raws,
+                    shots_breakdown_options=shots_breakdown_options_wzn_raws,
                     runs_count=runs_count_wzn_raws,
                     show_fours_sixes=show_fours_sixes_wzn_raws,
                     show_control=show_control_wzn_raws,
@@ -5809,7 +5874,8 @@ if df is not None:
                     show_venue=show_venue_wzn_raws,
                     show_overs=show_overs_wzn_raws,
                     show_phase=show_phase_wzn_raws,
-                    show_bowl_type=show_bowl_type_wzn_raws
+                    show_bowl_type=show_bowl_type_wzn_raws,
+                    show_bowl_arm=show_bowl_arm_wzn_raws
                 )
                 with col2:
                     st.pyplot(fig_wzn_raws)
@@ -5834,7 +5900,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_lap = st.checkbox("Show Plot Title", value=True, key="wzn_lap_title")
-                show_legend_wzn_lap = st.checkbox("Show Legend", value=True, key="wzn_lap_legend")
                 show_summary_wzn_lap = st.checkbox("Show Runs Summary", value=True, key="wzn_lap_summary")
                 runs_count_wzn_lap = st.checkbox("Show Runs Count", value=True, key="wzn_lap_runs")
                 show_fours_sixes_wzn_lap = st.checkbox("Show 4s and 6s", value=True, key="wzn_lap_fs")
@@ -5937,7 +6002,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_lafs = st.checkbox("Show Plot Title", value=True, key="wzn_lafs_title")
-                show_legend_wzn_lafs = st.checkbox("Show Legend", value=True, key="wzn_lafs_legend")
                 show_summary_wzn_lafs = st.checkbox("Show Runs Summary", value=True, key="wzn_lafs_summary")
                 runs_count_wzn_lafs = st.checkbox("Show Runs Count", value=True, key="wzn_lafs_runs")
                 show_fours_sixes_wzn_lafs = st.checkbox("Show 4s and 6s", value=True, key="wzn_lafs_fs")
@@ -6040,7 +6104,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_laws = st.checkbox("Show Plot Title", value=True, key="wzn_laws_title")
-                show_legend_wzn_laws = st.checkbox("Show Legend", value=True, key="wzn_laws_legend")
                 show_summary_wzn_laws = st.checkbox("Show Runs Summary", value=True, key="wzn_laws_summary")
                 runs_count_wzn_laws = st.checkbox("Show Runs Count", value=True, key="wzn_laws_runs")
                 show_fours_sixes_wzn_laws = st.checkbox("Show 4s and 6s", value=True, key="wzn_laws_fs")
@@ -6143,7 +6206,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_all_arm = st.checkbox("Show Plot Title", value=True, key="wzn_all_arm_title")
-                show_legend_wzn_all_arm = st.checkbox("Show Legend", value=True, key="wzn_all_arm_legend")
                 show_summary_wzn_all_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_all_arm_summary")
                 runs_count_wzn_all_arm = st.checkbox("Show Runs Count", value=True, key="wzn_all_arm_runs")
                 show_fours_sixes_wzn_all_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_all_arm_fs")
@@ -6244,7 +6306,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_right_arm = st.checkbox("Show Plot Title", value=True, key="wzn_right_arm_title")
-                show_legend_wzn_right_arm = st.checkbox("Show Legend", value=True, key="wzn_right_arm_legend")
                 show_summary_wzn_right_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_right_arm_summary")
                 runs_count_wzn_right_arm = st.checkbox("Show Runs Count", value=True, key="wzn_right_arm_runs")
                 show_fours_sixes_wzn_right_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_right_arm_fs")
@@ -6345,7 +6406,6 @@ if df is not None:
             with col1:
                 st.markdown("## Customize Plot Info")
                 show_title_wzn_left_arm = st.checkbox("Show Plot Title", value=True, key="wzn_left_arm_title")
-                show_legend_wzn_left_arm = st.checkbox("Show Legend", value=True, key="wzn_left_arm_legend")
                 show_summary_wzn_left_arm = st.checkbox("Show Runs Summary", value=True, key="wzn_left_arm_summary")
                 runs_count_wzn_left_arm = st.checkbox("Show Runs Count", value=True, key="wzn_left_arm_runs")
                 show_fours_sixes_wzn_left_arm = st.checkbox("Show 4s and 6s", value=True, key="wzn_left_arm_fs")
@@ -6467,10 +6527,10 @@ if df is not None:
                 show_prod_shot_dismissal = st.checkbox("Show Most Loose Shot", value=True, key="prod_shot_dismissal")
                 show_overs_dismissal = st.checkbox("Show Overs", value=True, key="overs_dismissal")
                 show_phase_dismissal = st.checkbox("Show Phase", value=True, key="phase_dismissal")
-                # show_venue_dismissal = st.checkbox("Show Venue", value=True, key="venue_dismissal")
-                # Auto-enable show_venue if 'show_venue' is selected in title_components
-                show_venue_default = 'show_venue' in title_components
-                show_venue_dismissal = st.checkbox("Show Venue", value=show_venue_default, key="venue_dismissal")
+                show_venue_dismissal = st.checkbox("Show Venue", value=True, key="venue_dismissal")
+                # # Auto-enable show_venue if 'show_venue' is selected in title_components
+                # show_venue_default = 'show_venue' in title_components
+                # show_venue_dismissal = st.checkbox("Show Venue", value=show_venue_default, key="venue_dismissal")
                 show_bowl_type_dismissal = st.checkbox("Show Bowl Type", value=True, key="bowl_type_dismissal")
                 show_bowl_kind_dismissal = st.checkbox("Show Bowl Pace", value=True, key="bowl_kind_dismissal")
                 show_bowl_arm_dismissal = st.checkbox("Show Bowl Arm", value=True, key="bowl_arm_dismissal")
@@ -6712,6 +6772,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_pace = st.checkbox("Show Plot Title", value=True, key="dis_pace_title")
                 show_summary_dis_pace = st.checkbox("Show Runs Summary", value=True, key="dis_pace_summary")
+                show_shots_breakdown_dis_pace = st.checkbox("Show Shots Breakdown", value=True, key="dis_pace_shots_breakdown")
+                if show_shots_breakdown_dis_pace:
+                    shots_breakdown_options_dis_pace = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_pace_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_pace = []
                 runs_count_dis_pace = st.checkbox("Show Runs Count", value=True, key="dis_pace_runs")
                 show_fours_sixes_dis_pace = st.checkbox("Show 4s and 6s", value=True, key="dis_pace_fs")
                 show_bowler_dis_pace = st.checkbox("Show Bowler", value=True, key="dis_pace_bowler")
@@ -6720,6 +6790,10 @@ if df is not None:
                 show_overs_dis_pace = st.checkbox("Show Overs", value=True, key="dis_pace_overs")
                 show_phase_dis_pace = st.checkbox("Show Phase", value=True, key="dis_pace_phase")
                 show_bowl_type_dis_pace = st.checkbox("Show Bowl Type", value=True, key="dis_pace_bowl_type")
+                show_ground_dis_pace = st.checkbox("Show Ground", value=True, key="dis_pace_ground")
+                show_venue_dis_pace = st.checkbox("Show Venue", value=True, key="dis_pace_venue")
+                show_bowl_kind_dis_pace = st.checkbox("Show Bowl Pace", value=True, key="dis_pace_bowl_kind")
+                show_bowl_arm_dis_pace = st.checkbox("Show Bowl Arm", value=True, key="dis_pace_bowl_arm")
                 
             try:
                 fig_dis_pace = dismissal_plot(
@@ -6747,14 +6821,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_pace,
                     show_summary=show_summary_dis_pace,
+                    show_shots_breakdown=show_shots_breakdown_dis_pace,
+                    shots_breakdown_options=shots_breakdown_options_dis_pace,
                     runs_count=runs_count_dis_pace,
                     show_fours_sixes=show_fours_sixes_dis_pace,
                     show_control=show_control_dis_pace,
                     show_prod_shot=show_prod_shot_dis_pace,
                     show_bowler=show_bowler_dis_pace,
+                    show_ground=show_ground_dis_pace,
+                    show_venue=show_venue_dis_pace,
                     show_overs=show_overs_dis_pace,
                     show_phase=show_phase_dis_pace,
-                    show_bowl_type=show_bowl_type_dis_pace
+                    show_bowl_type=show_bowl_type_dis_pace,
+                    show_bowl_kind=show_bowl_kind_dis_pace,
+                    show_bowl_arm=show_bowl_arm_dis_pace
                 )
                 with col2:
                     st.pyplot(fig_dis_pace)
@@ -6783,6 +6863,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_spin = st.checkbox("Show Plot Title", value=True, key="dis_spin_title")
                 show_summary_dis_spin = st.checkbox("Show Runs Summary", value=True, key="dis_spin_summary")
+                show_shots_breakdown_dis_spin = st.checkbox("Show Shots Breakdown", value=True, key="dis_spin_shots_breakdown")
+                if show_shots_breakdown_dis_spin:
+                    shots_breakdown_options_dis_spin = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_spin_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_spin = []
                 runs_count_dis_spin = st.checkbox("Show Runs Count", value=True, key="dis_spin_runs")
                 show_fours_sixes_dis_spin = st.checkbox("Show 4s and 6s", value=True, key="dis_spin_fs")
                 show_bowler_dis_spin = st.checkbox("Show Bowler", value=True, key="dis_spin_bowler")
@@ -6791,6 +6881,10 @@ if df is not None:
                 show_overs_dis_spin = st.checkbox("Show Overs", value=True, key="dis_spin_overs")
                 show_phase_dis_spin = st.checkbox("Show Phase", value=True, key="dis_spin_phase")
                 show_bowl_type_dis_spin = st.checkbox("Show Bowl Type", value=True, key="dis_spin_bowl_type")
+                show_ground_dis_spin = st.checkbox("Show Ground", value=True, key="dis_spin_ground")
+                show_venue_dis_spin = st.checkbox("Show Venue", value=True, key="dis_spin_venue")
+                show_bowl_kind_dis_spin = st.checkbox("Show Bowl Pace", value=True, key="dis_spin_bowl_kind")
+                show_bowl_arm_dis_spin = st.checkbox("Show Bowl Arm", value=True, key="dis_spin_bowl_arm")
                 
             try:
                 fig_dis_spin = dismissal_plot(
@@ -6818,14 +6912,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_spin,
                     show_summary=show_summary_dis_spin,
+                    show_shots_breakdown=show_shots_breakdown_dis_spin,
+                    shots_breakdown_options=shots_breakdown_options_dis_spin,
                     runs_count=runs_count_dis_spin,
                     show_fours_sixes=show_fours_sixes_dis_spin,
                     show_control=show_control_dis_spin,
                     show_prod_shot=show_prod_shot_dis_spin,
                     show_bowler=show_bowler_dis_spin,
+                    show_ground=show_ground_dis_spin,
+                    show_venue=show_venue_dis_spin,
                     show_overs=show_overs_dis_spin,
                     show_phase=show_phase_dis_spin,
-                    show_bowl_type=show_bowl_type_dis_spin
+                    show_bowl_type=show_bowl_type_dis_spin,
+                    show_bowl_kind=show_bowl_kind_dis_spin,
+                    show_bowl_arm=show_bowl_arm_dis_spin
                 )
                 with col2:
                     st.pyplot(fig_dis_spin)
@@ -6854,6 +6954,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_all_phase = st.checkbox("Show Plot Title", value=True, key="dis_all_phase_title")
                 show_summary_dis_all_phase = st.checkbox("Show Runs Summary", value=True, key="dis_all_phase_summary")
+                show_shots_breakdown_dis_all_phase = st.checkbox("Show Shots Breakdown", value=True, key="dis_all_phase_shots_breakdown")
+                if show_shots_breakdown_dis_all_phase:
+                    shots_breakdown_options_dis_all_phase = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_all_phase_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_all_phase = []
                 runs_count_dis_all_phase = st.checkbox("Show Runs Count", value=True, key="dis_all_phase_runs")
                 show_fours_sixes_dis_all_phase = st.checkbox("Show 4s and 6s", value=True, key="dis_all_phase_fs")
                 show_bowler_dis_all_phase = st.checkbox("Show Bowler", value=True, key="dis_all_phase_bowler")
@@ -6862,6 +6972,10 @@ if df is not None:
                 show_overs_dis_all_phase = st.checkbox("Show Overs", value=True, key="dis_all_phase_overs")
                 show_phase_dis_all_phase = st.checkbox("Show Phase", value=True, key="dis_all_phase_phase")
                 show_bowl_type_dis_all_phase = st.checkbox("Show Bowl Type", value=True, key="dis_all_phase_bowl_type")
+                show_ground_dis_all_phase = st.checkbox("Show Ground", value=True, key="dis_all_phase_ground")
+                show_venue_dis_all_phase = st.checkbox("Show Venue", value=True, key="dis_all_phase_venue")
+                show_bowl_kind_dis_all_phase = st.checkbox("Show Bowl Pace", value=True, key="dis_all_phase_bowl_kind")
+                show_bowl_arm_dis_all_phase = st.checkbox("Show Bowl Arm", value=True, key="dis_all_phase_bowl_arm")
                 
             try:
                 fig_dis_all_phase = dismissal_plot(
@@ -6889,14 +7003,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_all_phase,
                     show_summary=show_summary_dis_all_phase,
+                    show_shots_breakdown=show_shots_breakdown_dis_all_phase,
+                    shots_breakdown_options=shots_breakdown_options_dis_all_phase,
                     runs_count=runs_count_dis_all_phase,
                     show_fours_sixes=show_fours_sixes_dis_all_phase,
                     show_control=show_control_dis_all_phase,
                     show_prod_shot=show_prod_shot_dis_all_phase,
                     show_bowler=show_bowler_dis_all_phase,
+                    show_ground=show_ground_dis_all_phase,
+                    show_venue=show_venue_dis_all_phase,
                     show_overs=show_overs_dis_all_phase,
                     show_phase=show_phase_dis_all_phase,
-                    show_bowl_type=show_bowl_type_dis_all_phase
+                    show_bowl_type=show_bowl_type_dis_all_phase,
+                    show_bowl_kind=show_bowl_kind_dis_all_phase,
+                    show_bowl_arm=show_bowl_arm_dis_all_phase
                 )
                 with col2:
                     st.pyplot(fig_dis_all_phase)
@@ -6925,6 +7045,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_pp = st.checkbox("Show Plot Title", value=True, key="dis_pp_title")
                 show_summary_dis_pp = st.checkbox("Show Runs Summary", value=True, key="dis_pp_summary")
+                show_shots_breakdown_dis_pp = st.checkbox("Show Shots Breakdown", value=True, key="dis_pp_shots_breakdown")
+                if show_shots_breakdown_dis_pp:
+                    shots_breakdown_options_dis_pp = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_pp_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_pp = []
                 runs_count_dis_pp = st.checkbox("Show Runs Count", value=True, key="dis_pp_runs")
                 show_fours_sixes_dis_pp = st.checkbox("Show 4s and 6s", value=True, key="dis_pp_fs")
                 show_bowler_dis_pp = st.checkbox("Show Bowler", value=True, key="dis_pp_bowler")
@@ -6933,6 +7063,10 @@ if df is not None:
                 show_overs_dis_pp = st.checkbox("Show Overs", value=True, key="dis_pp_overs")
                 show_phase_dis_pp = st.checkbox("Show Phase", value=True, key="dis_pp_phase")
                 show_bowl_type_dis_pp = st.checkbox("Show Bowl Type", value=True, key="dis_pp_bowl_type")
+                show_ground_dis_pp = st.checkbox("Show Ground", value=True, key="dis_pp_ground")
+                show_venue_dis_pp = st.checkbox("Show Venue", value=True, key="dis_pp_venue")
+                show_bowl_kind_dis_pp = st.checkbox("Show Bowl Pace", value=True, key="dis_pp_bowl_kind")
+                show_bowl_arm_dis_pp = st.checkbox("Show Bowl Arm", value=True, key="dis_pp_bowl_arm")
                 
             try:
                 fig_dis_pp = dismissal_plot(
@@ -6960,14 +7094,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_pp,
                     show_summary=show_summary_dis_pp,
+                    show_shots_breakdown=show_shots_breakdown_dis_pp,
+                    shots_breakdown_options=shots_breakdown_options_dis_pp,
                     runs_count=runs_count_dis_pp,
                     show_fours_sixes=show_fours_sixes_dis_pp,
                     show_control=show_control_dis_pp,
                     show_prod_shot=show_prod_shot_dis_pp,
                     show_bowler=show_bowler_dis_pp,
+                    show_ground=show_ground_dis_pp,
+                    show_venue=show_venue_dis_pp,
                     show_overs=show_overs_dis_pp,
                     show_phase=show_phase_dis_pp,
-                    show_bowl_type=show_bowl_type_dis_pp
+                    show_bowl_type=show_bowl_type_dis_pp,
+                    show_bowl_kind=show_bowl_kind_dis_pp,
+                    show_bowl_arm=show_bowl_arm_dis_pp
                 )
                 with col2:
                     st.pyplot(fig_dis_pp)
@@ -6996,6 +7136,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_mid = st.checkbox("Show Plot Title", value=True, key="dis_mid_title")
                 show_summary_dis_mid = st.checkbox("Show Runs Summary", value=True, key="dis_mid_summary")
+                show_shots_breakdown_dis_mid = st.checkbox("Show Shots Breakdown", value=True, key="dis_mid_shots_breakdown")
+                if show_shots_breakdown_dis_mid:
+                    shots_breakdown_options_dis_mid = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_mid_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_mid = []
                 runs_count_dis_mid = st.checkbox("Show Runs Count", value=True, key="dis_mid_runs")
                 show_fours_sixes_dis_mid = st.checkbox("Show 4s and 6s", value=True, key="dis_mid_fs")
                 show_bowler_dis_mid = st.checkbox("Show Bowler", value=True, key="dis_mid_bowler")
@@ -7004,6 +7154,10 @@ if df is not None:
                 show_overs_dis_mid = st.checkbox("Show Overs", value=True, key="dis_mid_overs")
                 show_phase_dis_mid = st.checkbox("Show Phase", value=True, key="dis_mid_phase")
                 show_bowl_type_dis_mid = st.checkbox("Show Bowl Type", value=True, key="dis_mid_bowl_type")
+                show_ground_dis_mid = st.checkbox("Show Ground", value=True, key="dis_mid_ground")
+                show_venue_dis_mid = st.checkbox("Show Venue", value=True, key="dis_mid_venue")
+                show_bowl_kind_dis_mid = st.checkbox("Show Bowl Pace", value=True, key="dis_mid_bowl_kind")
+                show_bowl_arm_dis_mid = st.checkbox("Show Bowl Arm", value=True, key="dis_mid_bowl_arm")
                 
             try:
                 fig_dis_mid = dismissal_plot(
@@ -7031,14 +7185,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_mid,
                     show_summary=show_summary_dis_mid,
+                    show_shots_breakdown=show_shots_breakdown_dis_mid,
+                    shots_breakdown_options=shots_breakdown_options_dis_mid,
                     runs_count=runs_count_dis_mid,
                     show_fours_sixes=show_fours_sixes_dis_mid,
                     show_control=show_control_dis_mid,
                     show_prod_shot=show_prod_shot_dis_mid,
                     show_bowler=show_bowler_dis_mid,
+                    show_ground=show_ground_dis_mid,
+                    show_venue=show_venue_dis_mid,
                     show_overs=show_overs_dis_mid,
                     show_phase=show_phase_dis_mid,
-                    show_bowl_type=show_bowl_type_dis_mid
+                    show_bowl_type=show_bowl_type_dis_mid,
+                    show_bowl_kind=show_bowl_kind_dis_mid,
+                    show_bowl_arm=show_bowl_arm_dis_mid
                 )
                 with col2:
                     st.pyplot(fig_dis_mid)
@@ -7067,6 +7227,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_slog = st.checkbox("Show Plot Title", value=True, key="dis_slog_title")
                 show_summary_dis_slog = st.checkbox("Show Runs Summary", value=True, key="dis_slog_summary")
+                show_shots_breakdown_dis_slog = st.checkbox("Show Shots Breakdown", value=True, key="dis_slog_shots_breakdown")
+                if show_shots_breakdown_dis_slog:
+                    shots_breakdown_options_dis_slog = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_slog_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_slog = []
                 runs_count_dis_slog = st.checkbox("Show Runs Count", value=True, key="dis_slog_runs")
                 show_fours_sixes_dis_slog = st.checkbox("Show 4s and 6s", value=True, key="dis_slog_fs")
                 show_bowler_dis_slog = st.checkbox("Show Bowler", value=True, key="dis_slog_bowler")
@@ -7075,6 +7245,10 @@ if df is not None:
                 show_overs_dis_slog = st.checkbox("Show Overs", value=True, key="dis_slog_overs")
                 show_phase_dis_slog = st.checkbox("Show Phase", value=True, key="dis_slog_phase")
                 show_bowl_type_dis_slog = st.checkbox("Show Bowl Type", value=True, key="dis_slog_bowl_type")
+                show_ground_dis_slog = st.checkbox("Show Ground", value=True, key="dis_slog_ground")
+                show_venue_dis_slog = st.checkbox("Show Venue", value=True, key="dis_slog_venue")
+                show_bowl_kind_dis_slog = st.checkbox("Show Bowl Pace", value=True, key="dis_slog_bowl_kind")
+                show_bowl_arm_dis_slog = st.checkbox("Show Bowl Arm", value=True, key="dis_slog_bowl_arm")
                 
             try:
                 fig_dis_slog = dismissal_plot(
@@ -7102,14 +7276,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_slog,
                     show_summary=show_summary_dis_slog,
+                    show_shots_breakdown=show_shots_breakdown_dis_slog,
+                    shots_breakdown_options=shots_breakdown_options_dis_slog,
                     runs_count=runs_count_dis_slog,
                     show_fours_sixes=show_fours_sixes_dis_slog,
                     show_control=show_control_dis_slog,
                     show_prod_shot=show_prod_shot_dis_slog,
                     show_bowler=show_bowler_dis_slog,
+                    show_ground=show_ground_dis_slog,
+                    show_venue=show_venue_dis_slog,
                     show_overs=show_overs_dis_slog,
                     show_phase=show_phase_dis_slog,
-                    show_bowl_type=show_bowl_type_dis_slog
+                    show_bowl_type=show_bowl_type_dis_slog,
+                    show_bowl_kind=show_bowl_kind_dis_slog,
+                    show_bowl_arm=show_bowl_arm_dis_slog
                 )
                 with col2:
                     st.pyplot(fig_dis_slog)
@@ -7138,6 +7318,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_all_kind = st.checkbox("Show Plot Title", value=True, key="dis_all_kind_title")
                 show_summary_dis_all_kind = st.checkbox("Show Runs Summary", value=True, key="dis_all_kind_summary")
+                show_shots_breakdown_dis_all_kind = st.checkbox("Show Shots Breakdown", value=True, key="dis_all_kind_shots_breakdown")
+                if show_shots_breakdown_dis_all_kind:
+                    shots_breakdown_options_dis_all_kind = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_all_kind_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_all_kind = []
                 runs_count_dis_all_kind = st.checkbox("Show Runs Count", value=True, key="dis_all_kind_runs")
                 show_fours_sixes_dis_all_kind = st.checkbox("Show 4s and 6s", value=True, key="dis_all_kind_fs")
                 show_bowler_dis_all_kind = st.checkbox("Show Bowler", value=True, key="dis_all_kind_bowler")
@@ -7146,6 +7336,10 @@ if df is not None:
                 show_overs_dis_all_kind = st.checkbox("Show Overs", value=True, key="dis_all_kind_overs")
                 show_phase_dis_all_kind = st.checkbox("Show Phase", value=True, key="dis_all_kind_phase")
                 show_bowl_type_dis_all_kind = st.checkbox("Show Bowl Type", value=True, key="dis_all_kind_bowl_type")
+                show_ground_dis_all_kind = st.checkbox("Show Ground", value=True, key="dis_all_kind_ground")
+                show_venue_dis_all_kind = st.checkbox("Show Venue", value=True, key="dis_all_kind_venue")
+                show_bowl_kind_dis_all_kind = st.checkbox("Show Bowl Pace", value=True, key="dis_all_kind_bowl_kind")
+                show_bowl_arm_dis_all_kind = st.checkbox("Show Bowl Arm", value=True, key="dis_all_kind_bowl_arm")
                 
             try:
                 fig_dis_all_kind = dismissal_plot(
@@ -7173,14 +7367,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_all_kind,
                     show_summary=show_summary_dis_all_kind,
+                    show_shots_breakdown=show_shots_breakdown_dis_all_kind,
+                    shots_breakdown_options=shots_breakdown_options_dis_all_kind,
                     runs_count=runs_count_dis_all_kind,
                     show_fours_sixes=show_fours_sixes_dis_all_kind,
                     show_control=show_control_dis_all_kind,
                     show_prod_shot=show_prod_shot_dis_all_kind,
                     show_bowler=show_bowler_dis_all_kind,
+                    show_ground=show_ground_dis_all_kind,
+                    show_venue=show_venue_dis_all_kind,
                     show_overs=show_overs_dis_all_kind,
                     show_phase=show_phase_dis_all_kind,
-                    show_bowl_type=show_bowl_type_dis_all_kind
+                    show_bowl_type=show_bowl_type_dis_all_kind,
+                    show_bowl_kind=show_bowl_kind_dis_all_kind,
+                    show_bowl_arm=show_bowl_arm_dis_all_kind
                 )
                 with col2:
                     st.pyplot(fig_dis_all_kind)
@@ -7209,6 +7409,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_rap = st.checkbox("Show Plot Title", value=True, key="dis_rap_title")
                 show_summary_dis_rap = st.checkbox("Show Runs Summary", value=True, key="dis_rap_summary")
+                show_shots_breakdown_dis_rap = st.checkbox("Show Shots Breakdown", value=True, key="dis_rap_shots_breakdown")
+                if show_shots_breakdown_dis_rap:
+                    shots_breakdown_options_dis_rap = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_rap_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_rap = []
                 runs_count_dis_rap = st.checkbox("Show Runs Count", value=True, key="dis_rap_runs")
                 show_fours_sixes_dis_rap = st.checkbox("Show 4s and 6s", value=True, key="dis_rap_fs")
                 show_bowler_dis_rap = st.checkbox("Show Bowler", value=True, key="dis_rap_bowler")
@@ -7217,6 +7427,10 @@ if df is not None:
                 show_overs_dis_rap = st.checkbox("Show Overs", value=True, key="dis_rap_overs")
                 show_phase_dis_rap = st.checkbox("Show Phase", value=True, key="dis_rap_phase")
                 show_bowl_type_dis_rap = st.checkbox("Show Bowl Type", value=True, key="dis_rap_bowl_type")
+                show_ground_dis_rap = st.checkbox("Show Ground", value=True, key="dis_rap_ground")
+                show_venue_dis_rap = st.checkbox("Show Venue", value=True, key="dis_rap_venue")
+                show_bowl_kind_dis_rap = st.checkbox("Show Bowl Pace", value=True, key="dis_rap_bowl_kind")
+                show_bowl_arm_dis_rap = st.checkbox("Show Bowl Arm", value=True, key="dis_rap_bowl_arm")
                 
             try:
                 fig_dis_rap = dismissal_plot(
@@ -7244,14 +7458,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_rap,
                     show_summary=show_summary_dis_rap,
+                    show_shots_breakdown=show_shots_breakdown_dis_rap,
+                    shots_breakdown_options=shots_breakdown_options_dis_rap,
                     runs_count=runs_count_dis_rap,
                     show_fours_sixes=show_fours_sixes_dis_rap,
                     show_control=show_control_dis_rap,
                     show_prod_shot=show_prod_shot_dis_rap,
                     show_bowler=show_bowler_dis_rap,
+                    show_ground=show_ground_dis_rap,
+                    show_venue=show_venue_dis_rap,
                     show_overs=show_overs_dis_rap,
                     show_phase=show_phase_dis_rap,
-                    show_bowl_type=show_bowl_type_dis_rap
+                    show_bowl_type=show_bowl_type_dis_rap,
+                    show_bowl_kind=show_bowl_kind_dis_rap,
+                    show_bowl_arm=show_bowl_arm_dis_rap
                 )
                 with col2:
                     st.pyplot(fig_dis_rap)
@@ -7280,6 +7500,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_rafs = st.checkbox("Show Plot Title", value=True, key="dis_rafs_title")
                 show_summary_dis_rafs = st.checkbox("Show Runs Summary", value=True, key="dis_rafs_summary")
+                show_shots_breakdown_dis_rafs = st.checkbox("Show Shots Breakdown", value=True, key="dis_rafs_shots_breakdown")
+                if show_shots_breakdown_dis_rafs:
+                    shots_breakdown_options_dis_rafs = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_rafs_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_rafs = []
                 runs_count_dis_rafs = st.checkbox("Show Runs Count", value=True, key="dis_rafs_runs")
                 show_fours_sixes_dis_rafs = st.checkbox("Show 4s and 6s", value=True, key="dis_rafs_fs")
                 show_bowler_dis_rafs = st.checkbox("Show Bowler", value=True, key="dis_rafs_bowler")
@@ -7288,6 +7518,10 @@ if df is not None:
                 show_overs_dis_rafs = st.checkbox("Show Overs", value=True, key="dis_rafs_overs")
                 show_phase_dis_rafs = st.checkbox("Show Phase", value=True, key="dis_rafs_phase")
                 show_bowl_type_dis_rafs = st.checkbox("Show Bowl Type", value=True, key="dis_rafs_bowl_type")
+                show_ground_dis_rafs = st.checkbox("Show Ground", value=True, key="dis_rafs_ground")
+                show_venue_dis_rafs = st.checkbox("Show Venue", value=True, key="dis_rafs_venue")
+                show_bowl_kind_dis_rafs = st.checkbox("Show Bowl Pace", value=True, key="dis_rafs_bowl_kind")
+                show_bowl_arm_dis_rafs = st.checkbox("Show Bowl Arm", value=True, key="dis_rafs_bowl_arm")
                 
             try:
                 fig_dis_rafs = dismissal_plot(
@@ -7315,14 +7549,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_rafs,
                     show_summary=show_summary_dis_rafs,
+                    show_shots_breakdown=show_shots_breakdown_dis_rafs,
+                    shots_breakdown_options=shots_breakdown_options_dis_rafs,
                     runs_count=runs_count_dis_rafs,
                     show_fours_sixes=show_fours_sixes_dis_rafs,
                     show_control=show_control_dis_rafs,
                     show_prod_shot=show_prod_shot_dis_rafs,
                     show_bowler=show_bowler_dis_rafs,
+                    show_ground=show_ground_dis_rafs,
+                    show_venue=show_venue_dis_rafs,
                     show_overs=show_overs_dis_rafs,
                     show_phase=show_phase_dis_rafs,
-                    show_bowl_type=show_bowl_type_dis_rafs
+                    show_bowl_type=show_bowl_type_dis_rafs,
+                    show_bowl_kind=show_bowl_kind_dis_rafs,
+                    show_bowl_arm=show_bowl_arm_dis_rafs
                 )
                 with col2:
                     st.pyplot(fig_dis_rafs)
@@ -7351,6 +7591,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_raws = st.checkbox("Show Plot Title", value=True, key="dis_raws_title")
                 show_summary_dis_raws = st.checkbox("Show Runs Summary", value=True, key="dis_raws_summary")
+                show_shots_breakdown_dis_raws = st.checkbox("Show Shots Breakdown", value=True, key="dis_raws_shots_breakdown")
+                if show_shots_breakdown_dis_raws:
+                    shots_breakdown_options_dis_raws = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_raws_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_raws = []
                 runs_count_dis_raws = st.checkbox("Show Runs Count", value=True, key="dis_raws_runs")
                 show_fours_sixes_dis_raws = st.checkbox("Show 4s and 6s", value=True, key="dis_raws_fs")
                 show_bowler_dis_raws = st.checkbox("Show Bowler", value=True, key="dis_raws_bowler")
@@ -7359,6 +7609,10 @@ if df is not None:
                 show_overs_dis_raws = st.checkbox("Show Overs", value=True, key="dis_raws_overs")
                 show_phase_dis_raws = st.checkbox("Show Phase", value=True, key="dis_raws_phase")
                 show_bowl_type_dis_raws = st.checkbox("Show Bowl Type", value=True, key="dis_raws_bowl_type")
+                show_ground_dis_raws = st.checkbox("Show Ground", value=True, key="dis_raws_ground")
+                show_venue_dis_raws = st.checkbox("Show Venue", value=True, key="dis_raws_venue")
+                show_bowl_kind_dis_raws = st.checkbox("Show Bowl Pace", value=True, key="dis_raws_bowl_kind")
+                show_bowl_arm_dis_raws = st.checkbox("Show Bowl Arm", value=True, key="dis_raws_bowl_arm")
                 
             try:
                 fig_dis_raws = dismissal_plot(
@@ -7386,14 +7640,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_raws,
                     show_summary=show_summary_dis_raws,
+                    show_shots_breakdown=show_shots_breakdown_dis_raws,
+                    shots_breakdown_options=shots_breakdown_options_dis_raws,
                     runs_count=runs_count_dis_raws,
                     show_fours_sixes=show_fours_sixes_dis_raws,
                     show_control=show_control_dis_raws,
                     show_prod_shot=show_prod_shot_dis_raws,
                     show_bowler=show_bowler_dis_raws,
+                    show_ground=show_ground_dis_raws,
+                    show_venue=show_venue_dis_raws,
                     show_overs=show_overs_dis_raws,
                     show_phase=show_phase_dis_raws,
-                    show_bowl_type=show_bowl_type_dis_raws
+                    show_bowl_type=show_bowl_type_dis_raws,
+                    show_bowl_kind=show_bowl_kind_dis_raws,
+                    show_bowl_arm=show_bowl_arm_dis_raws
                 )
                 with col2:
                     st.pyplot(fig_dis_raws)
@@ -7422,6 +7682,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_lap = st.checkbox("Show Plot Title", value=True, key="dis_lap_title")
                 show_summary_dis_lap = st.checkbox("Show Runs Summary", value=True, key="dis_lap_summary")
+                show_shots_breakdown_dis_lap = st.checkbox("Show Shots Breakdown", value=True, key="dis_lap_shots_breakdown")
+                if show_shots_breakdown_dis_lap:
+                    shots_breakdown_options_dis_lap = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_lap_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_lap = []
                 runs_count_dis_lap = st.checkbox("Show Runs Count", value=True, key="dis_lap_runs")
                 show_fours_sixes_dis_lap = st.checkbox("Show 4s and 6s", value=True, key="dis_lap_fs")
                 show_bowler_dis_lap = st.checkbox("Show Bowler", value=True, key="dis_lap_bowler")
@@ -7430,6 +7700,10 @@ if df is not None:
                 show_overs_dis_lap = st.checkbox("Show Overs", value=True, key="dis_lap_overs")
                 show_phase_dis_lap = st.checkbox("Show Phase", value=True, key="dis_lap_phase")
                 show_bowl_type_dis_lap = st.checkbox("Show Bowl Type", value=True, key="dis_lap_bowl_type")
+                show_ground_dis_lap = st.checkbox("Show Ground", value=True, key="dis_lap_ground")
+                show_venue_dis_lap = st.checkbox("Show Venue", value=True, key="dis_lap_venue")
+                show_bowl_kind_dis_lap = st.checkbox("Show Bowl Pace", value=True, key="dis_lap_bowl_kind")
+                show_bowl_arm_dis_lap = st.checkbox("Show Bowl Arm", value=True, key="dis_lap_bowl_arm")
                 
             try:
                 fig_dis_lap = dismissal_plot(
@@ -7457,14 +7731,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_lap,
                     show_summary=show_summary_dis_lap,
+                    show_shots_breakdown=show_shots_breakdown_dis_lap,
+                    shots_breakdown_options=shots_breakdown_options_dis_lap,
                     runs_count=runs_count_dis_lap,
                     show_fours_sixes=show_fours_sixes_dis_lap,
                     show_control=show_control_dis_lap,
                     show_prod_shot=show_prod_shot_dis_lap,
                     show_bowler=show_bowler_dis_lap,
+                    show_ground=show_ground_dis_lap,
+                    show_venue=show_venue_dis_lap,
                     show_overs=show_overs_dis_lap,
                     show_phase=show_phase_dis_lap,
-                    show_bowl_type=show_bowl_type_dis_lap
+                    show_bowl_type=show_bowl_type_dis_lap,
+                    show_bowl_kind=show_bowl_kind_dis_lap,
+                    show_bowl_arm=show_bowl_arm_dis_lap
                 )
                 with col2:
                     st.pyplot(fig_dis_lap)
@@ -7493,6 +7773,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_lafs = st.checkbox("Show Plot Title", value=True, key="dis_lafs_title")
                 show_summary_dis_lafs = st.checkbox("Show Runs Summary", value=True, key="dis_lafs_summary")
+                show_shots_breakdown_dis_lafs = st.checkbox("Show Shots Breakdown", value=True, key="dis_lafs_shots_breakdown")
+                if show_shots_breakdown_dis_lafs:
+                    shots_breakdown_options_dis_lafs = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_lafs_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_lafs = []
                 runs_count_dis_lafs = st.checkbox("Show Runs Count", value=True, key="dis_lafs_runs")
                 show_fours_sixes_dis_lafs = st.checkbox("Show 4s and 6s", value=True, key="dis_lafs_fs")
                 show_bowler_dis_lafs = st.checkbox("Show Bowler", value=True, key="dis_lafs_bowler")
@@ -7501,6 +7791,10 @@ if df is not None:
                 show_overs_dis_lafs = st.checkbox("Show Overs", value=True, key="dis_lafs_overs")
                 show_phase_dis_lafs = st.checkbox("Show Phase", value=True, key="dis_lafs_phase")
                 show_bowl_type_dis_lafs = st.checkbox("Show Bowl Type", value=True, key="dis_lafs_bowl_type")
+                show_ground_dis_lafs = st.checkbox("Show Ground", value=True, key="dis_lafs_ground")
+                show_venue_dis_lafs = st.checkbox("Show Venue", value=True, key="dis_lafs_venue")
+                show_bowl_kind_dis_lafs = st.checkbox("Show Bowl Pace", value=True, key="dis_lafs_bowl_kind")
+                show_bowl_arm_dis_lafs = st.checkbox("Show Bowl Arm", value=True, key="dis_lafs_bowl_arm")
                 
             try:
                 fig_dis_lafs = dismissal_plot(
@@ -7528,14 +7822,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_lafs,
                     show_summary=show_summary_dis_lafs,
+                    show_shots_breakdown=show_shots_breakdown_dis_lafs,
+                    shots_breakdown_options=shots_breakdown_options_dis_lafs,
                     runs_count=runs_count_dis_lafs,
                     show_fours_sixes=show_fours_sixes_dis_lafs,
                     show_control=show_control_dis_lafs,
                     show_prod_shot=show_prod_shot_dis_lafs,
                     show_bowler=show_bowler_dis_lafs,
+                    show_ground=show_ground_dis_lafs,
+                    show_venue=show_venue_dis_lafs,
                     show_overs=show_overs_dis_lafs,
                     show_phase=show_phase_dis_lafs,
-                    show_bowl_type=show_bowl_type_dis_lafs
+                    show_bowl_type=show_bowl_type_dis_lafs,
+                    show_bowl_kind=show_bowl_kind_dis_lafs,
+                    show_bowl_arm=show_bowl_arm_dis_lafs
                 )
                 with col2:
                     st.pyplot(fig_dis_lafs)
@@ -7564,6 +7864,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_laws = st.checkbox("Show Plot Title", value=True, key="dis_laws_title")
                 show_summary_dis_laws = st.checkbox("Show Runs Summary", value=True, key="dis_laws_summary")
+                show_shots_breakdown_dis_laws = st.checkbox("Show Shots Breakdown", value=True, key="dis_laws_shots_breakdown")
+                if show_shots_breakdown_dis_laws:
+                    shots_breakdown_options_dis_laws = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_laws_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_laws = []
                 runs_count_dis_laws = st.checkbox("Show Runs Count", value=True, key="dis_laws_runs")
                 show_fours_sixes_dis_laws = st.checkbox("Show 4s and 6s", value=True, key="dis_laws_fs")
                 show_bowler_dis_laws = st.checkbox("Show Bowler", value=True, key="dis_laws_bowler")
@@ -7572,6 +7882,10 @@ if df is not None:
                 show_overs_dis_laws = st.checkbox("Show Overs", value=True, key="dis_laws_overs")
                 show_phase_dis_laws = st.checkbox("Show Phase", value=True, key="dis_laws_phase")
                 show_bowl_type_dis_laws = st.checkbox("Show Bowl Type", value=True, key="dis_laws_bowl_type")
+                show_ground_dis_laws = st.checkbox("Show Ground", value=True, key="dis_laws_ground")
+                show_venue_dis_laws = st.checkbox("Show Venue", value=True, key="dis_laws_venue")
+                show_bowl_kind_dis_laws = st.checkbox("Show Bowl Pace", value=True, key="dis_laws_bowl_kind")
+                show_bowl_arm_dis_laws = st.checkbox("Show Bowl Arm", value=True, key="dis_laws_bowl_arm")
                 
             try:
                 fig_dis_laws = dismissal_plot(
@@ -7599,14 +7913,20 @@ if df is not None:
                     bowl_arm=bowl_arm,
                     show_title=show_title_dis_laws,
                     show_summary=show_summary_dis_laws,
+                    show_shots_breakdown=show_shots_breakdown_dis_laws,
+                    shots_breakdown_options=shots_breakdown_options_dis_laws,
                     runs_count=runs_count_dis_laws,
                     show_fours_sixes=show_fours_sixes_dis_laws,
                     show_control=show_control_dis_laws,
                     show_prod_shot=show_prod_shot_dis_laws,
                     show_bowler=show_bowler_dis_laws,
+                    show_ground=show_ground_dis_laws,
+                    show_venue=show_venue_dis_laws,
                     show_overs=show_overs_dis_laws,
                     show_phase=show_phase_dis_laws,
-                    show_bowl_type=show_bowl_type_dis_laws
+                    show_bowl_type=show_bowl_type_dis_laws,
+                    show_bowl_kind=show_bowl_kind_dis_laws,
+                    show_bowl_arm=show_bowl_arm_dis_laws
                 )
                 with col2:
                     st.pyplot(fig_dis_laws)
@@ -7635,6 +7955,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_all_arm = st.checkbox("Show Plot Title", value=True, key="dis_all_arm_title")
                 show_summary_dis_all_arm = st.checkbox("Show Runs Summary", value=True, key="dis_all_arm_summary")
+                show_shots_breakdown_dis_all_arm = st.checkbox("Show Shots Breakdown", value=True, key="dis_all_arm_shots_breakdown")
+                if show_shots_breakdown_dis_all_arm:
+                    shots_breakdown_options_dis_all_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_all_arm_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_all_arm = []
                 runs_count_dis_all_arm = st.checkbox("Show Runs Count", value=True, key="dis_all_arm_runs")
                 show_fours_sixes_dis_all_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_all_arm_fs")
                 show_bowler_dis_all_arm = st.checkbox("Show Bowler", value=True, key="dis_all_arm_bowler")
@@ -7643,6 +7973,10 @@ if df is not None:
                 show_overs_dis_all_arm = st.checkbox("Show Overs", value=True, key="dis_all_arm_overs")
                 show_phase_dis_all_arm = st.checkbox("Show Phase", value=True, key="dis_all_arm_phase")
                 show_bowl_type_dis_all_arm = st.checkbox("Show Bowl Type", value=True, key="dis_all_arm_bowl_type")
+                show_ground_dis_all_arm = st.checkbox("Show Ground", value=True, key="dis_all_arm_ground")
+                show_venue_dis_all_arm = st.checkbox("Show Venue", value=True, key="dis_all_arm_venue")
+                show_bowl_kind_dis_all_arm = st.checkbox("Show Bowl Pace", value=True, key="dis_all_arm_bowl_kind")
+                show_bowl_arm_dis_all_arm = st.checkbox("Show Bowl Arm", value=True, key="dis_all_arm_bowl_arm")
                 
             try:
                 fig_dis_all_arm = dismissal_plot(
@@ -7670,14 +8004,20 @@ if df is not None:
                     bowl_arm=None,
                     show_title=show_title_dis_all_arm,
                     show_summary=show_summary_dis_all_arm,
+                    show_shots_breakdown=show_shots_breakdown_dis_all_arm,
+                    shots_breakdown_options=shots_breakdown_options_dis_all_arm,
                     runs_count=runs_count_dis_all_arm,
                     show_fours_sixes=show_fours_sixes_dis_all_arm,
                     show_control=show_control_dis_all_arm,
                     show_prod_shot=show_prod_shot_dis_all_arm,
                     show_bowler=show_bowler_dis_all_arm,
+                    show_ground=show_ground_dis_all_arm,
+                    show_venue=show_venue_dis_all_arm,
                     show_overs=show_overs_dis_all_arm,
                     show_phase=show_phase_dis_all_arm,
-                    show_bowl_type=show_bowl_type_dis_all_arm
+                    show_bowl_type=show_bowl_type_dis_all_arm,
+                    show_bowl_kind=show_bowl_kind_dis_all_arm,
+                    show_bowl_arm=show_bowl_arm_dis_all_arm
                 )
                 with col2:
                     st.pyplot(fig_dis_all_arm)
@@ -7706,6 +8046,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_right_arm = st.checkbox("Show Plot Title", value=True, key="dis_right_arm_title")
                 show_summary_dis_right_arm = st.checkbox("Show Runs Summary", value=True, key="dis_right_arm_summary")
+                show_shots_breakdown_dis_right_arm = st.checkbox("Show Shots Breakdown", value=True, key="dis_right_arm_shots_breakdown")
+                if show_shots_breakdown_dis_right_arm:
+                    shots_breakdown_options_dis_right_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_right_arm_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_right_arm = []
                 runs_count_dis_right_arm = st.checkbox("Show Runs Count", value=True, key="dis_right_arm_runs")
                 show_fours_sixes_dis_right_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_right_arm_fs")
                 show_bowler_dis_right_arm = st.checkbox("Show Bowler", value=True, key="dis_right_arm_bowler")
@@ -7714,6 +8064,10 @@ if df is not None:
                 show_overs_dis_right_arm = st.checkbox("Show Overs", value=True, key="dis_right_arm_overs")
                 show_phase_dis_right_arm = st.checkbox("Show Phase", value=True, key="dis_right_arm_phase")
                 show_bowl_type_dis_right_arm = st.checkbox("Show Bowl Type", value=True, key="dis_right_arm_bowl_type")
+                show_ground_dis_right_arm = st.checkbox("Show Ground", value=True, key="dis_right_arm_ground")
+                show_venue_dis_right_arm = st.checkbox("Show Venue", value=True, key="dis_right_arm_venue")
+                show_bowl_kind_dis_right_arm = st.checkbox("Show Bowl Pace", value=True, key="dis_right_arm_bowl_kind")
+                show_bowl_arm_dis_right_arm = st.checkbox("Show Bowl Arm", value=True, key="dis_right_arm_bowl_arm")
                 
             try:
                 fig_dis_right_arm = dismissal_plot(
@@ -7741,14 +8095,20 @@ if df is not None:
                     bowl_arm=["Right Arm"],
                     show_title=show_title_dis_right_arm,
                     show_summary=show_summary_dis_right_arm,
+                    show_shots_breakdown=show_shots_breakdown_dis_right_arm,
+                    shots_breakdown_options=shots_breakdown_options_dis_right_arm,
                     runs_count=runs_count_dis_right_arm,
                     show_fours_sixes=show_fours_sixes_dis_right_arm,
                     show_control=show_control_dis_right_arm,
                     show_prod_shot=show_prod_shot_dis_right_arm,
                     show_bowler=show_bowler_dis_right_arm,
+                    show_ground=show_ground_dis_right_arm,
+                    show_venue=show_venue_dis_right_arm,
                     show_overs=show_overs_dis_right_arm,
                     show_phase=show_phase_dis_right_arm,
-                    show_bowl_type=show_bowl_type_dis_right_arm
+                    show_bowl_type=show_bowl_type_dis_right_arm,
+                    show_bowl_kind=show_bowl_kind_dis_right_arm,
+                    show_bowl_arm=show_bowl_arm_dis_right_arm
                 )
                 with col2:
                     st.pyplot(fig_dis_right_arm)
@@ -7777,6 +8137,16 @@ if df is not None:
                 st.markdown("## Customize Plot Info")
                 show_title_dis_left_arm = st.checkbox("Show Plot Title", value=True, key="dis_left_arm_title")
                 show_summary_dis_left_arm = st.checkbox("Show Runs Summary", value=True, key="dis_left_arm_summary")
+                show_shots_breakdown_dis_left_arm = st.checkbox("Show Shots Breakdown", value=True, key="dis_left_arm_shots_breakdown")
+                if show_shots_breakdown_dis_left_arm:
+                    shots_breakdown_options_dis_left_arm = st.multiselect(
+                        "Shots to Display",
+                        options=['0s', '1s', '2s', '3s', '4s', '6s'],
+                        default=['0s', '1s', '4s', '6s'],
+                        key="dis_left_arm_shots_options"
+                    )
+                else:
+                    shots_breakdown_options_dis_left_arm = []
                 runs_count_dis_left_arm = st.checkbox("Show Runs Count", value=True, key="dis_left_arm_runs")
                 show_fours_sixes_dis_left_arm = st.checkbox("Show 4s and 6s", value=True, key="dis_left_arm_fs")
                 show_bowler_dis_left_arm = st.checkbox("Show Bowler", value=True, key="dis_left_arm_bowler")
@@ -7785,6 +8155,10 @@ if df is not None:
                 show_overs_dis_left_arm = st.checkbox("Show Overs", value=True, key="dis_left_arm_overs")
                 show_phase_dis_left_arm = st.checkbox("Show Phase", value=True, key="dis_left_arm_phase")
                 show_bowl_type_dis_left_arm = st.checkbox("Show Bowl Type", value=True, key="dis_left_arm_bowl_type")
+                show_ground_dis_left_arm = st.checkbox("Show Ground", value=True, key="dis_left_arm_ground")
+                show_venue_dis_left_arm = st.checkbox("Show Venue", value=True, key="dis_left_arm_venue")
+                show_bowl_kind_dis_left_arm = st.checkbox("Show Bowl Pace", value=True, key="dis_left_arm_bowl_kind")
+                show_bowl_arm_dis_left_arm = st.checkbox("Show Bowl Arm", value=True, key="dis_left_arm_bowl_arm")
                 
             try:
                 fig_dis_left_arm = dismissal_plot(
@@ -7812,14 +8186,20 @@ if df is not None:
                     bowl_arm=["Left Arm"],
                     show_title=show_title_dis_left_arm,
                     show_summary=show_summary_dis_left_arm,
+                    show_shots_breakdown=show_shots_breakdown_dis_left_arm,
+                    shots_breakdown_options=shots_breakdown_options_dis_left_arm,
                     runs_count=runs_count_dis_left_arm,
                     show_fours_sixes=show_fours_sixes_dis_left_arm,
                     show_control=show_control_dis_left_arm,
                     show_prod_shot=show_prod_shot_dis_left_arm,
                     show_bowler=show_bowler_dis_left_arm,
+                    show_ground=show_ground_dis_left_arm,
+                    show_venue=show_venue_dis_left_arm,
                     show_overs=show_overs_dis_left_arm,
                     show_phase=show_phase_dis_left_arm,
-                    show_bowl_type=show_bowl_type_dis_left_arm
+                    show_bowl_type=show_bowl_type_dis_left_arm,
+                    show_bowl_kind=show_bowl_kind_dis_left_arm,
+                    show_bowl_arm=show_bowl_arm_dis_left_arm
                 )
                 with col2:
                     st.pyplot(fig_dis_left_arm)
