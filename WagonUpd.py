@@ -708,6 +708,9 @@ def wagon_zone_plot_descriptive(
     else:
         innings_valid_balls = local_df[local_df['wide'] == 0]
         innings_runs = innings_valid_balls['batruns'].sum()
+        
+    # actual complete innings balls
+    innings_balls = innings_valid_balls.shape[0]
 
     # innings_balls = innings_valid_balls[
     #     ~((innings_valid_balls['wagonX'] == 0) & (innings_valid_balls['wagonY'] == 0))
@@ -718,8 +721,6 @@ def wagon_zone_plot_descriptive(
 
     # innings_balls = valid_shots.shape[0]
 
-    # actual complete innings balls
-    innings_balls = innings_valid_balls.shape[0]
 
     if bowler_id is not None:
         local_df = local_df[local_df['p_bowl'] == bowler_id]
