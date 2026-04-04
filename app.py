@@ -302,13 +302,28 @@ elif data_source == "Cache_since24":
         st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
 
 
-# Add a clear data button
-if st.session_state.df is not None:
-    if st.sidebar.button("🗑️ Clear Loaded Data"):
-        st.cache_data.clear()
-        st.session_state.df = None
-        st.rerun()
+# # Add a clear data button
+# if st.session_state.df is not None:
+#     if st.sidebar.button("🗑️ Clear Loaded Data"):
+#         st.cache_data.clear()
+#         st.session_state.df = None
+#         st.rerun()
         
+
+# Add refresh and clear data buttons
+if st.session_state.df is not None:
+    col_refresh, col_clear = st.sidebar.columns(2)
+    
+    with col_refresh:
+        if st.sidebar.button("🔄 Refresh Data", key="refresh_data_btn"):
+            st.cache_data.clear()
+            st.rerun()
+    
+    with col_clear:
+        if st.sidebar.button("🗑️ Clear Data", key="clear_data_btn"):
+            st.cache_data.clear()
+            st.session_state.df = None
+            st.rerun()
 
 # ===== BATCH PLOT GENERATION SECTION =====
 if st.session_state.df is not None:
@@ -1115,12 +1130,12 @@ if df is not None:
             "━━ Wagon Zone - All Kinds", "━━ Wagon Zone - RAP", "━━ Wagon Zone - RAFS", "━━ Wagon Zone - RAWS",
             "━━ Wagon Zone - LAP", "━━ Wagon Zone - LAFS", "━━ Wagon Zone - LAWS",
             "━━ Wagon Zone - All Arm", "━━ Wagon Zone - Right Arm", "━━ Wagon Zone - Left Arm",
-            "Dismissal Plot", "Dismissal Plot (Trans)",
-            "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
-            "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
-            "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
-            "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
-            "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
+            # "Dismissal Plot", "Dismissal Plot (Trans)",
+            # "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
+            # "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
+            # "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
+            # "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
+            # "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
         ]
         
         # Define run values for all plots
@@ -1568,7 +1583,7 @@ if df is not None:
                     shots_breakdown_options = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -1690,7 +1705,7 @@ if df is not None:
                     shots_breakdown_options_trans = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_trans_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -1812,7 +1827,7 @@ if df is not None:
                     shots_breakdown_options_desc = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_desc_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -1943,7 +1958,7 @@ if df is not None:
                     shots_breakdown_options_all_kind = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_all_kind_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2072,7 +2087,7 @@ if df is not None:
                     shots_breakdown_options_pace = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_desc_pace_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2200,7 +2215,7 @@ if df is not None:
                     shots_breakdown_options_spin = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_desc_spin_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2328,7 +2343,7 @@ if df is not None:
                     shots_breakdown_options_desc_trans = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="spike_desc_trans_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2455,7 +2470,7 @@ if df is not None:
                     shots_breakdown_options_phs_all = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_phs_all_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2583,7 +2598,7 @@ if df is not None:
                     shots_breakdown_options_phs_pp = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_phs_pp_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2711,7 +2726,7 @@ if df is not None:
                     shots_breakdown_options_phs_mid = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_phs_mid_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2839,7 +2854,7 @@ if df is not None:
                     shots_breakdown_options_phs_slog = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_phs_slog_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -2967,7 +2982,7 @@ if df is not None:
                     shots_breakdown_options_whl_all_type = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_all_type_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3095,7 +3110,7 @@ if df is not None:
                     shots_breakdown_options_whl_rap = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_rap_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3223,7 +3238,7 @@ if df is not None:
                     shots_breakdown_options_whl_rafs = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_rafs_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3351,7 +3366,7 @@ if df is not None:
                     shots_breakdown_options_whl_raws = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_raws_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3479,7 +3494,7 @@ if df is not None:
                     shots_breakdown_options_whl_lap = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_lap_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3607,7 +3622,7 @@ if df is not None:
                     shots_breakdown_options_whl_lafs = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_lafs_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3735,7 +3750,7 @@ if df is not None:
                     shots_breakdown_options_whl_laws = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_laws_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3863,7 +3878,7 @@ if df is not None:
                     shots_breakdown_options_whl_all_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_all_arm_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -3991,7 +4006,7 @@ if df is not None:
                     shots_breakdown_options_whl_right_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_right_arm_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -4119,7 +4134,7 @@ if df is not None:
                     shots_breakdown_options_whl_left_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="whl_left_arm_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -4246,7 +4261,7 @@ if df is not None:
                     shots_breakdown_options_wagon = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wagon_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -4361,7 +4376,7 @@ if df is not None:
                     shots_breakdown_options_wagon_trans = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wagon_trans_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -4477,7 +4492,7 @@ if df is not None:
                     shots_breakdown_options_wagon_desc = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wagon_desc_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -4600,7 +4615,7 @@ if df is not None:
                     shots_breakdown_options_wagon_desc_trans = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wagon_desc_trans_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -5429,7 +5444,7 @@ if df is not None:
                     shots_breakdown_options_wzn_all_kind = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wzn_all_kind_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -5550,7 +5565,7 @@ if df is not None:
                     shots_breakdown_options_wzn_rap = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wzn_rap_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -5669,7 +5684,7 @@ if df is not None:
                     shots_breakdown_options_wzn_rafs = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wzn_rafs_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -5788,7 +5803,7 @@ if df is not None:
                     shots_breakdown_options_wzn_raws = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="wzn_raws_shots_options",
                         help="Select which run types to display in breakdown"
                     )
@@ -6514,7 +6529,7 @@ if df is not None:
                     shots_breakdown_options_dismissal = st.multiselect(
                         "Select Runs to Show",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="shots_options_dismissal"
                     )
                 else:
@@ -6612,7 +6627,7 @@ if df is not None:
                     shots_breakdown_options_dismissal_trans = st.multiselect(
                         "Select Runs to Show",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="shots_options_dismissal_trans"
                     )
                 else:
@@ -6777,7 +6792,7 @@ if df is not None:
                     shots_breakdown_options_dis_pace = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_pace_shots_options"
                     )
                 else:
@@ -6868,7 +6883,7 @@ if df is not None:
                     shots_breakdown_options_dis_spin = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_spin_shots_options"
                     )
                 else:
@@ -6959,7 +6974,7 @@ if df is not None:
                     shots_breakdown_options_dis_all_phase = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_all_phase_shots_options"
                     )
                 else:
@@ -7050,7 +7065,7 @@ if df is not None:
                     shots_breakdown_options_dis_pp = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_pp_shots_options"
                     )
                 else:
@@ -7141,7 +7156,7 @@ if df is not None:
                     shots_breakdown_options_dis_mid = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_mid_shots_options"
                     )
                 else:
@@ -7232,7 +7247,7 @@ if df is not None:
                     shots_breakdown_options_dis_slog = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_slog_shots_options"
                     )
                 else:
@@ -7323,7 +7338,7 @@ if df is not None:
                     shots_breakdown_options_dis_all_kind = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_all_kind_shots_options"
                     )
                 else:
@@ -7414,7 +7429,7 @@ if df is not None:
                     shots_breakdown_options_dis_rap = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_rap_shots_options"
                     )
                 else:
@@ -7505,7 +7520,7 @@ if df is not None:
                     shots_breakdown_options_dis_rafs = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_rafs_shots_options"
                     )
                 else:
@@ -7596,7 +7611,7 @@ if df is not None:
                     shots_breakdown_options_dis_raws = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_raws_shots_options"
                     )
                 else:
@@ -7687,7 +7702,7 @@ if df is not None:
                     shots_breakdown_options_dis_lap = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_lap_shots_options"
                     )
                 else:
@@ -7778,7 +7793,7 @@ if df is not None:
                     shots_breakdown_options_dis_lafs = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_lafs_shots_options"
                     )
                 else:
@@ -7869,7 +7884,7 @@ if df is not None:
                     shots_breakdown_options_dis_laws = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_laws_shots_options"
                     )
                 else:
@@ -7960,7 +7975,7 @@ if df is not None:
                     shots_breakdown_options_dis_all_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_all_arm_shots_options"
                     )
                 else:
@@ -8051,7 +8066,7 @@ if df is not None:
                     shots_breakdown_options_dis_right_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_right_arm_shots_options"
                     )
                 else:
@@ -8142,7 +8157,7 @@ if df is not None:
                     shots_breakdown_options_dis_left_arm = st.multiselect(
                         "Shots to Display",
                         options=['0s', '1s', '2s', '3s', '4s', '6s'],
-                        default=['0s', '1s', '4s', '6s'],
+                        default=['0s', '1s', '2s', '4s', '6s'],
                         key="dis_left_arm_shots_options"
                     )
                 else:
