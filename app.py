@@ -1130,12 +1130,12 @@ if df is not None:
             "━━ Wagon Zone - All Kinds", "━━ Wagon Zone - RAP", "━━ Wagon Zone - RAFS", "━━ Wagon Zone - RAWS",
             "━━ Wagon Zone - LAP", "━━ Wagon Zone - LAFS", "━━ Wagon Zone - LAWS",
             "━━ Wagon Zone - All Arm", "━━ Wagon Zone - Right Arm", "━━ Wagon Zone - Left Arm",
-            # "Dismissal Plot", "Dismissal Plot (Trans)",
-            # "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
-            # "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
-            # "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
-            # "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
-            # "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
+            "Dismissal Plot", "Dismissal Plot (Trans)",
+            "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
+            "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
+            "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
+            "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
+            "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
         ]
         
         # Define run values for all plots
