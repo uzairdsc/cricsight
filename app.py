@@ -18,7 +18,7 @@ if "authenticated" not in st.session_state:
     st.session_state.authenticated = False
 
 if not st.session_state.authenticated:
-    st.title("⭐ PSL - Private Cricket App Login")
+    st.title("⭐ Plots - Private Cricket App Login")
     password_input = st.text_input("Enter Access Password:", type="password")
 
     if password_input == APP_PASSWORD:
@@ -34,8 +34,8 @@ from SpikeUpd import spike_graph_plot as spike_plot_custom, spike_graph_plot_des
 from WagonUpd import wagon_zone_plot, wagon_zone_plot_descriptive
 from DismissalPlot import dismissal_plot
 
-st.set_page_config(page_title="PSL Cricket Wagon Wheel App" ,page_icon="🏏" ,layout="wide")
-st.title("🏏 PSL - Wagons Analysis Dashboard")
+st.set_page_config(page_title="Cricket Wagon Wheel App" ,page_icon="🏏" ,layout="wide")
+st.title("🏏Batting Wagons Analysis Dashboard")
 
 
 def normalize_data(df):
