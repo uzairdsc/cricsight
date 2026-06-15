@@ -35,7 +35,7 @@ from WagonUpd import wagon_zone_plot, wagon_zone_plot_descriptive
 from DismissalPlot import dismissal_plot
 
 st.set_page_config(page_title="Cricket Wagon Wheel App" ,page_icon="🏏" ,layout="wide")
-st.title("🏏Batting Wagons Analysis Dashboard")
+st.title("🏏 Batting Wagons Analysis Dashboard")
 
 
 def normalize_data(df):
@@ -122,7 +122,7 @@ def create_zip_of_plots(figures_dict):
 st.sidebar.header("📂 Select Dataset Source")
 data_source = st.sidebar.selectbox(
     "Choose data source:",
-    ["Upload Data File", "S3_since24", "S3_PSL-26", "S3_all", "Cache_all", "Cache_since24"]
+    ["Upload Data File", "S3_since24", "S3_WWT20-26", "S3_PSL-26", "S3_all", "Cache_all", "Cache_since24"]
 )
 
 # Initialize session state for df
@@ -204,6 +204,31 @@ elif data_source == "S3_since24":
             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
     else:
         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+
+elif data_source == "S3_WWT20-26":
+    if "aws" in st.secrets:
+        bucket = st.secrets["aws"]["bucket_name"]
+        access_key = st.secrets["aws"]["access_key_id"]
+        secret_key = st.secrets["aws"]["secret_access_key"]
+        region = st.secrets["aws"].get("region_name", "ap-south-1")
+        
+        s3_file_key = st.sidebar.text_input(
+            "Enter S3 file path:",
+            value="2026-WWT20-bbb.csv"
+        )
+        
+        if st.sidebar.button("Load from S3", key="load_2025"):
+            loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
+            if loaded_df is not None:
+                st.session_state.df = loaded_df
+                df = loaded_df
+        
+        # Show current loaded data info
+        if st.session_state.df is not None:
+            st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+    else:
+        st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+
 
 elif data_source == "S3_PSL-26":
     if "aws" in st.secrets:
@@ -357,8 +382,9 @@ if st.session_state.df is not None:
     # New Dropdown option
     # List of possible file paths (in order of preference)
     possible_paths = [
+        "data/S2026_WWT20.xlsx",
         "data/S2026_PSL.xlsx",
-        "data/S2026_IPL.xlsx",
+        # "data/S2026_IPL.xlsx",
     ]
 
     # Find which files actually exist
@@ -1130,12 +1156,12 @@ if df is not None:
             "━━ Wagon Zone - All Kinds", "━━ Wagon Zone - RAP", "━━ Wagon Zone - RAFS", "━━ Wagon Zone - RAWS",
             "━━ Wagon Zone - LAP", "━━ Wagon Zone - LAFS", "━━ Wagon Zone - LAWS",
             "━━ Wagon Zone - All Arm", "━━ Wagon Zone - Right Arm", "━━ Wagon Zone - Left Arm",
-            "Dismissal Plot", "Dismissal Plot (Trans)",
-            "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
-            "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
-            "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
-            "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
-            "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
+            # "Dismissal Plot", "Dismissal Plot (Trans)",
+            # "━━ Dis Plot - vs All Types", "━━ Dis Plot - vs Pace", "━━ Dis Plot - vs Spin",
+            # "━━ Dis Plot - All Phases", "━━ Dis Plot - Powerplay", "━━ Dis Plot - Middle", "━━ Dis Plot - Slog",
+            # "━━ Dis Plot - All Kinds", "━━ Dis Plot - RAP", "━━ Dis Plot - RAFS", "━━ Dis Plot - RAWS",
+            # "━━ Dis Plot - LAP", "━━ Dis Plot - LAFS", "━━ Dis Plot - LAWS",
+            # "━━ Dis Plot - All Arm", "━━ Dis Plot - Right Arm", "━━ Dis Plot - Left Arm"
         ]
         
         # Define run values for all plots
