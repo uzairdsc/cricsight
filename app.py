@@ -9,6 +9,16 @@ from botocore.exceptions import NoCredentialsError
 import zipfile
 import os
 import time
+from pathlib import Path
+
+
+# Data Root Paths
+DATA_ROOT = os.getenv("DATA_ROOT", "data")
+SQUAD_DATA_DIR = Path(DATA_ROOT) / "squads"
+psl_2026_path = Path(DATA_ROOT) / "t20_bbb_psl_2026.csv"
+t20_since_2024_path = Path(DATA_ROOT) / "t20_bbb_since_2024.csv"
+t20_all_path = Path(DATA_ROOT) / "t20_bbb.csv"
+
 
 # Set your custom password here
 APP_PASSWORD = st.secrets["auth"]["password"]
@@ -122,7 +132,7 @@ def create_zip_of_plots(figures_dict):
 st.sidebar.header("📂 Select Dataset Source")
 data_source = st.sidebar.selectbox(
     "Choose data source:",
-    ["Upload Data File", "S3_since24", "S3_WWT20-26", "S3_PSL-26", "S3_all", "Cache_all", "Cache_since24"]
+    ["Upload Data File", "S3_since24", "S3_WWT20-26", "S3_PSL-26", "S3_all", "Cache_PSL-26", "Cache_all", "Cache_since24"]
 )
 
 # Initialize session state for df
@@ -173,120 +183,59 @@ if 'filter_phase_display' not in st.session_state:
 if 'date_range_filter' not in st.session_state:
     st.session_state['date_range_filter'] = (None, None)
 
+
+# (file_key, button_key) per S3 source
+S3_DEFAULTS = {
+    "S3_since24":  ("t20_bbb_since_2024.csv", "load_s3_since24"),
+    "S3_WWT20-26": ("2026-WWT20-bbb.csv",     "load_s3_wwt20"),
+    "S3_PSL-26":   ("PSL_26_bbb.csv",          "load_s3_psl26"),
+    "S3_all":      ("t20_bbb_wt20.csv",        "load_s3_all"),
+}
+CACHE_DEFAULTS = {
+    # "Cache_PSL-26":  "E:/Cricket Related Projects/HG-Datasets/t20_bbb.csv",
+    # "Cache_all":     "E:/Cricket Related Projects/HG-Datasets/t20_bbb.csv",
+    # "Cache_since24": "E:/Cricket Related Projects/HG-Datasets/t20_bbb_since_2024.csv",
+    "Cache_all": t20_all_path,
+    "Cache_since24": t20_since_2024_path,
+    "Cache_PSL-26" : psl_2026_path,
+}
+
 if data_source == "Upload Data File":
-    uploaded_file = st.sidebar.file_uploader("Upload CSV File", type=["csv"])
+    uploaded_file = st.sidebar.file_uploader("Upload CSV File", type=["csv"], key="wagonplots_upload_csv")
     if uploaded_file:
         df = pd.read_csv(uploaded_file, low_memory=False)
         df = normalize_data(df)  # Ensure wagonX/Y are numeric
         st.session_state.df = df
         st.sidebar.success(f"Loaded {len(df):,} rows")
 
-elif data_source == "S3_since24":
+elif data_source in S3_DEFAULTS:
     if "aws" in st.secrets:
         bucket = st.secrets["aws"]["bucket_name"]
         access_key = st.secrets["aws"]["access_key_id"]
         secret_key = st.secrets["aws"]["secret_access_key"]
         region = st.secrets["aws"].get("region_name", "ap-south-1")
-        
-        s3_file_key = st.sidebar.text_input(
-            "Enter S3 file path:",
-            value="t20_bbb_since_2024.csv"
-        )
-        
-        if st.sidebar.button("Load from S3", key="load_2025"):
+
+        default_key, btn_key = S3_DEFAULTS[data_source]
+        s3_file_key = st.sidebar.text_input("Enter S3 file path:", value=default_key)
+
+        if st.sidebar.button("Load from S3", key=btn_key):
             loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
             if loaded_df is not None:
                 st.session_state.df = loaded_df
                 df = loaded_df
-        
-        # Show current loaded data info
+
         if st.session_state.df is not None:
             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
     else:
         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
 
-elif data_source == "S3_WWT20-26":
-    if "aws" in st.secrets:
-        bucket = st.secrets["aws"]["bucket_name"]
-        access_key = st.secrets["aws"]["access_key_id"]
-        secret_key = st.secrets["aws"]["secret_access_key"]
-        region = st.secrets["aws"].get("region_name", "ap-south-1")
-        
-        s3_file_key = st.sidebar.text_input(
-            "Enter S3 file path:",
-            value="2026-WWT20-bbb.csv"
-        )
-        
-        if st.sidebar.button("Load from S3", key="load_2025"):
-            loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
-            if loaded_df is not None:
-                st.session_state.df = loaded_df
-                df = loaded_df
-        
-        # Show current loaded data info
-        if st.session_state.df is not None:
-            st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
-    else:
-        st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
-
-
-elif data_source == "S3_PSL-26":
-    if "aws" in st.secrets:
-        bucket = st.secrets["aws"]["bucket_name"]
-        access_key = st.secrets["aws"]["access_key_id"]
-        secret_key = st.secrets["aws"]["secret_access_key"]
-        region = st.secrets["aws"].get("region_name", "ap-south-1")
-        
-        s3_file_key = st.sidebar.text_input(
-            "Enter S3 file path:",
-            value="PSL_26_bbb.csv"
-        )
-        
-        if st.sidebar.button("Load from S3", key="load_2025"):
-            loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
-            if loaded_df is not None:
-                st.session_state.df = loaded_df
-                df = loaded_df
-        
-        # Show current loaded data info
-        if st.session_state.df is not None:
-            st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
-    else:
-        st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
-
-
-elif data_source == "S3_all":
-    if "aws" in st.secrets:
-        bucket = st.secrets["aws"]["bucket_name"]
-        access_key = st.secrets["aws"]["access_key_id"]
-        secret_key = st.secrets["aws"]["secret_access_key"]
-        region = st.secrets["aws"].get("region_name", "ap-south-1")
-        
-        s3_file_key = st.sidebar.text_input(
-            "Enter S3 file path:",
-            # value="t20_bbb.csv"
-            value="t20_bbb_wt20.csv"
-        )
-        
-        if st.sidebar.button("Load from S3", key="load_complete"):
-            loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
-            if loaded_df is not None:
-                st.session_state.df = loaded_df
-                df = loaded_df
-        
-        # Show current loaded data info
-        if st.session_state.df is not None:
-            st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
-    else:
-        st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
-        
-elif data_source == "Cache_all":
+elif data_source in CACHE_DEFAULTS:
     local_file_path = st.sidebar.text_input(
         "Enter local file path:",
-        value="E:/Cricket Related Projects/HG-Datasets/t20_bbb.csv"
+        value=str(CACHE_DEFAULTS[data_source])
     )
-    
-    if st.sidebar.button("Load from Local Storage", key="load_local_complete"):
+
+    if st.sidebar.button("Load from Local Storage", key=f"load_{data_source}"):
         try:
             with st.spinner(f"Loading data from {local_file_path}..."):
                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
@@ -298,33 +247,178 @@ elif data_source == "Cache_all":
             st.sidebar.error(f"File not found: {local_file_path}")
         except Exception as e:
             st.sidebar.error(f"Error loading file: {str(e)}")
-    
-    # Show current loaded data info
+
     if st.session_state.df is not None:
         st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
 
-elif data_source == "Cache_since24":
-    local_file_path = st.sidebar.text_input(
-        "Enter local file path:",
-        value="E:/Cricket Related Projects/HG-Datasets/t20_bbb_since_2024.csv"
-    )
+
+# elif data_source == "S3_since24":
+#     if "aws" in st.secrets:
+#         bucket = st.secrets["aws"]["bucket_name"]
+#         access_key = st.secrets["aws"]["access_key_id"]
+#         secret_key = st.secrets["aws"]["secret_access_key"]
+#         region = st.secrets["aws"].get("region_name", "ap-south-1")
+        
+#         s3_file_key = st.sidebar.text_input(
+#             "Enter S3 file path:",
+#             value="t20_bbb_since_2024.csv"
+#         )
+        
+#         if st.sidebar.button("Load from S3", key="load_2025"):
+#             loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
+#             if loaded_df is not None:
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+        
+#         # Show current loaded data info
+#         if st.session_state.df is not None:
+#             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+#     else:
+#         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+
+# elif data_source == "S3_WWT20-26":
+#     if "aws" in st.secrets:
+#         bucket = st.secrets["aws"]["bucket_name"]
+#         access_key = st.secrets["aws"]["access_key_id"]
+#         secret_key = st.secrets["aws"]["secret_access_key"]
+#         region = st.secrets["aws"].get("region_name", "ap-south-1")
+        
+#         s3_file_key = st.sidebar.text_input(
+#             "Enter S3 file path:",
+#             value="2026-WWT20-bbb.csv"
+#         )
+        
+#         if st.sidebar.button("Load from S3", key="load_2025"):
+#             loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
+#             if loaded_df is not None:
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+        
+#         # Show current loaded data info
+#         if st.session_state.df is not None:
+#             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+#     else:
+#         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+
+
+# elif data_source == "S3_PSL-26":
+#     if "aws" in st.secrets:
+#         bucket = st.secrets["aws"]["bucket_name"]
+#         access_key = st.secrets["aws"]["access_key_id"]
+#         secret_key = st.secrets["aws"]["secret_access_key"]
+#         region = st.secrets["aws"].get("region_name", "ap-south-1")
+        
+#         s3_file_key = st.sidebar.text_input(
+#             "Enter S3 file path:",
+#             value="PSL_26_bbb.csv"
+#         )
+        
+#         if st.sidebar.button("Load from S3", key="load_2025"):
+#             loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
+#             if loaded_df is not None:
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+        
+#         # Show current loaded data info
+#         if st.session_state.df is not None:
+#             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+#     else:
+#         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+
+
+# elif data_source == "S3_all":
+#     if "aws" in st.secrets:
+#         bucket = st.secrets["aws"]["bucket_name"]
+#         access_key = st.secrets["aws"]["access_key_id"]
+#         secret_key = st.secrets["aws"]["secret_access_key"]
+#         region = st.secrets["aws"].get("region_name", "ap-south-1")
+        
+#         s3_file_key = st.sidebar.text_input(
+#             "Enter S3 file path:",
+#             # value="t20_bbb.csv"
+#             value="t20_bbb_wt20.csv"
+#         )
+        
+#         if st.sidebar.button("Load from S3", key="load_complete"):
+#             loaded_df = load_from_s3(bucket, s3_file_key, access_key, secret_key, region)
+#             if loaded_df is not None:
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+        
+#         # Show current loaded data info
+#         if st.session_state.df is not None:
+#             st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+#     else:
+#         st.sidebar.warning("⚠️ AWS credentials not configured in secrets.toml")
+        
+# elif data_source == "Cache_all":
+#     local_file_path = st.sidebar.text_input(
+#         "Enter local file path:",
+#         value="E:/Cricket Related Projects/HG-Datasets/t20_bbb.csv"
+#     )
     
-    if st.sidebar.button("Load from Local Storage", key="load_local_complete"):
-        try:
-            with st.spinner(f"Loading data from {local_file_path}..."):
-                loaded_df = pd.read_csv(local_file_path, low_memory=False)
-                loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
-                st.session_state.df = loaded_df
-                df = loaded_df
-                st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
-        except FileNotFoundError:
-            st.sidebar.error(f"File not found: {local_file_path}")
-        except Exception as e:
-            st.sidebar.error(f"Error loading file: {str(e)}")
+#     if st.sidebar.button("Load from Local Storage", key="load_local_complete"):
+#         try:
+#             with st.spinner(f"Loading data from {local_file_path}..."):
+#                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
+#                 loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+#                 st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
+#         except FileNotFoundError:
+#             st.sidebar.error(f"File not found: {local_file_path}")
+#         except Exception as e:
+#             st.sidebar.error(f"Error loading file: {str(e)}")
     
-    # Show current loaded data info
-    if st.session_state.df is not None:
-        st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+#     # Show current loaded data info
+#     if st.session_state.df is not None:
+#         st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+
+# elif data_source == "Cache_PSL-26":
+#     local_file_path = st.sidebar.text_input(
+#         "Enter local file path:",
+#         value="E:/Cricket Related Projects/HG-Datasets/t20_bbb.csv"
+#     )
+    
+#     if st.sidebar.button("Load from Local Storage", key="load_local_complete"):
+#         try:
+#             with st.spinner(f"Loading data from {local_file_path}..."):
+#                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
+#                 loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+#                 st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
+#         except FileNotFoundError:
+#             st.sidebar.error(f"File not found: {local_file_path}")
+#         except Exception as e:
+#             st.sidebar.error(f"Error loading file: {str(e)}")
+    
+#     # Show current loaded data info
+#     if st.session_state.df is not None:
+#         st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
+
+# elif data_source == "Cache_since24":
+#     local_file_path = st.sidebar.text_input(
+#         "Enter local file path:",
+#         value="E:/Cricket Related Projects/HG-Datasets/t20_bbb_since_2024.csv"
+#     )
+    
+#     if st.sidebar.button("Load from Local Storage", key="load_local_complete"):
+#         try:
+#             with st.spinner(f"Loading data from {local_file_path}..."):
+#                 loaded_df = pd.read_csv(local_file_path, low_memory=False)
+#                 loaded_df = normalize_data(loaded_df)  # Ensure wagonX/Y are numeric
+#                 st.session_state.df = loaded_df
+#                 df = loaded_df
+#                 st.sidebar.success(f"Loaded {len(loaded_df):,} rows from local storage")
+#         except FileNotFoundError:
+#             st.sidebar.error(f"File not found: {local_file_path}")
+#         except Exception as e:
+#             st.sidebar.error(f"Error loading file: {str(e)}")
+    
+#     # Show current loaded data info
+#     if st.session_state.df is not None:
+#         st.sidebar.info(f"Current data: {len(st.session_state.df):,} rows")
 
 
 # # Add a clear data button
@@ -381,10 +475,13 @@ if st.session_state.df is not None:
 
     # New Dropdown option
     # List of possible file paths (in order of preference)
+    # possible_paths = [
+    #     "data/S2026_WWT20.xlsx",
+    #     "data/S2026_PSL.xlsx",
+    # ]
     possible_paths = [
-        "data/S2026_WWT20.xlsx",
-        "data/S2026_PSL.xlsx",
-        # "data/S2026_IPL.xlsx",
+        str(SQUAD_DATA_DIR / "S2026_WWT20.xlsx"),
+        str(SQUAD_DATA_DIR / "S2026_PSL.xlsx"),
     ]
 
     # Find which files actually exist
